@@ -1,0 +1,13 @@
+{
+  "name": "@rabby/extension",
+  "version": "0.93.77",
+  "private": true,
+  "scripts": {
+    "build": "echo 'Use ../../yarn build:dev from root'",
+    "build:dev": "cd ../.. && yarn build:dev",
+    "build:pro": "cd ../.. && yarn build:pro"
+  },
+  "dependencies": {
+    "@rabby/shared": "file:../../packages/shared"
+  }
+}

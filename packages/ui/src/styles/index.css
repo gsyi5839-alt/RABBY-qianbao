@@ -1,0 +1,172 @@
+/* Rabby UI Design System - Global Styles */
+
+:root {
+  /* Classical theme --r-* (light defaults) */
+  --r-blue-default: rgba(76, 101, 255, 1);
+  --r-blue-light-1: rgba(237, 240, 255, 1);
+  --r-blue-light-2: rgba(219, 224, 255, 1);
+  --r-blue-disable: rgba(165, 178, 255, 1);
+  --r-green-default: rgba(42, 187, 127, 1);
+  --r-green-light: rgba(216, 242, 231, 1);
+  --r-orange-default: rgba(255, 176, 32, 1);
+  --r-orange-light: rgba(255, 245, 226, 1);
+  --r-red-default: rgba(227, 73, 53, 1);
+  --r-red-light: rgba(255, 242, 240, 1);
+  --r-red-dark: rgba(174, 42, 25, 1);
+  --r-neutral-title-1: rgba(25, 41, 69, 1);
+  --r-neutral-title-2: rgba(255, 255, 255, 1);
+  --r-neutral-body: rgba(62, 73, 94, 1);
+  --r-neutral-foot: rgba(106, 117, 135, 1);
+  --r-neutral-line: rgba(224, 229, 236, 1);
+  --r-neutral-bg-1: rgba(255, 255, 255, 1);
+  --r-neutral-bg-2: rgba(242, 244, 247, 1);
+  --r-neutral-bg-3: rgba(247, 250, 252, 1);
+  --r-neutral-bg-4: rgba(235, 238, 247, 1);
+  --r-neutral-card-1: rgba(255, 255, 255, 1);
+  --r-neutral-card-2: rgba(242, 244, 247, 1);
+  --r-neutral-card-3: rgba(247, 250, 252, 1);
+  --r-neutral-black: rgba(0, 0, 0, 1);
+
+  /* App theme --rb-* (light defaults) */
+  --rb-brand-default: rgba(76, 101, 255, 1);
+  --rb-brand-light-1: rgba(76, 101, 255, 0.12);
+  --rb-brand-light-2: rgba(76, 101, 255, 0.25);
+  --rb-brand-disable: rgba(76, 101, 255, 0.4);
+  --rb-red-default: rgba(255, 69, 58, 1);
+  --rb-red-light-1: rgba(255, 115, 107, 0.1);
+  --rb-orange-default: rgba(255, 159, 10, 1);
+  --rb-orange-light-1: rgba(255, 159, 10, 0.1);
+  --rb-green-default: rgba(88, 198, 105, 1);
+  --rb-green-light-1: rgba(88, 198, 105, 0.14);
+  --rb-blue-default: rgba(10, 132, 255, 1);
+  --rb-blue-light-1: rgba(10, 132, 255, 0.14);
+  --rb-neutral-bg-0: rgba(246, 247, 247, 1);
+  --rb-neutral-bg-1: rgba(255, 255, 255, 1);
+  --rb-neutral-bg-2: rgba(242, 244, 247, 1);
+  --rb-neutral-line: rgba(224, 229, 236, 1);
+  --rb-neutral-title-1: rgba(25, 41, 69, 1);
+  --rb-neutral-card-1: rgba(255, 255, 255, 1);
+  --rb-neutral-body: rgba(62, 73, 94, 1);
+  --rb-neutral-foot: rgba(106, 117, 135, 1);
+  --rb-neutral-secondary: rgba(154, 156, 169, 1);
+
+  /* Layout */
+  --rabby-topbar-height: 64px;
+  --rabby-sidenav-width: 240px;
+  --rabby-sidenav-collapsed-width: 64px;
+  --rabby-bottom-tab-height: 56px;
+  --rabby-content-max-width: 800px;
+
+  /* Shadows */
+  --rabby-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+  --rabby-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --rabby-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+  /* Border radius */
+  --rabby-radius-xs: 4px;
+  --rabby-radius-sm: 6px;
+  --rabby-radius-md: 8px;
+  --rabby-radius-lg: 12px;
+  --rabby-radius-xl: 16px;
+
+  /* Transitions */
+  --rabby-transition-fast: 150ms ease-in-out;
+  --rabby-transition-normal: 200ms ease-in-out;
+  --rabby-transition-slow: 300ms ease-in-out;
+
+  color-scheme: light;
+  font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dark theme overrides - applied via class on html */
+html.dark {
+  color-scheme: dark;
+
+  --r-blue-default: rgba(76, 101, 255, 1);
+  --r-blue-light-1: rgba(33, 38, 64, 1);
+  --r-blue-light-2: rgba(38, 45, 85, 1);
+  --r-blue-disable: rgba(47, 59, 128, 1);
+  --r-green-default: rgba(42, 187, 127, 1);
+  --r-green-light: rgba(57, 90, 90, 1);
+  --r-orange-default: rgba(255, 198, 74, 1);
+  --r-orange-light: rgba(72, 67, 57, 1);
+  --r-red-default: rgba(239, 92, 72, 1);
+  --r-red-light: rgba(79, 58, 66, 1);
+  --r-neutral-title-1: rgba(247, 250, 252, 1);
+  --r-neutral-body: rgba(211, 216, 224, 1);
+  --r-neutral-foot: rgba(186, 190, 197, 1);
+  --r-neutral-line: rgba(255, 255, 255, 0.1);
+  --r-neutral-bg-1: rgba(12, 15, 31, 1);
+  --r-neutral-bg-2: rgba(12, 15, 31, 1);
+  --r-neutral-bg-3: rgba(12, 15, 31, 1);
+  --r-neutral-bg-4: rgba(12, 15, 31, 1);
+  --r-neutral-card-1: rgba(255, 255, 255, 0.06);
+  --r-neutral-card-2: rgba(255, 255, 255, 0.06);
+  --r-neutral-card-3: rgba(255, 255, 255, 0.06);
+
+  --rb-brand-default: rgba(112, 132, 255, 1);
+  --rb-brand-light-1: rgba(112, 132, 255, 0.12);
+  --rb-brand-light-2: rgba(112, 132, 255, 0.25);
+  --rb-brand-disable: rgba(112, 132, 255, 0.4);
+  --rb-red-default: rgba(255, 69, 58, 1);
+  --rb-red-light-1: rgba(255, 115, 107, 0.1);
+  --rb-orange-default: rgba(255, 159, 10, 1);
+  --rb-green-default: rgba(88, 198, 105, 1);
+  --rb-neutral-bg-0: rgba(19, 20, 22, 1);
+  --rb-neutral-bg-1: rgba(19, 20, 22, 1);
+  --rb-neutral-bg-2: rgba(35, 36, 40, 1);
+  --rb-neutral-line: rgba(47, 49, 53, 1);
+  --rb-neutral-title-1: rgba(247, 250, 252, 1);
+  --rb-neutral-card-1: rgba(255, 255, 255, 0.06);
+  --rb-neutral-body: rgba(211, 216, 224, 1);
+  --rb-neutral-foot: rgba(186, 190, 197, 1);
+  --rb-neutral-secondary: rgba(113, 115, 128, 1);
+}
+
+/* Typography utilities */
+.text-12 { font-size: 12px; }
+.text-13 { font-size: 13px; }
+.text-14 { font-size: 14px; line-height: 18px; }
+.text-15 { font-size: 15px; line-height: 18px; }
+.text-18 { font-size: 18px; line-height: 22px; }
+.text-20 { font-size: 20px; }
+.text-24 { font-size: 24px; line-height: 28px; }
+.text-28 { font-size: 28px; line-height: 33px; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { border-radius: 4px; background: var(--r-neutral-line); }
+::-webkit-scrollbar-thumb:hover { background: var(--r-neutral-foot); }
+
+/* Base body */
+body {
+  margin: 0;
+  background: var(--r-neutral-bg-2);
+  color: var(--r-neutral-title-1);
+}
+
+/* Keyframe animations (from extension) */
+@keyframes rabby-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes rabby-fade-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes rabby-slide-up { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes rabby-slide-down { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes rabby-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+.animate-fade-in { animation: rabby-fade-in var(--rabby-transition-normal); }
+.animate-slide-up { animation: rabby-slide-up var(--rabby-transition-slow); }
+
+/* Text ellipsis utility */
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Address monospace */
+.address-text {
+  font-family: 'SF Mono', 'Fira Code', Menlo, Monaco, Consolas, monospace;
+  font-size: 13px;
+}

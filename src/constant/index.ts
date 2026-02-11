@@ -222,6 +222,36 @@ export { default as LANGS } from '../../_raw/locales/index.json';
 
 export { CHAINS, CHAINS_ENUM };
 
+// Re-export platform-agnostic constants from @rabby/shared
+export {
+  KEYRING_TYPE,
+  KEYRING_CLASS,
+  HARDWARE_KEYRING_TYPES,
+  EVENTS,
+  EVENTS_IN_BG,
+  INITIAL_OPENAPI_URL,
+  INITIAL_TESTNET_OPENAPI_URL,
+  MINIMUM_GAS_LIMIT,
+  GAS_LEVEL_TEXT,
+  EXTENSION_MESSAGES,
+  SORT_WEIGHT,
+  GAS_TOP_UP_ADDRESS,
+  GAS_TOP_UP_PAY_ADDRESS,
+  FREE_GAS_ADDRESS,
+  SWAP_FEE_PRECISION,
+  DEFAULT_GAS_LIMIT_RATIO,
+  DEFAULT_GAS_LIMIT_BUFFER,
+  KEYRING_CATEGORY,
+  WALLET_BRAND_TYPES,
+  WALLET_BRAND_CATEGORY,
+  TX_TYPE_ENUM,
+  CANCEL_TX_TYPE,
+  DARK_MODE_TYPE,
+  SIGN_PERMISSION_TYPES,
+  KEYRING_TYPE_TEXT,
+  BRAND_ALIAN_TYPE_TEXT,
+} from '@rabby/shared';
+
 const isDesktop =
   typeof window !== 'undefined' && window.location.pathname === '/desktop.html';
 const IconPrivateKeyInk = isDesktop
@@ -259,43 +289,6 @@ export const syncChainIdList = () => {
   }
 };
 
-export const KEYRING_TYPE = {
-  HdKeyring: 'HD Key Tree',
-  SimpleKeyring: 'Simple Key Pair',
-  HardwareKeyring: 'hardware',
-  WatchAddressKeyring: 'Watch Address',
-  WalletConnectKeyring: 'WalletConnect',
-  GnosisKeyring: 'Gnosis',
-  CoboArgusKeyring: 'CoboArgus',
-  CoinbaseKeyring: 'Coinbase',
-} as const;
-
-const createHardwareObject = () => {
-  const hardware = {
-    BITBOX02: 'BitBox02 Hardware',
-    TREZOR: 'Trezor Hardware',
-    LEDGER: 'Ledger Hardware',
-    ONEKEY: 'Onekey Hardware',
-    GRIDPLUS: 'GridPlus Hardware',
-    KEYSTONE: 'QR Hardware Wallet Device',
-    IMKEY: 'imKey Hardware',
-    NGRAVEZERO: 'QR Hardware Wallet Device',
-  };
-
-  return hardware;
-};
-
-export const KEYRING_CLASS = {
-  PRIVATE_KEY: 'Simple Key Pair',
-  MNEMONIC: 'HD Key Tree',
-  HARDWARE: createHardwareObject(),
-  WATCH: 'Watch Address',
-  WALLETCONNECT: 'WalletConnect',
-  GNOSIS: 'Gnosis',
-  CoboArgus: 'CoboArgus',
-  Coinbase: 'Coinbase',
-} as const;
-
 export const CORE_KEYRING_TYPES = [
   KEYRING_CLASS.MNEMONIC,
   KEYRING_CLASS.PRIVATE_KEY,
@@ -318,64 +311,6 @@ export const SUPPORT_1559_KEYRING_TYPE = [
   KEYRING_CLASS.HARDWARE.ONEKEY,
   KEYRING_CLASS.HARDWARE.BITBOX02,
 ];
-
-export const KEYRING_TYPE_TEXT = {
-  [KEYRING_TYPE.HdKeyring]: 'Created by Seed Phrase',
-  [KEYRING_TYPE.SimpleKeyring]: 'Imported by Private Key',
-  [KEYRING_TYPE.WatchAddressKeyring]: 'Contact',
-  [KEYRING_CLASS.HARDWARE.BITBOX02]: 'Imported by BitBox02',
-  [KEYRING_CLASS.HARDWARE.LEDGER]: 'Imported by Ledger',
-  [KEYRING_CLASS.HARDWARE.TREZOR]: 'Imported by Trezor',
-  [KEYRING_CLASS.HARDWARE.ONEKEY]: 'Imported by Onekey',
-  [KEYRING_CLASS.HARDWARE.GRIDPLUS]: 'Imported by GridPlus',
-  [KEYRING_CLASS.GNOSIS]: 'Imported by Safe',
-  [KEYRING_CLASS.HARDWARE.KEYSTONE]: 'Imported by QRCode Base',
-  [KEYRING_CLASS.HARDWARE.NGRAVEZERO]: 'Imported by QRCode Base',
-  [KEYRING_CLASS.HARDWARE.IMKEY]: 'Imported by imKey',
-};
-
-export const HARDWARE_KEYRING_TYPES = {
-  BitBox02: {
-    type: 'BitBox02 Hardware',
-    brandName: 'BitBox02',
-  },
-  Ledger: {
-    type: 'Ledger Hardware',
-    brandName: 'Ledger',
-  },
-  Trezor: {
-    type: 'Trezor Hardware',
-    brandName: 'Trezor',
-  },
-  Onekey: {
-    type: 'Onekey Hardware',
-    brandName: 'Onekey',
-  },
-  GridPlus: {
-    type: 'GridPlus Hardware',
-    brandName: 'GridPlus',
-  },
-  Keystone: {
-    type: 'QR Hardware Wallet Device',
-    brandName: 'Keystone',
-  },
-  NGRAVEZERO: {
-    type: 'QR Hardware Wallet Device',
-    brandName: 'NGRAVE ZERO',
-  },
-  ImKey: {
-    type: 'imKey Hardware',
-    brandName: 'imKey',
-  },
-} as const;
-
-export enum TX_TYPE_ENUM {
-  SEND = 1,
-  APPROVE = 2,
-  CANCEL_APPROVE = 3,
-  CANCEL_TX = 4,
-  SIGN_TX = 5,
-}
 
 export const IS_CHROME = /Chrome\//i.test(global.navigator?.userAgent);
 
@@ -402,14 +337,6 @@ if (IS_CHROME) {
 export const IS_AFTER_CHROME91 = IS_CHROME
   ? chromeVersion && chromeVersion >= 91
   : false;
-
-export const GAS_LEVEL_TEXT = {
-  $unknown: 'Unknown',
-  slow: 'Standard',
-  normal: 'Fast',
-  fast: 'Instant',
-  custom: 'Custom',
-} as const;
 
 export const IS_WINDOWS = /windows/i.test(global.navigator?.userAgent);
 
@@ -468,8 +395,6 @@ export const SAFE_RPC_METHODS = [
   'net_version',
 ];
 
-export const MINIMUM_GAS_LIMIT = 21000;
-
 export enum WATCH_ADDRESS_CONNECT_TYPE {
   WalletConnect = 'WalletConnect',
 }
@@ -505,122 +430,6 @@ export const INTERNAL_REQUEST_SESSION = {
   origin: INTERNAL_REQUEST_ORIGIN,
   icon: RabbyChainLogo,
 };
-
-export const INITIAL_OPENAPI_URL = 'https://api.rabby.io';
-
-export const INITIAL_TESTNET_OPENAPI_URL = 'https://api.testnet.rabby.io';
-
-export const EVENTS = {
-  BRIDGE_HISTORY_UPDATED: 'BRIDGE_HISTORY_UPDATED',
-  broadcastToUI: 'broadcastToUI',
-  broadcastToBackground: 'broadcastToBackground',
-  TX_COMPLETED: 'TX_COMPLETED',
-  SIGN_FINISHED: 'SIGN_FINISHED',
-  TX_SUBMITTING: 'TX_SUBMITTING',
-  WALLETCONNECT: {
-    STATUS_CHANGED: 'WALLETCONNECT_STATUS_CHANGED',
-    SESSION_STATUS_CHANGED: 'SESSION_STATUS_CHANGED',
-    SESSION_ACCOUNT_CHANGED: 'SESSION_ACCOUNT_CHANGED',
-    SESSION_NETWORK_DELAY: 'SESSION_NETWORK_DELAY',
-    INIT: 'WALLETCONNECT_INIT',
-    INITED: 'WALLETCONNECT_INITED',
-    TRANSPORT_ERROR: 'TRANSPORT_ERROR',
-    SCAN_ACCOUNT: 'SCAN_ACCOUNT',
-  },
-  GNOSIS: {
-    TX_BUILT: 'TransactionBuilt',
-    TX_CONFIRMED: 'TransactionConfirmed',
-  },
-  QRHARDWARE: {
-    ACQUIRE_MEMSTORE_SUCCEED: 'ACQUIRE_MEMSTORE_SUCCEED',
-  },
-  LEDGER: {
-    REJECTED: 'LEDGER_REJECTED',
-    REJECT_APPROVAL: 'LEDGER_REJECT_APPROVAL',
-  },
-  COMMON_HARDWARE: {
-    REJECTED: 'COMMON_HARDWARE_REJECTED',
-  },
-  ONEKEY: {
-    REQUEST_PERMISSION_WEBUSB: 'ONEKEY_REQUEST_PERMISSION_WEBUI',
-  },
-  LOCK_WALLET: 'LOCK_WALLET',
-  RELOAD_TX: 'RELOAD_TX',
-  SIGN_BEGIN: 'SIGN_BEGIN',
-  SIGN_WAITING_AMOUNTED: 'SIGN_WAITING_AMOUNTED',
-  DIRECT_SIGN: 'DIRECT_SIGN',
-  // FORCE_EXPIRE_ADDRESS_BALANCE: 'FORCE_EXPIRE_ADDRESS_BALANCE',
-  GAS_ACCOUNT: {
-    LOG_IN: 'LOG_IN',
-    LOG_OUT: 'LOG_OUT',
-    CLOSE_WINDOW: 'CLOSE_WINDOW',
-  },
-  PERPS: {
-    LOG_OUT: 'PERPS_LOG_OUT',
-    HANDLE_CLICK_PRICE: 'PERPS_HANDLE_CLICK_PRICE',
-    USER_INFO_HISTORY_TAB_CHANGED: 'PERPS_USER_INFO_HISTORY_TAB_CHANGED',
-  },
-  INNER_HISTORY_ITEM_PENDING: 'INNER_HISTORY_ITEM_PENDING',
-  INNER_HISTORY_ITEM_COMPLETE: 'INNER_HISTORY_ITEM_COMPLETE',
-  PERSIST_KEYRING: 'PERSIST_KEYRING',
-
-  RELOAD_ACCOUNT_LIST: 'RELOAD_ACCOUNT_LIST',
-
-  DESKTOP: {
-    FOCUSED: 'DESKTOP_FOCUSED',
-    SWITCH_PERPS_ACCOUNT: 'DESKTOP_SWITCH_PERPS_ACCOUNT',
-  },
-
-  RELOAD_APPROVAL: 'RELOAD_APPROVAL',
-  INNER_DAPP_CHANGE: {
-    ACCOUNT_CHANGED: 'INNER_DAPP_ACCOUNT_CHANGED',
-    DAPP_CHANGED: 'INNER_DAPP_DAPP_CHANGED',
-  },
-};
-
-export const EVENTS_IN_BG = {
-  ON_TX_COMPLETED: 'ON_TX_COMPLETED',
-};
-
-export enum WALLET_BRAND_TYPES {
-  AMBER = 'AMBER',
-  BITBOX02 = 'BITBOX02',
-  COBO = 'COBO',
-  FIREBLOCKS = 'FIREBLOCKS',
-  IMTOKEN = 'IMTOKEN',
-  JADE = 'JADE',
-  LEDGER = 'LEDGER',
-  MATHWALLET = 'MATHWALLET',
-  ONEKEY = 'ONEKEY',
-  TP = 'TP',
-  TREZOR = 'TREZOR',
-  TRUSTWALLET = 'TRUSTWALLET',
-  GNOSIS = 'Gnosis',
-  GRIDPLUS = 'GRIDPLUS',
-  METAMASK = 'MetaMask',
-  KEYSTONE = 'Keystone',
-  COOLWALLET = 'CoolWallet',
-  DEFIANT = 'Defiant',
-  WALLETCONNECT = 'WALLETCONNECT',
-  AIRGAP = 'AirGap',
-  IMTOKENOFFLINE = 'imTokenOffline',
-  Rainbow = 'Rainbow',
-  Bitkeep = 'Bitget',
-  // Uniswap = 'Uniswap',
-  Zerion = 'Zerion',
-  CoboArgus = 'CoboArgus',
-  MPCVault = 'MPCVault',
-  Coinbase = 'Coinbase',
-  IMKEY = 'IMKEY',
-  NGRAVEZERO = 'NGRAVE ZERO',
-  Utila = 'Utila',
-}
-
-export enum WALLET_BRAND_CATEGORY {
-  MOBILE = 'mobile',
-  HARDWARE = 'hardware',
-  INSTITUTIONAL = 'institutional',
-}
 
 export type ThemeIconType = string | React.FC<React.SVGProps<SVGSVGElement>>;
 
@@ -1171,15 +980,6 @@ export const SPECIFIC_TEXT_BRAND = {
   },
 };
 
-export const SORT_WEIGHT = {
-  [KEYRING_TYPE.HdKeyring]: 1,
-  [KEYRING_TYPE.SimpleKeyring]: 2,
-  [KEYRING_TYPE.HardwareKeyring]: 3,
-  [KEYRING_TYPE.WalletConnectKeyring]: 4,
-  [KEYRING_TYPE.GnosisKeyring]: 5,
-  [KEYRING_TYPE.WatchAddressKeyring]: 999,
-};
-
 export const GASPRICE_RANGE = ensureChainHashValid({
   [CHAINS_ENUM.ETH]: [0, 20000],
   [CHAINS_ENUM.BOBA]: [0, 20000],
@@ -1211,15 +1011,6 @@ export const HDPaths = {
     { name: 'BIP44 Standard', value: "m/44'/60'/0'/0" },
   ],
 };
-
-export enum KEYRING_CATEGORY {
-  Mnemonic = 'Mnemonic',
-  PrivateKey = 'PrivateKey',
-  WatchMode = 'WatchMode',
-  Contract = 'Contract',
-  Hardware = 'Hardware',
-  WalletConnect = 'WalletConnect',
-}
 
 export const KEYRING_CATEGORY_MAP = {
   [KEYRING_CLASS.MNEMONIC]: KEYRING_CATEGORY.Mnemonic,
@@ -1446,28 +1237,6 @@ declare global {
 
 export const IS_RD = typeof window === 'undefined' ? false : window.__is_rd__;
 
-export const BRAND_ALIAN_TYPE_TEXT = {
-  [KEYRING_TYPE.HdKeyring]: 'Seed Phrase',
-  [KEYRING_TYPE.SimpleKeyring]: 'Private Key',
-  [KEYRING_TYPE.WatchAddressKeyring]: 'Contact',
-  [KEYRING_CLASS.HARDWARE.LEDGER]: 'Ledger',
-  [KEYRING_CLASS.HARDWARE.TREZOR]: 'Trezor',
-  [KEYRING_CLASS.HARDWARE.ONEKEY]: 'Onekey',
-  [WALLET_BRAND_TYPES.ONEKEY]: 'Onekey QR',
-  [KEYRING_CLASS.HARDWARE.BITBOX02]: 'BitBox02',
-  [KEYRING_CLASS.GNOSIS]: 'Safe',
-  [KEYRING_CLASS.HARDWARE.GRIDPLUS]: 'GridPlus',
-  [KEYRING_CLASS.HARDWARE.KEYSTONE]: 'Keystone',
-  [KEYRING_CLASS.HARDWARE.NGRAVEZERO]: 'NGRAVE ZERO',
-  [WALLET_BRAND_TYPES.TP]: WALLET_BRAND_CONTENT.TP.name,
-  [WALLET_BRAND_TYPES.METAMASK]: WALLET_BRAND_CONTENT.MetaMask.name,
-  [WALLET_BRAND_TYPES.IMTOKEN]: WALLET_BRAND_CONTENT.IMTOKEN.name,
-  [WALLET_BRAND_TYPES.MATHWALLET]: WALLET_BRAND_CONTENT.MATHWALLET.name,
-  [WALLET_BRAND_TYPES.TRUSTWALLET]: WALLET_BRAND_CONTENT.TRUSTWALLET.name,
-  [KEYRING_CLASS.Coinbase]: WALLET_BRAND_CONTENT.Coinbase.name,
-  [KEYRING_CLASS.HARDWARE.IMKEY]: 'imKey',
-};
-
 export const COBO_ARGUS_SUPPORT_CHAINS = ensureChainListValid([
   CHAINS_ENUM.ETH,
   CHAINS_ENUM.OP,
@@ -1612,10 +1381,6 @@ export const SWAP_SUPPORT_CHAINS = Array.from(
   new Set(Object.values(DEX_SUPPORT_CHAINS).flat())
 );
 
-export enum SIGN_PERMISSION_TYPES {
-  MAINNET_AND_TESTNET = 'MAINNET_AND_TESTNET',
-  TESTNET = 'TESTNET',
-}
 export const SIGN_PERMISSION_OPTIONS = [
   {
     label: 'Mainnet & Testnet',
@@ -1627,18 +1392,7 @@ export const SIGN_PERMISSION_OPTIONS = [
   },
 ];
 
-export enum CANCEL_TX_TYPE {
-  QUICK_CANCEL = 'QUICK_CANCEL',
-  ON_CHAIN_CANCEL = 'ON_CHAIN_CANCEL',
-  REMOVE_LOCAL_PENDING_TX = 'REMOVE_LOCAL_PENDING_TX',
-}
 export const REJECT_SIGN_TEXT_KEYRINGS = [KEYRING_TYPE.CoboArgusKeyring];
-
-export enum DARK_MODE_TYPE {
-  'light' = 0,
-  'dark' = 1,
-  'system' = 2,
-}
 
 export const ThemeModes = [
   {

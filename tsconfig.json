@@ -11,6 +11,7 @@
     "esModuleInterop": true,
     "useUnknownInCatchVariables": false,
     "paths": {
+      "@rabby/shared": ["./packages/shared/src"],
       "@/utils": ["./src/utils"],
       "@/*": ["./src/*"],
       "ui/*": ["./src/ui/*"],

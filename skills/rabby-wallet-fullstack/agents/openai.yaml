@@ -1,0 +1,4 @@
+interface:
+  display_name: "Rabby Fullstack Wallet"
+  short_description: "Rabby wallet fullstack migration workflow"
+  default_prompt: "Use $rabby-wallet-fullstack to migrate a wallet feature from extension to web/admin/api."
