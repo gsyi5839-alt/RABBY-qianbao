@@ -1,0 +1,878 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		00AFD2DDD6DD000639A65C0F /* Pods_RabbyMobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D4832CC7F8287C10903E01C /* Pods_RabbyMobile.framework */; };
+		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		F20000000000000000000001 /* RabbyMobileApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000001 /* RabbyMobileApp.swift */; };
+		F20000000000000000000002 /* AutoLockManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000002 /* AutoLockManager.swift */; };
+		F20000000000000000000003 /* BIP39.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000003 /* BIP39.swift */; };
+		F20000000000000000000004 /* BIP44.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000004 /* BIP44.swift */; };
+		F20000000000000000000005 /* BiometricAuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000005 /* BiometricAuthManager.swift */; };
+		F20000000000000000000006 /* BridgeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000006 /* BridgeManager.swift */; };
+		F20000000000000000000007 /* ContactBookManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000007 /* ContactBookManager.swift */; };
+		F20000000000000000000008 /* CustomRPCManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000008 /* CustomRPCManager.swift */; };
+		F20000000000000000000009 /* CustomTestnetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000009 /* CustomTestnetManager.swift */; };
+		F2000000000000000000000A /* EthereumUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000A /* EthereumUtils.swift */; };
+		F2000000000000000000000B /* GasAccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000B /* GasAccountManager.swift */; };
+		F2000000000000000000000C /* BluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000C /* BluetoothManager.swift */; };
+		F2000000000000000000000D /* LedgerKeyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000D /* LedgerKeyring.swift */; };
+		F2000000000000000000000E /* KeyringManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000E /* KeyringManager.swift */; };
+		F2000000000000000000000F /* LendingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000F /* LendingManager.swift */; };
+		F20000000000000000000010 /* NFTManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000010 /* NFTManager.swift */; };
+		F20000000000000000000011 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000011 /* NetworkManager.swift */; };
+		F20000000000000000000012 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000012 /* NotificationManager.swift */; };
+		F20000000000000000000013 /* OpenAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000013 /* OpenAPIService.swift */; };
+		F20000000000000000000014 /* PerpsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000014 /* PerpsManager.swift */; };
+		F20000000000000000000015 /* PreferenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000015 /* PreferenceManager.swift */; };
+		F20000000000000000000016 /* RabbyPointsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000016 /* RabbyPointsManager.swift */; };
+		F20000000000000000000017 /* SecurityEngineManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000017 /* SecurityEngineManager.swift */; };
+		F20000000000000000000018 /* SignHistoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000018 /* SignHistoryManager.swift */; };
+		F20000000000000000000019 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000019 /* StorageManager.swift */; };
+		F2000000000000000000001A /* SwapManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000001A /* SwapManager.swift */; };
+		F2000000000000000000001B /* SyncChainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000001B /* SyncChainManager.swift */; };
+		F2000000000000000000001C /* TokenManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000001C /* TokenManager.swift */; };
+		F2000000000000000000001D /* TransactionBroadcastWatcherManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000001D /* TransactionBroadcastWatcherManager.swift */; };
+		F2000000000000000000001E /* TransactionHistoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000001E /* TransactionHistoryManager.swift */; };
+		F2000000000000000000001F /* TransactionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000001F /* TransactionManager.swift */; };
+		F20000000000000000000020 /* TransactionWatcherManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000020 /* TransactionWatcherManager.swift */; };
+		F20000000000000000000021 /* WalletConnectManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000021 /* WalletConnectManager.swift */; };
+		F20000000000000000000022 /* WatchGnosisSessionKeyrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000022 /* WatchGnosisSessionKeyrings.swift */; };
+		F20000000000000000000023 /* WhitelistManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000023 /* WhitelistManager.swift */; };
+		F20000000000000000000024 /* Keccak256.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000024 /* Keccak256.swift */; };
+		F20000000000000000000025 /* RLPEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000025 /* RLPEncoder.swift */; };
+		F20000000000000000000026 /* Secp256k1Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000026 /* Secp256k1Helper.swift */; };
+				F20000000000000000000060 /* CryptoIconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000060 /* CryptoIconProvider.swift */; };
+				F20000000000000000000061 /* ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000061 /* ImageCacheManager.swift */; };
+		F20000000000000000000027 /* ActivitiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000027 /* ActivitiesView.swift */; };
+		F20000000000000000000028 /* AddressDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000028 /* AddressDetailView.swift */; };
+		F20000000000000000000029 /* TransactionApprovalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000029 /* TransactionApprovalView.swift */; };
+		F2000000000000000000002A /* AssetsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000002A /* AssetsView.swift */; };
+		F2000000000000000000002B /* BridgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000002B /* BridgeView.swift */; };
+		F2000000000000000000002C /* DAppBrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000002C /* DAppBrowserView.swift */; };
+		F2000000000000000000002D /* LedgerConnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000002D /* LedgerConnectView.swift */; };
+		F2000000000000000000002E /* TransactionHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000002E /* TransactionHistoryView.swift */; };
+		F2000000000000000000002F /* HDManagerSwitchViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000002F /* HDManagerSwitchViews.swift */; };
+		F20000000000000000000030 /* ImportOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000030 /* ImportOptionsView.swift */; };
+		F20000000000000000000031 /* ImportSuccessAddFromSeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000031 /* ImportSuccessAddFromSeedView.swift */; };
+		F20000000000000000000032 /* SelectAddressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000032 /* SelectAddressView.swift */; };
+		F20000000000000000000033 /* GasAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000033 /* GasAccountView.swift */; };
+		F20000000000000000000034 /* LendingPerpsAdvancedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000034 /* LendingPerpsAdvancedView.swift */; };
+		F20000000000000000000035 /* MiscViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000035 /* MiscViews.swift */; };
+		F20000000000000000000036 /* NFTView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000036 /* NFTView.swift */; };
+		F20000000000000000000037 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000037 /* RootView.swift */; };
+		F20000000000000000000038 /* SendTokenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000038 /* SendTokenView.swift */; };
+		F20000000000000000000039 /* GnosisQueueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000039 /* GnosisQueueView.swift */; };
+		F2000000000000000000003A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000003A /* SettingsView.swift */; };
+		F2000000000000000000003B /* WhitelistInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000003B /* WhitelistInputView.swift */; };
+		F2000000000000000000003C /* SwapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000003C /* SwapView.swift */; };
+		F2000000000000000000003D /* CreateWalletView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000003D /* CreateWalletView.swift */; };
+		F2000000000000000000003E /* ImportWalletView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000003E /* ImportWalletView.swift */; };
+		F2000000000000000000003F /* TokenDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000003F /* TokenDetailView.swift */; };
+		F20000000000000000000040 /* BalanceCurveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000040 /* BalanceCurveView.swift */; };
+		F20000000000000000000041 /* ChainBalanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000041 /* ChainBalanceView.swift */; };
+		F20000000000000000000042 /* NFTGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000042 /* NFTGalleryView.swift */; };
+		F20000000000000000000043 /* NFTDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000043 /* NFTDetailView.swift */; };
+		F20000000000000000000044 /* ProtocolPositionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000044 /* ProtocolPositionView.swift */; };
+		F20000000000000000000045 /* AddCustomTokenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000045 /* AddCustomTokenView.swift */; };
+		F20000000000000000000046 /* GasPriceBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000046 /* GasPriceBarView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		13B07F961A680F5B00A75B9A /* RabbyMobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RabbyMobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1D4832CC7F8287C10903E01C /* Pods_RabbyMobile.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RabbyMobile.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		800FE6E28ABECB5FCB1077FC /* Pods-RabbyMobile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RabbyMobile.release.xcconfig"; path = "Target Support Files/Pods-RabbyMobile/Pods-RabbyMobile.release.xcconfig"; sourceTree = "<group>"; };
+		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		D8D344B63F528CD395A24998 /* Pods-RabbyMobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RabbyMobile.debug.xcconfig"; path = "Target Support Files/Pods-RabbyMobile/Pods-RabbyMobile.debug.xcconfig"; sourceTree = "<group>"; };
+		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		F10000000000000000000001 /* RabbyMobileApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RabbyMobileApp.swift; sourceTree = "<group>"; };
+		F10000000000000000000002 /* AutoLockManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoLockManager.swift; sourceTree = "<group>"; };
+		F10000000000000000000003 /* BIP39.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BIP39.swift; sourceTree = "<group>"; };
+		F10000000000000000000004 /* BIP44.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BIP44.swift; sourceTree = "<group>"; };
+		F10000000000000000000005 /* BiometricAuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricAuthManager.swift; sourceTree = "<group>"; };
+		F10000000000000000000006 /* BridgeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgeManager.swift; sourceTree = "<group>"; };
+		F10000000000000000000007 /* ContactBookManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactBookManager.swift; sourceTree = "<group>"; };
+		F10000000000000000000008 /* CustomRPCManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomRPCManager.swift; sourceTree = "<group>"; };
+		F10000000000000000000009 /* CustomTestnetManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTestnetManager.swift; sourceTree = "<group>"; };
+		F1000000000000000000000A /* EthereumUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EthereumUtils.swift; sourceTree = "<group>"; };
+		F1000000000000000000000B /* GasAccountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GasAccountManager.swift; sourceTree = "<group>"; };
+		F1000000000000000000000C /* BluetoothManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothManager.swift; sourceTree = "<group>"; };
+		F1000000000000000000000D /* LedgerKeyring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LedgerKeyring.swift; sourceTree = "<group>"; };
+		F1000000000000000000000E /* KeyringManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringManager.swift; sourceTree = "<group>"; };
+		F1000000000000000000000F /* LendingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LendingManager.swift; sourceTree = "<group>"; };
+		F10000000000000000000010 /* NFTManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTManager.swift; sourceTree = "<group>"; };
+		F10000000000000000000011 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		F10000000000000000000012 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		F10000000000000000000013 /* OpenAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAPIService.swift; sourceTree = "<group>"; };
+		F10000000000000000000014 /* PerpsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerpsManager.swift; sourceTree = "<group>"; };
+		F10000000000000000000015 /* PreferenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceManager.swift; sourceTree = "<group>"; };
+		F10000000000000000000016 /* RabbyPointsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RabbyPointsManager.swift; sourceTree = "<group>"; };
+		F10000000000000000000017 /* SecurityEngineManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityEngineManager.swift; sourceTree = "<group>"; };
+		F10000000000000000000018 /* SignHistoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignHistoryManager.swift; sourceTree = "<group>"; };
+		F10000000000000000000019 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
+		F1000000000000000000001A /* SwapManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapManager.swift; sourceTree = "<group>"; };
+		F1000000000000000000001B /* SyncChainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncChainManager.swift; sourceTree = "<group>"; };
+		F1000000000000000000001C /* TokenManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenManager.swift; sourceTree = "<group>"; };
+		F1000000000000000000001D /* TransactionBroadcastWatcherManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionBroadcastWatcherManager.swift; sourceTree = "<group>"; };
+		F1000000000000000000001E /* TransactionHistoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionHistoryManager.swift; sourceTree = "<group>"; };
+		F1000000000000000000001F /* TransactionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionManager.swift; sourceTree = "<group>"; };
+		F10000000000000000000020 /* TransactionWatcherManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionWatcherManager.swift; sourceTree = "<group>"; };
+		F10000000000000000000021 /* WalletConnectManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletConnectManager.swift; sourceTree = "<group>"; };
+		F10000000000000000000022 /* WatchGnosisSessionKeyrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchGnosisSessionKeyrings.swift; sourceTree = "<group>"; };
+		F10000000000000000000023 /* WhitelistManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhitelistManager.swift; sourceTree = "<group>"; };
+		F10000000000000000000024 /* Keccak256.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keccak256.swift; sourceTree = "<group>"; };
+		F10000000000000000000025 /* RLPEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RLPEncoder.swift; sourceTree = "<group>"; };
+		F10000000000000000000026 /* Secp256k1Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Secp256k1Helper.swift; sourceTree = "<group>"; };
+				F10000000000000000000060 /* CryptoIconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoIconProvider.swift; sourceTree = "<group>"; };
+				F10000000000000000000061 /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
+		F10000000000000000000027 /* ActivitiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivitiesView.swift; sourceTree = "<group>"; };
+		F10000000000000000000028 /* AddressDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressDetailView.swift; sourceTree = "<group>"; };
+		F10000000000000000000029 /* TransactionApprovalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionApprovalView.swift; sourceTree = "<group>"; };
+		F1000000000000000000002A /* AssetsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetsView.swift; sourceTree = "<group>"; };
+		F1000000000000000000002B /* BridgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgeView.swift; sourceTree = "<group>"; };
+		F1000000000000000000002C /* DAppBrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DAppBrowserView.swift; sourceTree = "<group>"; };
+		F1000000000000000000002D /* LedgerConnectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LedgerConnectView.swift; sourceTree = "<group>"; };
+		F1000000000000000000002E /* TransactionHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionHistoryView.swift; sourceTree = "<group>"; };
+		F1000000000000000000002F /* HDManagerSwitchViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HDManagerSwitchViews.swift; sourceTree = "<group>"; };
+		F10000000000000000000030 /* ImportOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportOptionsView.swift; sourceTree = "<group>"; };
+		F10000000000000000000031 /* ImportSuccessAddFromSeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportSuccessAddFromSeedView.swift; sourceTree = "<group>"; };
+		F10000000000000000000032 /* SelectAddressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectAddressView.swift; sourceTree = "<group>"; };
+		F10000000000000000000033 /* GasAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GasAccountView.swift; sourceTree = "<group>"; };
+		F10000000000000000000034 /* LendingPerpsAdvancedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LendingPerpsAdvancedView.swift; sourceTree = "<group>"; };
+		F10000000000000000000035 /* MiscViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiscViews.swift; sourceTree = "<group>"; };
+		F10000000000000000000036 /* NFTView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTView.swift; sourceTree = "<group>"; };
+		F10000000000000000000037 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		F10000000000000000000038 /* SendTokenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenView.swift; sourceTree = "<group>"; };
+		F10000000000000000000039 /* GnosisQueueView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GnosisQueueView.swift; sourceTree = "<group>"; };
+		F1000000000000000000003A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		F1000000000000000000003B /* WhitelistInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhitelistInputView.swift; sourceTree = "<group>"; };
+		F1000000000000000000003C /* SwapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapView.swift; sourceTree = "<group>"; };
+		F1000000000000000000003D /* CreateWalletView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateWalletView.swift; sourceTree = "<group>"; };
+		F1000000000000000000003E /* ImportWalletView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportWalletView.swift; sourceTree = "<group>"; };
+		F1000000000000000000003F /* TokenDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenDetailView.swift; sourceTree = "<group>"; };
+		F10000000000000000000040 /* BalanceCurveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalanceCurveView.swift; sourceTree = "<group>"; };
+		F10000000000000000000041 /* ChainBalanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChainBalanceView.swift; sourceTree = "<group>"; };
+		F10000000000000000000042 /* NFTGalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTGalleryView.swift; sourceTree = "<group>"; };
+		F10000000000000000000043 /* NFTDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTDetailView.swift; sourceTree = "<group>"; };
+		F10000000000000000000044 /* ProtocolPositionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtocolPositionView.swift; sourceTree = "<group>"; };
+		F10000000000000000000045 /* AddCustomTokenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCustomTokenView.swift; sourceTree = "<group>"; };
+		F10000000000000000000046 /* GasPriceBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GasPriceBarView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		13B07F8C1A680F5B00A75B9A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				00AFD2DDD6DD000639A65C0F /* Pods_RabbyMobile.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		13B07FAE1A68108700A75B9A /* RabbyMobile */ = {
+			isa = PBXGroup;
+			children = (
+				F10000000000000000000001 /* RabbyMobileApp.swift */,
+				F30000000000000000000001 /* Core */,
+				F30000000000000000000003 /* Utils */,
+				F30000000000000000000004 /* Views */,
+				13B07FB51A68108700A75B9A /* Images.xcassets */,
+				13B07FB61A68108700A75B9A /* Info.plist */,
+				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
+			);
+			path = RabbyMobile;
+			sourceTree = "<group>";
+		};
+		F30000000000000000000001 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				F10000000000000000000002 /* AutoLockManager.swift */,
+				F10000000000000000000003 /* BIP39.swift */,
+				F10000000000000000000004 /* BIP44.swift */,
+				F10000000000000000000005 /* BiometricAuthManager.swift */,
+				F10000000000000000000006 /* BridgeManager.swift */,
+				F10000000000000000000007 /* ContactBookManager.swift */,
+				F10000000000000000000008 /* CustomRPCManager.swift */,
+				F10000000000000000000009 /* CustomTestnetManager.swift */,
+				F1000000000000000000000A /* EthereumUtils.swift */,
+				F1000000000000000000000B /* GasAccountManager.swift */,
+				F30000000000000000000002 /* HardwareWallet */,
+				F1000000000000000000000E /* KeyringManager.swift */,
+				F1000000000000000000000F /* LendingManager.swift */,
+				F10000000000000000000010 /* NFTManager.swift */,
+				F10000000000000000000011 /* NetworkManager.swift */,
+				F10000000000000000000012 /* NotificationManager.swift */,
+				F10000000000000000000013 /* OpenAPIService.swift */,
+				F10000000000000000000014 /* PerpsManager.swift */,
+				F10000000000000000000015 /* PreferenceManager.swift */,
+				F10000000000000000000016 /* RabbyPointsManager.swift */,
+				F10000000000000000000017 /* SecurityEngineManager.swift */,
+				F10000000000000000000018 /* SignHistoryManager.swift */,
+				F10000000000000000000019 /* StorageManager.swift */,
+				F1000000000000000000001A /* SwapManager.swift */,
+				F1000000000000000000001B /* SyncChainManager.swift */,
+				F1000000000000000000001C /* TokenManager.swift */,
+				F1000000000000000000001D /* TransactionBroadcastWatcherManager.swift */,
+				F1000000000000000000001E /* TransactionHistoryManager.swift */,
+				F1000000000000000000001F /* TransactionManager.swift */,
+				F10000000000000000000020 /* TransactionWatcherManager.swift */,
+				F10000000000000000000021 /* WalletConnectManager.swift */,
+				F10000000000000000000022 /* WatchGnosisSessionKeyrings.swift */,
+				F10000000000000000000023 /* WhitelistManager.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		F30000000000000000000002 /* HardwareWallet */ = {
+			isa = PBXGroup;
+			children = (
+				F1000000000000000000000C /* BluetoothManager.swift */,
+				F1000000000000000000000D /* LedgerKeyring.swift */,
+			);
+			path = HardwareWallet;
+			sourceTree = "<group>";
+		};
+		F30000000000000000000003 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				F10000000000000000000024 /* Keccak256.swift */,
+				F10000000000000000000025 /* RLPEncoder.swift */,
+				F10000000000000000000026 /* Secp256k1Helper.swift */,
+				F10000000000000000000060 /* CryptoIconProvider.swift */,
+				F10000000000000000000061 /* ImageCacheManager.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		F30000000000000000000004 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				F10000000000000000000037 /* RootView.swift */,
+				F30000000000000000000005 /* Activities */,
+				F30000000000000000000006 /* AddressDetail */,
+				F30000000000000000000007 /* Approval */,
+				F30000000000000000000008 /* Assets */,
+				F30000000000000000000009 /* Bridge */,
+				F3000000000000000000000A /* DAppBrowser */,
+				F3000000000000000000000B /* HardwareWallet */,
+				F3000000000000000000000C /* History */,
+				F3000000000000000000000D /* Import */,
+				F3000000000000000000000E /* More */,
+				F3000000000000000000000F /* NFT */,
+				F30000000000000000000010 /* Send */,
+				F30000000000000000000011 /* Settings */,
+				F30000000000000000000012 /* Swap */,
+				F30000000000000000000013 /* Wallet */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		F30000000000000000000005 /* Activities */ = {
+			isa = PBXGroup;
+			children = (
+				F10000000000000000000027 /* ActivitiesView.swift */,
+			);
+			path = Activities;
+			sourceTree = "<group>";
+		};
+		F30000000000000000000006 /* AddressDetail */ = {
+			isa = PBXGroup;
+			children = (
+				F10000000000000000000028 /* AddressDetailView.swift */,
+			);
+			path = AddressDetail;
+			sourceTree = "<group>";
+		};
+		F30000000000000000000007 /* Approval */ = {
+			isa = PBXGroup;
+			children = (
+				F10000000000000000000029 /* TransactionApprovalView.swift */,
+			);
+			path = Approval;
+			sourceTree = "<group>";
+		};
+		F30000000000000000000008 /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				F1000000000000000000002A /* AssetsView.swift */,
+				F1000000000000000000003F /* TokenDetailView.swift */,
+				F10000000000000000000040 /* BalanceCurveView.swift */,
+				F10000000000000000000041 /* ChainBalanceView.swift */,
+				F10000000000000000000042 /* NFTGalleryView.swift */,
+				F10000000000000000000043 /* NFTDetailView.swift */,
+				F10000000000000000000044 /* ProtocolPositionView.swift */,
+				F10000000000000000000045 /* AddCustomTokenView.swift */,
+				F10000000000000000000046 /* GasPriceBarView.swift */,
+			);
+			path = Assets;
+			sourceTree = "<group>";
+		};
+		F30000000000000000000009 /* Bridge */ = {
+			isa = PBXGroup;
+			children = (
+				F1000000000000000000002B /* BridgeView.swift */,
+			);
+			path = Bridge;
+			sourceTree = "<group>";
+		};
+		F3000000000000000000000A /* DAppBrowser */ = {
+			isa = PBXGroup;
+			children = (
+				F1000000000000000000002C /* DAppBrowserView.swift */,
+			);
+			path = DAppBrowser;
+			sourceTree = "<group>";
+		};
+		F3000000000000000000000B /* HardwareWallet */ = {
+			isa = PBXGroup;
+			children = (
+				F1000000000000000000002D /* LedgerConnectView.swift */,
+			);
+			path = HardwareWallet;
+			sourceTree = "<group>";
+		};
+		F3000000000000000000000C /* History */ = {
+			isa = PBXGroup;
+			children = (
+				F1000000000000000000002E /* TransactionHistoryView.swift */,
+			);
+			path = History;
+			sourceTree = "<group>";
+		};
+		F3000000000000000000000D /* Import */ = {
+			isa = PBXGroup;
+			children = (
+				F1000000000000000000002F /* HDManagerSwitchViews.swift */,
+				F10000000000000000000030 /* ImportOptionsView.swift */,
+				F10000000000000000000031 /* ImportSuccessAddFromSeedView.swift */,
+				F10000000000000000000032 /* SelectAddressView.swift */,
+			);
+			path = Import;
+			sourceTree = "<group>";
+		};
+		F3000000000000000000000E /* More */ = {
+			isa = PBXGroup;
+			children = (
+				F10000000000000000000033 /* GasAccountView.swift */,
+				F10000000000000000000034 /* LendingPerpsAdvancedView.swift */,
+				F10000000000000000000035 /* MiscViews.swift */,
+			);
+			path = More;
+			sourceTree = "<group>";
+		};
+		F3000000000000000000000F /* NFT */ = {
+			isa = PBXGroup;
+			children = (
+				F10000000000000000000036 /* NFTView.swift */,
+			);
+			path = NFT;
+			sourceTree = "<group>";
+		};
+		F30000000000000000000010 /* Send */ = {
+			isa = PBXGroup;
+			children = (
+				F10000000000000000000038 /* SendTokenView.swift */,
+			);
+			path = Send;
+			sourceTree = "<group>";
+		};
+		F30000000000000000000011 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				F10000000000000000000039 /* GnosisQueueView.swift */,
+				F1000000000000000000003A /* SettingsView.swift */,
+				F1000000000000000000003B /* WhitelistInputView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		F30000000000000000000012 /* Swap */ = {
+			isa = PBXGroup;
+			children = (
+				F1000000000000000000003C /* SwapView.swift */,
+			);
+			path = Swap;
+			sourceTree = "<group>";
+		};
+		F30000000000000000000013 /* Wallet */ = {
+			isa = PBXGroup;
+			children = (
+				F1000000000000000000003D /* CreateWalletView.swift */,
+				F1000000000000000000003E /* ImportWalletView.swift */,
+			);
+			path = Wallet;
+			sourceTree = "<group>";
+		};
+		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
+				1D4832CC7F8287C10903E01C /* Pods_RabbyMobile.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		71483067664CBA6D6425B01A /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				D8D344B63F528CD395A24998 /* Pods-RabbyMobile.debug.xcconfig */,
+				800FE6E28ABECB5FCB1077FC /* Pods-RabbyMobile.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Libraries;
+			sourceTree = "<group>";
+		};
+		83CBB9F61A601CBA00E9B192 = {
+			isa = PBXGroup;
+			children = (
+				13B07FAE1A68108700A75B9A /* RabbyMobile */,
+				832341AE1AAA6A7D00B99B32 /* Libraries */,
+				83CBBA001A601CBA00E9B192 /* Products */,
+				2D16E6871FA4F8E400B85C8A /* Frameworks */,
+				71483067664CBA6D6425B01A /* Pods */,
+			);
+			indentWidth = 2;
+			sourceTree = "<group>";
+			tabWidth = 2;
+			usesTabs = 0;
+		};
+		83CBBA001A601CBA00E9B192 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				13B07F961A680F5B00A75B9A /* RabbyMobile.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		13B07F861A680F5B00A75B9A /* RabbyMobile */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "RabbyMobile" */;
+			buildPhases = (
+				796322D4E3F38A7883D481B7 /* [CP] Check Pods Manifest.lock */,
+				13B07F871A680F5B00A75B9A /* Sources */,
+				13B07F8C1A680F5B00A75B9A /* Frameworks */,
+				13B07F8E1A680F5B00A75B9A /* Resources */,
+				0725C8017AF62C78EDD8D5E7 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RabbyMobile;
+			productName = RabbyMobile;
+			productReference = 13B07F961A680F5B00A75B9A /* RabbyMobile.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		83CBB9F71A601CBA00E9B192 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1540;
+				TargetAttributes = {
+					13B07F861A680F5B00A75B9A = {
+						LastSwiftMigration = 1120;
+					};
+				};
+			};
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "RabbyMobile" */;
+			compatibilityVersion = "Xcode 12.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 83CBB9F61A601CBA00E9B192;
+			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				13B07F861A680F5B00A75B9A /* RabbyMobile */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		13B07F8E1A680F5B00A75B9A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		0725C8017AF62C78EDD8D5E7 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-RabbyMobile/Pods-RabbyMobile-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-RabbyMobile/Pods-RabbyMobile-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RabbyMobile/Pods-RabbyMobile-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		796322D4E3F38A7883D481B7 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-RabbyMobile-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		13B07F871A680F5B00A75B9A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F20000000000000000000001 /* RabbyMobileApp.swift in Sources */,
+				F20000000000000000000002 /* AutoLockManager.swift in Sources */,
+				F20000000000000000000003 /* BIP39.swift in Sources */,
+				F20000000000000000000004 /* BIP44.swift in Sources */,
+				F20000000000000000000005 /* BiometricAuthManager.swift in Sources */,
+				F20000000000000000000006 /* BridgeManager.swift in Sources */,
+				F20000000000000000000007 /* ContactBookManager.swift in Sources */,
+				F20000000000000000000008 /* CustomRPCManager.swift in Sources */,
+				F20000000000000000000009 /* CustomTestnetManager.swift in Sources */,
+				F2000000000000000000000A /* EthereumUtils.swift in Sources */,
+				F2000000000000000000000B /* GasAccountManager.swift in Sources */,
+				F2000000000000000000000C /* BluetoothManager.swift in Sources */,
+				F2000000000000000000000D /* LedgerKeyring.swift in Sources */,
+				F2000000000000000000000E /* KeyringManager.swift in Sources */,
+				F2000000000000000000000F /* LendingManager.swift in Sources */,
+				F20000000000000000000010 /* NFTManager.swift in Sources */,
+				F20000000000000000000011 /* NetworkManager.swift in Sources */,
+				F20000000000000000000012 /* NotificationManager.swift in Sources */,
+				F20000000000000000000013 /* OpenAPIService.swift in Sources */,
+				F20000000000000000000014 /* PerpsManager.swift in Sources */,
+				F20000000000000000000015 /* PreferenceManager.swift in Sources */,
+				F20000000000000000000016 /* RabbyPointsManager.swift in Sources */,
+				F20000000000000000000017 /* SecurityEngineManager.swift in Sources */,
+				F20000000000000000000018 /* SignHistoryManager.swift in Sources */,
+				F20000000000000000000019 /* StorageManager.swift in Sources */,
+				F2000000000000000000001A /* SwapManager.swift in Sources */,
+				F2000000000000000000001B /* SyncChainManager.swift in Sources */,
+				F2000000000000000000001C /* TokenManager.swift in Sources */,
+				F2000000000000000000001D /* TransactionBroadcastWatcherManager.swift in Sources */,
+				F2000000000000000000001E /* TransactionHistoryManager.swift in Sources */,
+				F2000000000000000000001F /* TransactionManager.swift in Sources */,
+				F20000000000000000000020 /* TransactionWatcherManager.swift in Sources */,
+				F20000000000000000000021 /* WalletConnectManager.swift in Sources */,
+				F20000000000000000000022 /* WatchGnosisSessionKeyrings.swift in Sources */,
+				F20000000000000000000023 /* WhitelistManager.swift in Sources */,
+				F20000000000000000000024 /* Keccak256.swift in Sources */,
+				F20000000000000000000025 /* RLPEncoder.swift in Sources */,
+				F20000000000000000000026 /* Secp256k1Helper.swift in Sources */,
+								F20000000000000000000060 /* CryptoIconProvider.swift in Sources */,
+								F20000000000000000000061 /* ImageCacheManager.swift in Sources */,
+				F20000000000000000000027 /* ActivitiesView.swift in Sources */,
+				F20000000000000000000028 /* AddressDetailView.swift in Sources */,
+				F20000000000000000000029 /* TransactionApprovalView.swift in Sources */,
+				F2000000000000000000002A /* AssetsView.swift in Sources */,
+				F2000000000000000000002B /* BridgeView.swift in Sources */,
+				F2000000000000000000002C /* DAppBrowserView.swift in Sources */,
+				F2000000000000000000002D /* LedgerConnectView.swift in Sources */,
+				F2000000000000000000002E /* TransactionHistoryView.swift in Sources */,
+				F2000000000000000000002F /* HDManagerSwitchViews.swift in Sources */,
+				F20000000000000000000030 /* ImportOptionsView.swift in Sources */,
+				F20000000000000000000031 /* ImportSuccessAddFromSeedView.swift in Sources */,
+				F20000000000000000000032 /* SelectAddressView.swift in Sources */,
+				F20000000000000000000033 /* GasAccountView.swift in Sources */,
+				F20000000000000000000034 /* LendingPerpsAdvancedView.swift in Sources */,
+				F20000000000000000000035 /* MiscViews.swift in Sources */,
+				F20000000000000000000036 /* NFTView.swift in Sources */,
+				F20000000000000000000037 /* RootView.swift in Sources */,
+				F20000000000000000000038 /* SendTokenView.swift in Sources */,
+				F20000000000000000000039 /* GnosisQueueView.swift in Sources */,
+				F2000000000000000000003A /* SettingsView.swift in Sources */,
+				F2000000000000000000003B /* WhitelistInputView.swift in Sources */,
+				F2000000000000000000003C /* SwapView.swift in Sources */,
+				F2000000000000000000003D /* CreateWalletView.swift in Sources */,
+				F2000000000000000000003E /* ImportWalletView.swift in Sources */,
+				F2000000000000000000003F /* TokenDetailView.swift in Sources */,
+				F20000000000000000000040 /* BalanceCurveView.swift in Sources */,
+				F20000000000000000000041 /* ChainBalanceView.swift in Sources */,
+				F20000000000000000000042 /* NFTGalleryView.swift in Sources */,
+				F20000000000000000000043 /* NFTDetailView.swift in Sources */,
+				F20000000000000000000044 /* ProtocolPositionView.swift in Sources */,
+				F20000000000000000000045 /* AddCustomTokenView.swift in Sources */,
+				F20000000000000000000046 /* GasPriceBarView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		13B07F941A680F5B00A75B9A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D8D344B63F528CD395A24998 /* Pods-RabbyMobile.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4X7QYL9K9S;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = RabbyMobile/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.bocail.pay;
+				PRODUCT_NAME = RabbyMobile;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		13B07F951A680F5B00A75B9A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 800FE6E28ABECB5FCB1077FC /* Pods-RabbyMobile.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4X7QYL9K9S;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = RabbyMobile/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.bocail.pay;
+				PRODUCT_NAME = RabbyMobile;
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		83CBBA201A601CBA00E9B192 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					/usr/lib/swift,
+					"$(inherited)",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"\"$(SDKROOT)/usr/lib/swift\"",
+					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
+					"\"$(inherited)\"",
+				);
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-DFOLLY_NO_CONFIG",
+					"-DFOLLY_MOBILE=1",
+					"-DFOLLY_USE_LIBCPP=1",
+					"-DFOLLY_CFG_NO_COROUTINES=1",
+					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
+				);
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		83CBBA211A601CBA00E9B192 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					/usr/lib/swift,
+					"$(inherited)",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"\"$(SDKROOT)/usr/lib/swift\"",
+					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
+					"\"$(inherited)\"",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-DFOLLY_NO_CONFIG",
+					"-DFOLLY_MOBILE=1",
+					"-DFOLLY_USE_LIBCPP=1",
+					"-DFOLLY_CFG_NO_COROUTINES=1",
+					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
+				);
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "RabbyMobile" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				13B07F941A680F5B00A75B9A /* Debug */,
+				13B07F951A680F5B00A75B9A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "RabbyMobile" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				83CBBA201A601CBA00E9B192 /* Debug */,
+				83CBBA211A601CBA00E9B192 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 83CBB9F71A601CBA00E9B192 /* Project object */;
+}

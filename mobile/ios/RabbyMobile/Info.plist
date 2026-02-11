@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>Rabby Wallet</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>localhost</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Rabby needs camera access to scan QR codes for wallet connections</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Rabby uses Face ID to secure your wallet and authenticate transactions</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Rabby needs permission to save QR codes to your photo library</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Rabby needs access to your photo library to select QR codes</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Rabby needs Bluetooth access to connect with hardware wallets like Ledger Nano X</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Rabby uses Bluetooth to communicate with your Ledger hardware wallet for secure transaction signing</string>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.bocail.pay</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>rabbywallet</string>
+				<string>wc</string>
+			</array>
+		</dict>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>bluetooth-central</string>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>wc</string>
+		<string>metamask</string>
+		<string>trust</string>
+		<string>rainbow</string>
+	</array>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Rabby uses the local network to connect with hardware wallets and dApps</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Rabby uses this to provide a better wallet experience</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Lato-Bold.ttf</string>
+		<string>Lato-Regular.ttf</string>
+		<string>Roboto-Bold.ttf</string>
+		<string>Roboto-Medium.ttf</string>
+		<string>Roboto-Regular.ttf</string>
+	</array>
+</dict>
+</plist>
