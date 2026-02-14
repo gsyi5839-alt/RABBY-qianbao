@@ -1,0 +1,23 @@
+{
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/BigInt/Sources/Data Conversion.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/BigInt.build/Objects-normal/arm64/Data Conversion.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/BigInt.build/Objects-normal/arm64/Data Conversion.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/BigInt.build/Objects-normal/arm64/Data Conversion.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/BigInt.build/Objects-normal/arm64/Data Conversion.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/BigInt.build/Objects-normal/arm64/Data Conversion.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/BigInt/Sources/Division.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/BigInt.build/Objects-normal/arm64/Division.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/BigInt.build/Objects-normal/arm64/Division.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/BigInt.build/Objects-normal/arm64/Division.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/BigInt.build/Objects-normal/arm64/Division.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/BigInt.build/Objects-normal/arm64/Division.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/BigInt/Sources/Exponentiation.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/BigInt.build/Objects-normal/arm64/Exponentiation.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/BigInt.build/Objects-normal/arm64/Exponentiation.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/BigInt.build/Objects-normal/arm64/Exponentiation.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/BigInt.build/Objects-normal/arm64/Exponentiation.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/BigInt.build/Objects-normal/arm64/Exponentiation.swiftdeps"
+  }
+}

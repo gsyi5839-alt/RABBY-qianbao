@@ -21,10 +21,10 @@ struct ImportWalletView: View {
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("Import Type")) {
-                    Picker("Type", selection: $importType) {
-                        Text("Secret Phrase").tag(ImportType.mnemonic)
-                        Text("Private Key").tag(ImportType.privateKey)
+                Section(header: Text(L("Import Type"))) {
+                    Picker(L("Type"), selection: $importType) {
+                        Text(L("Secret Phrase")).tag(ImportType.mnemonic)
+                        Text(L("Private Key")).tag(ImportType.privateKey)
                     }
                     .pickerStyle(SegmentedPickerStyle())
                 }
@@ -37,11 +37,11 @@ struct ImportWalletView: View {
                     }
                 }
                 
-                Section(header: Text("Set Password")) {
-                    SecureField("Password", text: $password)
+                Section(header: Text(L("Set Password"))) {
+                    SecureField(L("Password"), text: $password)
                         .autocapitalization(.none)
                     
-                    SecureField("Confirm Password", text: $confirmPassword)
+                    SecureField(L("Confirm Password"), text: $confirmPassword)
                         .autocapitalization(.none)
                 }
                 
@@ -56,10 +56,10 @@ struct ImportWalletView: View {
                         if isImporting {
                             HStack {
                                 ProgressView()
-                                Text("Importing...")
+                                Text(L("Importing..."))
                             }
                         } else {
-                            Text("Import Wallet")
+                            Text(L("Import Wallet"))
                                 .fontWeight(.semibold)
                         }
                     }
@@ -67,11 +67,11 @@ struct ImportWalletView: View {
                     .disabled(!canImport || isImporting)
                 }
             }
-            .navigationTitle("Import Wallet")
+            .navigationTitle(L("Import Wallet"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
+                    Button(L("Cancel")) {
                         presentationMode.wrappedValue.dismiss()
                     }
                 }
@@ -92,7 +92,7 @@ struct ImportWalletView: View {
                         .stroke(Color(.systemGray4), lineWidth: 1)
                 )
             
-            Text("Enter your 12 or 24 word secret phrase")
+            Text(L("Enter your 12 or 24 word secret phrase"))
                 .font(.caption)
                 .foregroundColor(.gray)
             
@@ -100,7 +100,7 @@ struct ImportWalletView: View {
                 HStack {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundColor(.green)
-                    Text("Valid mnemonic")
+                    Text(L("Valid mnemonic"))
                         .font(.caption)
                         .foregroundColor(.green)
                 }
@@ -121,7 +121,7 @@ struct ImportWalletView: View {
                         .stroke(Color(.systemGray4), lineWidth: 1)
                 )
             
-            Text("Enter your private key (with or without 0x prefix)")
+            Text(L("Enter your private key (with or without 0x prefix)"))
                 .font(.caption)
                 .foregroundColor(.gray)
             
@@ -129,7 +129,7 @@ struct ImportWalletView: View {
                 HStack {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundColor(.green)
-                    Text("Valid private key")
+                    Text(L("Valid private key"))
                         .font(.caption)
                         .foregroundColor(.green)
                 }

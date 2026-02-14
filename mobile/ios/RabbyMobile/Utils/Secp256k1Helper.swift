@@ -11,8 +11,10 @@ class Secp256k1Helper {
     /// Sign message hash with private key (ECDSA signature)
     /// @param hash: 32-byte message hash (typically Keccak256)
     /// @param privateKey: 32-byte secp256k1 private key
-    /// @returns: (r, s, v) signature tuple where v is recovery id + 27
-    static func sign(hash: Data, privateKey: Data) throws -> (r: Data, s: Data, v: UInt8) {
+    /// @returns: (r, s, recid) signature tuple where recid is 0/1 (Ethereum uses yParity) in practice
+    ///
+    /// Note: We enforce low-s (EIP-2). If normalization changes `s`, the recovery id must be flipped.
+    static func sign(hash: Data, privateKey: Data) throws -> (r: Data, s: Data, recid: Int32) {
         guard hash.count == 32 else {
             throw Secp256k1Error.invalidHashLength
         }
@@ -22,7 +24,7 @@ class Secp256k1Helper {
         }
         
         // Create secp256k1 context
-        guard let context = secp256k1_context_create(UInt32(SECP256K1_CONTEXT_SIGN)) else {
+        guard let context = secp256k1_context_create(UInt32(SECP256K1_CONTEXT_SIGN | SECP256K1_CONTEXT_VERIFY)) else {
             throw Secp256k1Error.contextCreationFailed
         }
         defer { secp256k1_context_destroy(context) }
@@ -46,22 +48,29 @@ class Secp256k1Helper {
             throw Secp256k1Error.signingFailed
         }
         
-        // Extract r, s, and recovery id
-        var output = [UInt8](repeating: 0, count: 64)
-        var recid: Int32 = 0
+        // Convert to normal signature so we can normalize to low-s (EIP-2).
+        var normalSig = secp256k1_ecdsa_signature()
+        secp256k1_ecdsa_recoverable_signature_convert(context, &normalSig, &signature)
         
-        secp256k1_ecdsa_recoverable_signature_serialize_compact(
-            context,
-            &output,
-            &recid,
-            &signature
-        )
+        var normalizedSig = secp256k1_ecdsa_signature()
+        let didNormalize = secp256k1_ecdsa_signature_normalize(context, &normalizedSig, &normalSig)
+        
+        // Serialize normalized signature to compact 64 bytes (r||s).
+        var output = [UInt8](repeating: 0, count: 64)
+        secp256k1_ecdsa_signature_serialize_compact(context, &output, &normalizedSig)
+        
+        // Extract recovery id from the original recoverable signature, then flip if normalized.
+        var recid: Int32 = 0
+        var recoverableCompact = [UInt8](repeating: 0, count: 64)
+        secp256k1_ecdsa_recoverable_signature_serialize_compact(context, &recoverableCompact, &recid, &signature)
+        if didNormalize == 1 {
+            recid ^= 1
+        }
         
         let r = Data(output[0..<32])
         let s = Data(output[32..<64])
-        let v = UInt8(27 + recid) // Ethereum style: 27 or 28
         
-        return (r, s, v)
+        return (r, s, recid)
     }
     
     /// Get uncompressed public key from private key
@@ -105,6 +114,44 @@ class Secp256k1Helper {
         
         // Remove 0x04 prefix and return 64 bytes
         return Data(output[1..<65])
+    }
+
+    /// Get compressed public key from private key
+    /// @param privateKey: 32-byte secp256k1 private key
+    /// @returns: 33-byte compressed public key (0x02/0x03 prefix + 32-byte x)
+    static func getCompressedPublicKey(privateKey: Data) throws -> Data {
+        guard privateKey.count == 32 else {
+            throw Secp256k1Error.invalidPrivateKeyLength
+        }
+        
+        guard let context = secp256k1_context_create(UInt32(SECP256K1_CONTEXT_SIGN)) else {
+            throw Secp256k1Error.contextCreationFailed
+        }
+        defer { secp256k1_context_destroy(context) }
+        
+        var publicKey = secp256k1_pubkey()
+        let result = privateKey.withUnsafeBytes { keyPtr in
+            secp256k1_ec_pubkey_create(
+                context,
+                &publicKey,
+                keyPtr.bindMemory(to: UInt8.self).baseAddress!
+            )
+        }
+        
+        guard result == 1 else {
+            throw Secp256k1Error.publicKeyCreationFailed
+        }
+        
+        var output = [UInt8](repeating: 0, count: 33)
+        var outputLen = 33
+        secp256k1_ec_pubkey_serialize(
+            context,
+            &output,
+            &outputLen,
+            &publicKey,
+            UInt32(SECP256K1_EC_COMPRESSED)
+        )
+        return Data(output[0..<outputLen])
     }
     
     /// Recover public key from signature (Ethereum-style)

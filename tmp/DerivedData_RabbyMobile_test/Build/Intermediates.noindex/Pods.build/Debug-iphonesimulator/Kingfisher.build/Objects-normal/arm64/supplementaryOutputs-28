@@ -1,0 +1,58 @@
+{
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/Kingfisher/Sources/Cache/MemoryStorage.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/MemoryStorage.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/MemoryStorage.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/MemoryStorage.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/MemoryStorage.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/MemoryStorage.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/Kingfisher/Sources/Extensions/NSButton+Kingfisher.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/NSButton+Kingfisher.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/NSButton+Kingfisher.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/NSButton+Kingfisher.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/NSButton+Kingfisher.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/NSButton+Kingfisher.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/Kingfisher/Sources/Extensions/NSTextAttachment+Kingfisher.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/NSTextAttachment+Kingfisher.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/NSTextAttachment+Kingfisher.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/NSTextAttachment+Kingfisher.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/NSTextAttachment+Kingfisher.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/NSTextAttachment+Kingfisher.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/Kingfisher/Sources/General/ImageSource/PHPickerResultImageDataProvider.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/PHPickerResultImageDataProvider.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/PHPickerResultImageDataProvider.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/PHPickerResultImageDataProvider.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/PHPickerResultImageDataProvider.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/PHPickerResultImageDataProvider.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/Kingfisher/Sources/General/KingfisherError.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/KingfisherError.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/KingfisherError.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/KingfisherError.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/KingfisherError.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/KingfisherError.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/Kingfisher/Sources/General/KingfisherManager.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/KingfisherManager.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/KingfisherManager.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/KingfisherManager.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/KingfisherManager.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/KingfisherManager.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/Kingfisher/Sources/General/KingfisherOptionsInfo.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/KingfisherOptionsInfo.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/KingfisherOptionsInfo.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/KingfisherOptionsInfo.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/KingfisherOptionsInfo.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/KingfisherOptionsInfo.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/Kingfisher/Sources/Image/Placeholder.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/Placeholder.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/Placeholder.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/Placeholder.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/Placeholder.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Kingfisher.build/Objects-normal/arm64/Placeholder.swiftdeps"
+  }
+}

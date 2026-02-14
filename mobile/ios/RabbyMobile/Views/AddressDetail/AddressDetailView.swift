@@ -34,7 +34,7 @@ struct AddressDetailView: View {
             }
             .padding()
         }
-        .navigationTitle("Address Detail")
+        .navigationTitle(L("Address Detail"))
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showEditAlias) {
             EditAliasSheet(address: address, currentAlias: aliasName) { newAlias in
@@ -44,11 +44,11 @@ struct AddressDetailView: View {
         .sheet(isPresented: $showBackup) {
             AddressBackupView()
         }
-        .alert("Delete Address", isPresented: $showDelete) {
-            Button("Delete", role: .destructive) { deleteAddress() }
-            Button("Cancel", role: .cancel) {}
+        .alert(L("Delete Address"), isPresented: $showDelete) {
+            Button(L("Delete"), role: .destructive) { deleteAddress() }
+            Button(L("Cancel"), role: .cancel) {}
         } message: {
-            Text("This will remove the address from your wallet. Make sure you have backed up your seed phrase or private key.")
+            Text(L("This will remove the address from your wallet. Make sure you have backed up your seed phrase or private key."))
         }
         .onAppear { loadAddressInfo() }
     }
@@ -120,7 +120,7 @@ struct AddressDetailView: View {
     
     private var balanceSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Balance").font(.headline)
+            Text(L("Balance")).font(.headline)
             
             HStack {
                 Text("$\(String(format: "%.2f", totalBalance))")
@@ -138,7 +138,7 @@ struct AddressDetailView: View {
     
     private var chainBreakdown: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Assets by Chain").font(.headline)
+            Text(L("Assets by Chain")).font(.headline)
             
             ForEach(chainManager.mainnetChains.prefix(5)) { chain in
                 HStack {
@@ -146,7 +146,7 @@ struct AddressDetailView: View {
                         .overlay(Text(String(chain.symbol.prefix(1))).font(.caption2).fontWeight(.bold).foregroundColor(.blue))
                     Text(chain.name).font(.subheadline)
                     Spacer()
-                    Text("$0.00").font(.subheadline).foregroundColor(.secondary)
+                    Text(L("$0.00")).font(.subheadline).foregroundColor(.secondary)
                 }
             }
         }
@@ -161,7 +161,7 @@ struct AddressDetailView: View {
             Button(action: { showBackup = true }) {
                 HStack {
                     Image(systemName: "key.fill").foregroundColor(.orange)
-                    Text("Backup Seed Phrase / Private Key").foregroundColor(.primary)
+                    Text(L("Backup Seed Phrase / Private Key")).foregroundColor(.primary)
                     Spacer()
                     Image(systemName: "chevron.right").foregroundColor(.secondary)
                 }
@@ -171,7 +171,7 @@ struct AddressDetailView: View {
             Button(action: { showDelete = true }) {
                 HStack {
                     Image(systemName: "trash.fill").foregroundColor(.red)
-                    Text("Remove Address").foregroundColor(.red)
+                    Text(L("Remove Address")).foregroundColor(.red)
                     Spacer()
                 }
                 .padding().background(Color.red.opacity(0.1)).cornerRadius(12)
@@ -229,14 +229,14 @@ struct EditAliasSheet: View {
     var body: some View {
         NavigationView {
             Form {
-                TextField("Enter alias name", text: $aliasText)
+                TextField(L("Enter alias name"), text: $aliasText)
             }
-            .navigationTitle("Edit Alias")
+            .navigationTitle(L("Edit Alias"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
+                ToolbarItem(placement: .cancellationAction) { Button(L("Cancel")) { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
+                    Button(L("Save")) {
                         PreferenceManager.shared.setAlias(address: address, alias: aliasText)
                         onSave(aliasText)
                         dismiss()

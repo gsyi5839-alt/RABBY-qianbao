@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Bridge View - Cross-chain bridge interface
+/// Bridge View - Cross-chain bridge interface with full execution pipeline
 struct BridgeView: View {
     @StateObject private var bridgeManager = BridgeManager.shared
     @StateObject private var chainManager = ChainManager.shared
@@ -12,7 +12,14 @@ struct BridgeView: View {
     @State private var showResult = false
     @State private var txHash: String?
     @State private var errorMessage: String?
-    
+
+    // Confirmation popup state
+    @State private var showConfirmation = false
+
+    // Active bridge status tracking
+    @State private var showBridgeTracker = false
+    @State private var activeTxHash: String?
+
     var body: some View {
         NavigationView {
             ScrollView {
@@ -25,37 +32,53 @@ struct BridgeView: View {
                         }
                         chainSelector(title: "To", chain: toChain) { toChain = $0 }
                     }.padding(.horizontal)
-                    
+
                     // Amount input
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Amount").font(.caption).foregroundColor(.secondary)
-                        TextField("0.0", text: $amount)
+                        Text(L("Amount")).font(.caption).foregroundColor(.secondary)
+                        TextField(L("0.0"), text: $amount)
                             .keyboardType(.decimalPad)
                             .font(.title2)
                             .padding()
                             .background(Color(.systemGray6))
                             .cornerRadius(12)
                     }.padding(.horizontal)
-                    
-                    // Quotes
-                    if !bridgeManager.quotes.isEmpty {
+
+                    // Quotes section
+                    if bridgeManager.isLoading {
+                        HStack {
+                            ProgressView()
+                            Text(L("Fetching bridge routes...")).font(.caption).foregroundColor(.secondary)
+                        }.padding()
+                    } else if !bridgeManager.quotes.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Bridge Routes").font(.headline).padding(.horizontal)
+                            Text(L("Bridge Routes")).font(.headline).padding(.horizontal)
                             ForEach(bridgeManager.quotes) { quote in
                                 bridgeQuoteRow(quote: quote)
                             }
                         }
                     }
-                    
+
+                    // Error message
                     if let error = errorMessage {
-                        Text(error).font(.caption).foregroundColor(.red).padding(.horizontal)
+                        HStack(spacing: 8) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundColor(.orange)
+                            Text(error).font(.caption).foregroundColor(.red)
+                        }
+                        .padding(.horizontal)
                     }
-                    
+
+                    // Execution progress indicator
+                    if bridgeManager.executionStep.isInProgress {
+                        executionProgressView
+                    }
+
                     // Bridge button
-                    Button(action: executeBridge) {
+                    Button(action: { showConfirmation = true }) {
                         HStack {
                             if isBridging { ProgressView().tint(.white) }
-                            Text(isBridging ? "Bridging..." : "Bridge")
+                            Text(bridgeButtonTitle)
                                 .fontWeight(.semibold)
                         }
                         .frame(maxWidth: .infinity).padding()
@@ -64,24 +87,314 @@ struct BridgeView: View {
                     }
                     .disabled(!canBridge || isBridging)
                     .padding(.horizontal)
+
+                    // Active bridge tracker section
+                    if !bridgeManager.activeBridges.isEmpty {
+                        activeBridgesSection
+                    }
                 }
                 .padding(.vertical)
             }
-            .navigationTitle("Bridge")
+            .navigationTitle(L("Bridge"))
             .navigationBarTitleDisplayMode(.inline)
         }
         .onChange(of: amount) { _ in fetchQuotes() }
-        .alert("Bridge Initiated", isPresented: $showResult) {
-            Button("OK") { amount = ""; selectedQuote = nil }
+        .onChange(of: fromChain) { _ in fetchQuotes() }
+        .onChange(of: toChain) { _ in fetchQuotes() }
+        // Confirmation sheet
+        .sheet(isPresented: $showConfirmation) {
+            bridgeConfirmationSheet
+        }
+        // Success alert
+        .alert(L("Bridge Initiated"), isPresented: $showResult) {
+            Button(L("OK")) {
+                amount = ""
+                selectedQuote = nil
+                bridgeManager.resetExecutionState()
+            }
         } message: {
-            Text("Track your bridge in transaction history.\nTx: \(txHash ?? "")")
+            Text("Your bridge transaction has been sent. Track the cross-chain transfer in the bridge status section below.\n\nTx: \(txHash ?? "")")
         }
     }
-    
+
+    // MARK: - Computed Properties
+
     private var canBridge: Bool {
         fromChain != nil && toChain != nil && !amount.isEmpty && selectedQuote != nil
     }
-    
+
+    private var bridgeButtonTitle: String {
+        if isBridging {
+            return bridgeManager.executionStep.displayText
+        }
+        if fromChain == nil || toChain == nil {
+            return LocalizationManager.shared.t("Select Chains")
+        }
+        if amount.isEmpty {
+            return LocalizationManager.shared.t("Enter Amount")
+        }
+        if selectedQuote == nil {
+            return LocalizationManager.shared.t("Select Route")
+        }
+        return LocalizationManager.shared.t("Bridge")
+    }
+
+    // MARK: - Execution Progress View
+
+    private var executionProgressView: some View {
+        VStack(spacing: 12) {
+            // Progress steps
+            let steps: [(BridgeManager.BridgeExecutionStep, String)] = [
+                (.checkingAllowance, LocalizationManager.shared.t("Check Allowance")),
+                (.approving, LocalizationManager.shared.t("Approve Token")),
+                (.waitingApprovalConfirmation, LocalizationManager.shared.t("Confirm Approval")),
+                (.buildingTransaction, LocalizationManager.shared.t("Build Transaction")),
+                (.signing, LocalizationManager.shared.t("Sign Transaction")),
+                (.sending, LocalizationManager.shared.t("Send Transaction")),
+                (.watchingBridgeStatus, LocalizationManager.shared.t("Bridge in Progress")),
+            ]
+
+            VStack(alignment: .leading, spacing: 8) {
+                ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
+                    HStack(spacing: 10) {
+                        stepStatusIcon(currentStep: bridgeManager.executionStep, targetStep: step.0, index: index, steps: steps)
+                        Text(step.1)
+                            .font(.caption)
+                            .foregroundColor(stepTextColor(currentStep: bridgeManager.executionStep, targetStep: step.0, index: index, steps: steps))
+                        Spacer()
+                    }
+                }
+            }
+            .padding()
+            .background(Color(.systemGray6))
+            .cornerRadius(12)
+        }
+        .padding(.horizontal)
+    }
+
+    @ViewBuilder
+    private func stepStatusIcon(currentStep: BridgeManager.BridgeExecutionStep, targetStep: BridgeManager.BridgeExecutionStep, index: Int, steps: [(BridgeManager.BridgeExecutionStep, String)]) -> some View {
+        let currentIndex = steps.firstIndex(where: { $0.0 == currentStep }) ?? -1
+
+        if index < currentIndex {
+            // Completed
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundColor(.green)
+                .font(.caption)
+        } else if index == currentIndex {
+            // Current
+            ProgressView()
+                .scaleEffect(0.7)
+        } else {
+            // Pending
+            Image(systemName: "circle")
+                .foregroundColor(.gray.opacity(0.5))
+                .font(.caption)
+        }
+    }
+
+    private func stepTextColor(currentStep: BridgeManager.BridgeExecutionStep, targetStep: BridgeManager.BridgeExecutionStep, index: Int, steps: [(BridgeManager.BridgeExecutionStep, String)]) -> Color {
+        let currentIndex = steps.firstIndex(where: { $0.0 == currentStep }) ?? -1
+
+        if index < currentIndex {
+            return .green
+        } else if index == currentIndex {
+            return .primary
+        } else {
+            return .secondary.opacity(0.5)
+        }
+    }
+
+    // MARK: - Confirmation Sheet
+
+    private var bridgeConfirmationSheet: some View {
+        NavigationView {
+            VStack(spacing: 0) {
+                ScrollView {
+                    VStack(spacing: 20) {
+                        // From section
+                        VStack(spacing: 8) {
+                            Text(L("From")).font(.caption).foregroundColor(.secondary)
+                            HStack {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(fromChain?.name ?? "").fontWeight(.medium)
+                                    Text(selectedQuote?.fromToken.symbol ?? fromChain?.symbol ?? "")
+                                        .font(.caption).foregroundColor(.secondary)
+                                }
+                                Spacer()
+                                Text(amount)
+                                    .font(.title2).fontWeight(.bold)
+                            }
+                            .padding()
+                            .background(Color(.systemGray6))
+                            .cornerRadius(12)
+                        }
+
+                        // Arrow
+                        Image(systemName: "arrow.down.circle.fill")
+                            .font(.title2)
+                            .foregroundColor(.blue)
+
+                        // To section
+                        VStack(spacing: 8) {
+                            Text(L("To")).font(.caption).foregroundColor(.secondary)
+                            HStack {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(toChain?.name ?? "").fontWeight(.medium)
+                                    Text(selectedQuote?.toToken.symbol ?? toChain?.symbol ?? "")
+                                        .font(.caption).foregroundColor(.secondary)
+                                }
+                                Spacer()
+                                Text(selectedQuote?.toAmount ?? "~")
+                                    .font(.title2).fontWeight(.bold)
+                            }
+                            .padding()
+                            .background(Color(.systemGray6))
+                            .cornerRadius(12)
+                        }
+
+                        // Details section
+                        if let quote = selectedQuote {
+                            VStack(spacing: 0) {
+                                confirmationDetailRow(label: "Bridge", value: quote.aggregatorName)
+                                Divider()
+                                confirmationDetailRow(label: LocalizationManager.shared.t("Estimated Time"), value: quote.estimatedTime)
+                                Divider()
+                                confirmationDetailRow(label: LocalizationManager.shared.t("Gas Fee"), value: quote.gasFee)
+                                Divider()
+                                confirmationDetailRow(label: LocalizationManager.shared.t("Bridge Fee"), value: quote.bridgeFee)
+
+                                if quote.needApprove {
+                                    Divider()
+                                    confirmationDetailRow(label: LocalizationManager.shared.t("Approval"), value: LocalizationManager.shared.t("Required"), valueColor: .orange)
+                                }
+
+                                if quote.rabbyFee > 0 {
+                                    Divider()
+                                    confirmationDetailRow(label: LocalizationManager.shared.t("Rabby Fee"), value: String(format: "%.2f%%", quote.rabbyFee * 100))
+                                }
+                            }
+                            .background(Color(.systemGray6))
+                            .cornerRadius(12)
+                        }
+
+                        // Warning for approval
+                        if selectedQuote?.needApprove == true {
+                            HStack(spacing: 8) {
+                                Image(systemName: "info.circle.fill").foregroundColor(.blue)
+                                Text(L("This bridge requires a token approval transaction before the bridge transaction. Two transactions will be sent."))
+                                    .font(.caption).foregroundColor(.secondary)
+                            }
+                            .padding()
+                            .background(Color.blue.opacity(0.1))
+                            .cornerRadius(8)
+                        }
+                    }
+                    .padding()
+                }
+
+                // Bottom buttons
+                VStack(spacing: 12) {
+                    Button(action: {
+                        showConfirmation = false
+                        executeBridge()
+                    }) {
+                        Text(L("Confirm Bridge"))
+                            .fontWeight(.semibold)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(12)
+                    }
+
+                    Button(action: { showConfirmation = false }) {
+                        Text(L("Cancel"))
+                            .fontWeight(.medium)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color(.systemGray5))
+                            .foregroundColor(.primary)
+                            .cornerRadius(12)
+                    }
+                }
+                .padding()
+                .background(Color(.systemBackground).shadow(radius: 2))
+            }
+            .navigationTitle(L("Confirm Bridge"))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: { showConfirmation = false }) {
+                        Image(systemName: "xmark.circle.fill").foregroundColor(.secondary)
+                    }
+                }
+            }
+        }
+    }
+
+    private func confirmationDetailRow(label: String, value: String, valueColor: Color = .primary) -> some View {
+        HStack {
+            Text(label).font(.subheadline).foregroundColor(.secondary)
+            Spacer()
+            Text(value).font(.subheadline).fontWeight(.medium).foregroundColor(valueColor)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+    }
+
+    // MARK: - Active Bridges Section
+
+    private var activeBridgesSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(L("Active Bridges")).font(.headline).padding(.horizontal)
+
+            ForEach(Array(bridgeManager.activeBridges.values), id: \.fromTxHash) { bridgeState in
+                activeBridgeRow(state: bridgeState)
+            }
+        }
+    }
+
+    private func activeBridgeRow(state: BridgeManager.BridgeWatchState) -> some View {
+        HStack {
+            // Status icon
+            Group {
+                switch state.status {
+                case .pending:
+                    ProgressView().scaleEffect(0.8)
+                case .bridging:
+                    ProgressView().scaleEffect(0.8)
+                case .completed:
+                    Image(systemName: "checkmark.circle.fill").foregroundColor(.green)
+                case .failed:
+                    Image(systemName: "xmark.circle.fill").foregroundColor(.red)
+                }
+            }
+            .frame(width: 24, height: 24)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("\(state.fromTokenSymbol) -> \(state.toTokenSymbol)")
+                    .font(.subheadline).fontWeight(.medium)
+                Text(state.status.displayText)
+                    .font(.caption).foregroundColor(.secondary)
+            }
+
+            Spacer()
+
+            VStack(alignment: .trailing, spacing: 2) {
+                Text(state.fromAmount).font(.caption).foregroundColor(.secondary)
+                Text(timeAgo(from: state.startedAt))
+                    .font(.caption2).foregroundColor(.secondary)
+            }
+        }
+        .padding()
+        .background(Color(.systemGray6))
+        .cornerRadius(8)
+        .padding(.horizontal)
+    }
+
+    // MARK: - Subviews
+
     private func chainSelector(title: String, chain: Chain?, action: @escaping (Chain) -> Void) -> some View {
         VStack(spacing: 4) {
             Text(title).font(.caption).foregroundColor(.secondary)
@@ -92,23 +405,34 @@ struct BridgeView: View {
             } label: {
                 VStack {
                     Text(chain?.symbol ?? "?").font(.title2).fontWeight(.bold)
-                    Text(chain?.name ?? "Select").font(.caption).foregroundColor(.secondary)
+                    Text(chain?.name ?? LocalizationManager.shared.t("Select")).font(.caption).foregroundColor(.secondary)
                 }
                 .frame(maxWidth: .infinity).padding()
                 .background(Color(.systemGray6)).cornerRadius(12)
             }
         }
     }
-    
+
     private func bridgeQuoteRow(quote: BridgeManager.BridgeQuote) -> some View {
         Button(action: { selectedQuote = quote }) {
             HStack {
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text(quote.aggregatorName).fontWeight(.medium)
-                    Text("~\(quote.estimatedTime)").font(.caption).foregroundColor(.secondary)
+                    HStack(spacing: 4) {
+                        Text("~\(quote.estimatedTime)").font(.caption).foregroundColor(.secondary)
+                        if quote.needApprove {
+                            Text(L("Approval needed"))
+                                .font(.caption2)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Color.orange.opacity(0.2))
+                                .foregroundColor(.orange)
+                                .cornerRadius(4)
+                        }
+                    }
                 }
                 Spacer()
-                VStack(alignment: .trailing) {
+                VStack(alignment: .trailing, spacing: 4) {
                     Text(quote.toAmount).fontWeight(.semibold)
                     Text("Fee: \(quote.bridgeFee)").font(.caption).foregroundColor(.secondary)
                 }
@@ -122,9 +446,11 @@ struct BridgeView: View {
         }
         .buttonStyle(.plain).padding(.horizontal)
     }
-    
+
+    // MARK: - Actions
+
     private func swapChains() { let t = fromChain; fromChain = toChain; toChain = t }
-    
+
     private func fetchQuotes() {
         guard let fc = fromChain, let tc = toChain, !amount.isEmpty,
               let address = PreferenceManager.shared.currentAccount?.address else { return }
@@ -139,17 +465,38 @@ struct BridgeView: View {
             } catch { errorMessage = error.localizedDescription }
         }
     }
-    
+
     private func executeBridge() {
         guard let quote = selectedQuote, let fc = fromChain,
               let address = PreferenceManager.shared.currentAccount?.address else { return }
-        isBridging = true; errorMessage = nil
+
+        isBridging = true
+        errorMessage = nil
+
         Task {
             do {
-                let hash = try await bridgeManager.executeBridge(quote: quote, fromAddress: address, fromChain: fc)
-                txHash = hash; showResult = true
-            } catch { errorMessage = error.localizedDescription }
+                let hash = try await bridgeManager.executeBridge(
+                    quote: quote,
+                    fromAddress: address,
+                    fromChain: fc
+                )
+                txHash = hash
+                showResult = true
+            } catch {
+                errorMessage = error.localizedDescription
+            }
             isBridging = false
         }
+    }
+
+    // MARK: - Helpers
+
+    private func timeAgo(from date: Date) -> String {
+        let seconds = Int(Date().timeIntervalSince(date))
+        if seconds < 60 { return "\(seconds)s ago" }
+        let minutes = seconds / 60
+        if minutes < 60 { return "\(minutes)m ago" }
+        let hours = minutes / 60
+        return "\(hours)h ago"
     }
 }

@@ -1,0 +1,397 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.2.4 effective-5.10 (swiftlang-6.2.4.1.4 clang-1700.6.4.2)
+// swift-module-flags: -target arm64-apple-ios15.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -Onone -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name EFQRCode
+// swift-module-flags-ignorable: -no-verify-emitted-module-interface -formal-cxx-interoperability-mode=off -interface-compiler-version 6.2.4
+import CoreImage.CIFilterBuiltins
+import CoreGraphics
+import CoreImage
+@_exported import EFQRCode
+import Foundation
+import ImageIO
+import MobileCoreServices
+import Swift
+import UIKit
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+extension CoreGraphics.CGColor {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func white(_ white: CoreFoundation.CGFloat = 1.0, alpha: CoreFoundation.CGFloat = 1.0) -> CoreGraphics.CGColor?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func black(_ black: CoreFoundation.CGFloat = 1.0, alpha: CoreFoundation.CGFloat = 1.0) -> CoreGraphics.CGColor?
+  #endif
+}
+@objc public enum EFInputCorrectionLevel : Swift.Int {
+  case l = 0
+  case m = 1
+  case q = 2
+  case h = 3
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(rawValue: Swift.Int)
+  #endif
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+@objc @objcMembers final public class EFIntSize : ObjectiveC.NSObject {
+  @objc final public let width: Swift.Int
+  @objc final public let height: Swift.Int
+  @objc public init(width: Swift.Int = 0, height: Swift.Int = 0)
+  @objc convenience public init(size: CoreFoundation.CGSize)
+  @objc final public var cgSize: CoreFoundation.CGSize {
+    @objc get
+  }
+  @objc deinit
+}
+@objc public protocol EFPointStyle {
+  @objc func fillRect(context: CoreGraphics.CGContext, rect: CoreFoundation.CGRect, isStatic: Swift.Bool)
+}
+@_inheritsConvenienceInitializers @objc public class EFSquarePointStyle : ObjectiveC.NSObject, EFQRCode.EFPointStyle {
+  @objc public func fillRect(context: CoreGraphics.CGContext, rect: CoreFoundation.CGRect, isStatic: Swift.Bool)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@_inheritsConvenienceInitializers @objc public class EFCirclePointStyle : ObjectiveC.NSObject, EFQRCode.EFPointStyle {
+  @objc public func fillRect(context: CoreGraphics.CGContext, rect: CoreFoundation.CGRect, isStatic: Swift.Bool)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@_inheritsConvenienceInitializers @objc public class EFDiamondPointStyle : ObjectiveC.NSObject, EFQRCode.EFPointStyle {
+  @objc public func fillRect(context: CoreGraphics.CGContext, rect: CoreFoundation.CGRect, isStatic: Swift.Bool)
+  @objc override dynamic public init()
+  @objc deinit
+}
+extension EFQRCode.EFPointStyle where Self == EFQRCode.EFSquarePointStyle {
+  public static var square: EFQRCode.EFSquarePointStyle {
+    get
+  }
+}
+extension EFQRCode.EFPointStyle where Self == EFQRCode.EFCirclePointStyle {
+  public static var circle: EFQRCode.EFCirclePointStyle {
+    get
+  }
+}
+extension EFQRCode.EFPointStyle where Self == EFQRCode.EFDiamondPointStyle {
+  public static var diamond: EFQRCode.EFDiamondPointStyle {
+    get
+  }
+}
+public enum EFQRCode {
+  public static func recognize(_ image: CoreGraphics.CGImage) -> [Swift.String]
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func generate(for content: Swift.String, encoding: Swift.String.Encoding = .utf8, inputCorrectionLevel: EFQRCode.EFInputCorrectionLevel = .h, size: EFQRCode.EFIntSize = EFIntSize(width: 600, height: 600), magnification: EFQRCode.EFIntSize? = nil, backgroundColor: CoreGraphics.CGColor = .white()!, foregroundColor: CoreGraphics.CGColor = .black()!, watermark: CoreGraphics.CGImage? = nil, watermarkMode: EFQRCode.EFWatermarkMode = .scaleAspectFill, watermarkIsTransparent isWatermarkTransparent: Swift.Bool = true, icon: CoreGraphics.CGImage? = nil, iconSize: EFQRCode.EFIntSize? = nil, pointStyle: any EFQRCode.EFPointStyle = EFSquarePointStyle.square, pointOffset: CoreFoundation.CGFloat = 0, isTimingPointStyled: Swift.Bool = false, mode: EFQRCode.EFQRCodeMode? = nil) -> CoreGraphics.CGImage?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func generateGIF(for content: Swift.String, encoding: Swift.String.Encoding = .utf8, inputCorrectionLevel: EFQRCode.EFInputCorrectionLevel = .h, size: EFQRCode.EFIntSize = EFIntSize(width: 600, height: 600), magnification: EFQRCode.EFIntSize? = nil, backgroundColor: CoreGraphics.CGColor = .white()!, foregroundColor: CoreGraphics.CGColor = .black()!, watermark: Foundation.Data, watermarkMode: EFQRCode.EFWatermarkMode = .scaleAspectFill, watermarkIsTransparent isWatermarkTransparent: Swift.Bool = true, icon: CoreGraphics.CGImage? = nil, iconSize: EFQRCode.EFIntSize? = nil, pointStyle: any EFQRCode.EFPointStyle = EFSquarePointStyle.square, pointOffset: CoreFoundation.CGFloat = 0, isTimingPointStyled: Swift.Bool = false, mode: EFQRCode.EFQRCodeMode? = nil) -> Foundation.Data?
+  #endif
+}
+extension EFQRCode.EFQRCode {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func generateGIF(using generator: EFQRCode.EFQRCodeGenerator, withWatermarkGIF data: Foundation.Data, delay: Swift.Double? = nil, loopCount: Swift.Int? = nil, useMultipleThreads: Swift.Bool = false) -> Foundation.Data?
+  #endif
+}
+extension EFQRCode.EFQRCode {
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(*, deprecated, renamed: "generate(for:encoding:size:backgroundColor:foregroundColor:watermark:watermarkMode:inputCorrectionLevel:icon:iconSize:watermarkIsTransparent:pointShape:mode:magnification:pointOffset:)")
+  public static func generate(content: Swift.String, contentEncoding: Swift.String.Encoding = .utf8, size: EFQRCode.EFIntSize = EFIntSize(width: 600, height: 600), backgroundColor: CoreGraphics.CGColor = CGColor.white()!, foregroundColor: CoreGraphics.CGColor = CGColor.black()!, watermark: CoreGraphics.CGImage? = nil, watermarkMode: EFQRCode.EFWatermarkMode = .scaleAspectFill, inputCorrectionLevel: EFQRCode.EFInputCorrectionLevel = .h, icon: CoreGraphics.CGImage? = nil, iconSize: EFQRCode.EFIntSize? = nil, allowTransparent: Swift.Bool = true, pointShape: EFQRCode.EFPointShape = .square, mode: EFQRCode.EFQRCodeMode = .none, magnification: EFQRCode.EFIntSize? = nil, foregroundPointOffset: CoreFoundation.CGFloat = 0) -> CoreGraphics.CGImage?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(*, deprecated, renamed: "generateGIF(for:encoding:size:backgroundColor:foregroundColor:watermark:watermarkMode:inputCorrectionLevel:icon:iconSize:watermarkIsTransparent:pointShape:mode:magnification:pointOffset:)")
+  public static func generateWithGIF(content: Swift.String, contentEncoding: Swift.String.Encoding = .utf8, size: EFQRCode.EFIntSize = EFIntSize(width: 600, height: 600), backgroundColor: CoreGraphics.CGColor = CGColor.white()!, foregroundColor: CoreGraphics.CGColor = CGColor.black()!, watermark: Foundation.Data, watermarkMode: EFQRCode.EFWatermarkMode = .scaleAspectFill, inputCorrectionLevel: EFQRCode.EFInputCorrectionLevel = .h, icon: CoreGraphics.CGImage? = nil, iconSize: EFQRCode.EFIntSize? = nil, allowTransparent: Swift.Bool = true, pointShape: EFQRCode.EFPointShape = .square, mode: EFQRCode.EFQRCodeMode = .none, magnification: EFQRCode.EFIntSize? = nil, foregroundPointOffset: CoreFoundation.CGFloat = 0) -> Foundation.Data?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(*, deprecated, renamed: "generate(for:encoding:inputCorrectionLevel:size:magnification:backgroundColor:foregroundColor:watermark:watermarkMode:watermarkIsTransparent:icon:iconSize:pointStyle:pointOffset:isTimingPointStyled:mode:)")
+  public static func generate(for content: Swift.String, encoding: Swift.String.Encoding = .utf8, inputCorrectionLevel: EFQRCode.EFInputCorrectionLevel = .h, size: EFQRCode.EFIntSize = EFIntSize(width: 600, height: 600), magnification: EFQRCode.EFIntSize? = nil, backgroundColor: CoreGraphics.CGColor = .white()!, foregroundColor: CoreGraphics.CGColor = .black()!, watermark: CoreGraphics.CGImage? = nil, watermarkMode: EFQRCode.EFWatermarkMode = .scaleAspectFill, watermarkIsTransparent isWatermarkTransparent: Swift.Bool = true, icon: CoreGraphics.CGImage? = nil, iconSize: EFQRCode.EFIntSize? = nil, pointShape: EFQRCode.EFPointShape, pointOffset: CoreFoundation.CGFloat = 0, isTimingPointStyled: Swift.Bool = false, mode: EFQRCode.EFQRCodeMode? = nil) -> CoreGraphics.CGImage?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(*, deprecated, renamed: "generateGIF(for:encoding:inputCorrectionLevel:size:magnification:backgroundColor:foregroundColor:watermark:watermarkMode:watermarkIsTransparent:icon:iconSize:pointStyle:pointOffset:isTimingPointStyled:mode:)")
+  public static func generateGIF(for content: Swift.String, encoding: Swift.String.Encoding = .utf8, inputCorrectionLevel: EFQRCode.EFInputCorrectionLevel = .h, size: EFQRCode.EFIntSize = EFIntSize(width: 600, height: 600), magnification: EFQRCode.EFIntSize? = nil, backgroundColor: CoreGraphics.CGColor = .white()!, foregroundColor: CoreGraphics.CGColor = .black()!, watermark: Foundation.Data, watermarkMode: EFQRCode.EFWatermarkMode = .scaleAspectFill, watermarkIsTransparent isWatermarkTransparent: Swift.Bool = true, icon: CoreGraphics.CGImage? = nil, iconSize: EFQRCode.EFIntSize? = nil, pointShape: EFQRCode.EFPointShape, pointOffset: CoreFoundation.CGFloat = 0, isTimingPointStyled: Swift.Bool = false, mode: EFQRCode.EFQRCodeMode? = nil) -> Foundation.Data?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(*, deprecated, renamed: "generateGIF(withWatermarkGIF:using:savingTo:delay:loopCount:useMultipleThreads:)")
+  public static func generateWithGIF(data: Foundation.Data, generator: EFQRCode.EFQRCodeGenerator, pathToSave: Foundation.URL? = nil, delay: Swift.Double? = nil, loopCount: Swift.Int? = nil, useMultipleThread: Swift.Bool = false) -> Foundation.Data?
+  #endif
+}
+extension EFQRCode.EFQRCodeGenerator {
+  @objc @available(*, deprecated, renamed: "withContent(_:)")
+  dynamic public func setContent(content: Swift.String)
+  @available(*, deprecated, renamed: "withContentEncoding(_:)")
+  public func setContentEncoding(encoding: Swift.String.Encoding)
+  @available(*, deprecated, renamed: "withMode(_:)")
+  public func setMode(mode: EFQRCode.EFQRCodeMode)
+  @objc @available(*, deprecated, renamed: "withInputCorrectionLevel(_:)")
+  dynamic public func setInputCorrectionLevel(inputCorrectionLevel: EFQRCode.EFInputCorrectionLevel)
+  @objc @available(*, deprecated, renamed: "withSize(_:)")
+  dynamic public func setSize(size: EFQRCode.EFIntSize)
+  #if compiler(>=5.3) && $NonescapableTypes
+  @objc @available(*, deprecated, renamed: "withMagnification(_:)")
+  dynamic public func setMagnification(magnification: EFQRCode.EFIntSize?)
+  #endif
+  @objc @available(*, deprecated, renamed: "withColors(backgroundColor:foregroundColor:)")
+  dynamic public func setColors(backgroundColor: CoreGraphics.CGColor, foregroundColor: CoreGraphics.CGColor)
+  #if compiler(>=5.3) && $NonescapableTypes
+  @objc @available(*, deprecated, renamed: "withIcon(_:size:)")
+  dynamic public func setIcon(icon: CoreGraphics.CGImage?, size: EFQRCode.EFIntSize?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(*, deprecated, renamed: "withWatermark(_:mode:)")
+  public func setWatermark(watermark: CoreGraphics.CGImage?, mode: EFQRCode.EFWatermarkMode? = nil)
+  #endif
+  @objc @available(*, deprecated, renamed: "withPointOffset(_:)")
+  dynamic public func setForegroundPointOffset(foregroundPointOffset: CoreFoundation.CGFloat)
+  @objc @available(*, deprecated, renamed: "withTransparentWatermark(_:)")
+  dynamic public func setAllowTransparent(allowTransparent: Swift.Bool)
+  @objc @available(*, deprecated, renamed: "withPointShape(_:)")
+  dynamic public func setPointShape(pointShape: EFQRCode.EFPointShape)
+  @objc @available(*, deprecated, renamed: "withStyledTimingPoint(_:)")
+  dynamic public func setIgnoreTiming(ignoreTiming isTimingStyled: Swift.Bool)
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(*, deprecated, renamed: "minMagnification(greaterThanOrEqualTo:)")
+  public func minMagnificationGreaterThanOrEqualTo(size: CoreFoundation.CGFloat) -> Swift.Int?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(*, deprecated, renamed: "maxMagnification(lessThanOrEqualTo:)")
+  public func maxMagnificationLessThanOrEqualTo(size: CoreFoundation.CGFloat) -> Swift.Int?
+  #endif
+}
+extension EFQRCode.EFQRCode {
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(*, deprecated, renamed: "recognize(_:)")
+  public static func recognize(image: CoreGraphics.CGImage?) -> [Swift.String]?
+  #endif
+}
+extension EFQRCode.EFQRCodeRecognizer {
+  @objc @available(*, deprecated, message: "Set `image` property directly.")
+  dynamic public func setImage(image: CoreGraphics.CGImage)
+}
+extension EFQRCode.EFQRCodeGenerator {
+  @available(*, deprecated, renamed: "withColors(backgroundColor:foregroundColor:)")
+  @nonobjc public func setColors(backgroundColor: CoreImage.CIColor, foregroundColor: CoreImage.CIColor)
+}
+@available(*, deprecated, message: "Use EFPointStyle instead.")
+@objc public enum EFPointShape : Swift.Int {
+  case square = 0
+  case circle = 1
+  case diamond = 2
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(rawValue: Swift.Int)
+  #endif
+  @available(*, deprecated, message: "Use EFPointStyle instead.")
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+extension EFQRCode.EFQRCodeGenerator {
+  @objc @available(*, deprecated, renamed: "pointStyle")
+  dynamic public var pointShape: EFQRCode.EFPointShape {
+    @objc get
+    @objc set
+  }
+  @objc @available(*, deprecated, renamed: "withPointStyle(_:)")
+  @discardableResult
+  dynamic public func withPointShape(_ pointShape: EFQRCode.EFPointShape) -> EFQRCode.EFQRCodeGenerator
+}
+extension EFQRCode.EFQRCodeGenerator {
+  @objc @available(swift, obsoleted: 1.0)
+  convenience dynamic public init(content: Swift.String, encoding: Swift.UInt, size: EFQRCode.EFIntSize)
+  @objc @discardableResult
+  @available(swift, obsoleted: 1.0)
+  dynamic public func withContent(_ content: Swift.String, encoding: Swift.UInt) -> EFQRCode.EFQRCodeGenerator
+  @objc @discardableResult
+  @available(swift, obsoleted: 1.0, renamed: "withMode")
+  dynamic public func withNormalMode() -> EFQRCode.EFQRCodeGenerator
+  @objc @discardableResult
+  @available(swift, obsoleted: 1.0, renamed: "withMode")
+  dynamic public func withGrayscaleMode() -> EFQRCode.EFQRCodeGenerator
+  @objc @discardableResult
+  @available(swift, obsoleted: 1.0, renamed: "withMode")
+  dynamic public func withBinarizationMode(threshold: CoreFoundation.CGFloat) -> EFQRCode.EFQRCodeGenerator
+  @objc @discardableResult
+  @available(swift, obsoleted: 1.0)
+  dynamic public func withWatermark(_ watermark: CoreGraphics.CGImage, mode: EFQRCode.EFWatermarkMode) -> EFQRCode.EFQRCodeGenerator
+  #if compiler(>=5.3) && $NonescapableTypes
+  @objc @available(swift, obsoleted: 1.0)
+  dynamic public func generateGIF(watermarkGIF data: Foundation.Data) -> Foundation.Data?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  @objc @available(swift, obsoleted: 1.0)
+  dynamic public func generateGIF(watermarkGIF data: Foundation.Data, delay: Swift.Double, loopCount: Swift.Int, useMultipleThreads: Swift.Bool) -> Foundation.Data?
+  #endif
+}
+@objc @objcMembers public class EFQRCodeGenerator : ObjectiveC.NSObject {
+  @discardableResult
+  @inlinable public func with<T>(_ keyPath: Swift.ReferenceWritableKeyPath<EFQRCode.EFQRCodeGenerator, T>, _ newValue: T) -> EFQRCode.EFQRCodeGenerator {
+        self[keyPath: keyPath] = newValue
+        return self
+    }
+  @objc public var content: Swift.String? {
+    @objc get
+    @objc set
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  @discardableResult
+  public func withContent(_ content: Swift.String, encoding: Swift.String.Encoding? = nil) -> EFQRCode.EFQRCodeGenerator
+  #endif
+  public var contentEncoding: Swift.String.Encoding {
+    get
+    set
+  }
+  @discardableResult
+  public func withContentEncoding(_ encoding: Swift.String.Encoding) -> EFQRCode.EFQRCodeGenerator
+  @objc public var inputCorrectionLevel: EFQRCode.EFInputCorrectionLevel {
+    @objc get
+    @objc set
+  }
+  @objc @discardableResult
+  public func withInputCorrectionLevel(_ inputCorrectionLevel: EFQRCode.EFInputCorrectionLevel) -> EFQRCode.EFQRCodeGenerator
+  public var mode: EFQRCode.EFQRCodeMode? {
+    get
+    set
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  @discardableResult
+  public func withMode(_ mode: EFQRCode.EFQRCodeMode?) -> EFQRCode.EFQRCodeGenerator
+  #endif
+  @objc public var size: EFQRCode.EFIntSize {
+    @objc get
+    @objc set
+  }
+  @objc @discardableResult
+  public func withSize(_ size: EFQRCode.EFIntSize) -> EFQRCode.EFQRCodeGenerator
+  @objc public var magnification: EFQRCode.EFIntSize? {
+    @objc get
+    @objc set
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  @objc @discardableResult
+  public func withMagnification(_ magnification: EFQRCode.EFIntSize?) -> EFQRCode.EFQRCodeGenerator
+  #endif
+  @objc public var backgroundColor: CoreGraphics.CGColor {
+    @objc get
+    @objc set
+  }
+  @objc public var foregroundColor: CoreGraphics.CGColor {
+    @objc get
+    @objc set
+  }
+  @discardableResult
+  @objc(withCIColorsForBackgroundColor:foregroundColor:) public func withColors(backgroundColor: CoreImage.CIColor, foregroundColor: CoreImage.CIColor) -> EFQRCode.EFQRCodeGenerator
+  @discardableResult
+  @objc(withCGColorsForBackgroundColor:foregroundColor:) public func withColors(backgroundColor: CoreGraphics.CGColor, foregroundColor: CoreGraphics.CGColor) -> EFQRCode.EFQRCodeGenerator
+  @objc public var icon: CoreGraphics.CGImage? {
+    @objc get
+    @objc set
+  }
+  @objc public var iconSize: EFQRCode.EFIntSize? {
+    @objc get
+    @objc set
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  @objc @discardableResult
+  public func withIcon(_ icon: CoreGraphics.CGImage?, size: EFQRCode.EFIntSize?) -> EFQRCode.EFQRCodeGenerator
+  #endif
+  @objc public var watermark: CoreGraphics.CGImage? {
+    @objc get
+    @objc set
+  }
+  @objc public var watermarkMode: EFQRCode.EFWatermarkMode {
+    @objc get
+    @objc set
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  @discardableResult
+  public func withWatermark(_ watermark: CoreGraphics.CGImage?, mode: EFQRCode.EFWatermarkMode? = nil) -> EFQRCode.EFQRCodeGenerator
+  #endif
+  @objc public var pointOffset: CoreFoundation.CGFloat {
+    @objc get
+    @objc set
+  }
+  @objc @discardableResult
+  public func withPointOffset(_ pointOffset: CoreFoundation.CGFloat) -> EFQRCode.EFQRCodeGenerator
+  @objc public var isWatermarkOpaque: Swift.Bool {
+    @objc get
+    @objc set
+  }
+  @objc @discardableResult
+  public func withOpaqueWatermark(_ isWatermarkOpaque: Swift.Bool = true) -> EFQRCode.EFQRCodeGenerator
+  @objc @discardableResult
+  public func withTransparentWatermark(_ isTransparent: Swift.Bool = true) -> EFQRCode.EFQRCodeGenerator
+  @objc public var pointStyle: any EFQRCode.EFPointStyle {
+    @objc get
+    @objc set
+  }
+  @objc @discardableResult
+  public func withPointStyle(_ pointStyle: any EFQRCode.EFPointStyle) -> EFQRCode.EFQRCodeGenerator
+  @objc public var isTimingPointStatic: Swift.Bool {
+    @objc get
+    @objc set
+  }
+  @objc @discardableResult
+  public func withStaticTimingPoint(_ isStatic: Swift.Bool = true) -> EFQRCode.EFQRCodeGenerator
+  @objc @discardableResult
+  public func withStyledTimingPoint(_ ignoreTiming: Swift.Bool = true) -> EFQRCode.EFQRCodeGenerator
+  @objc public func clearCache()
+  public init(content: Swift.String, encoding: Swift.String.Encoding = .utf8, size: EFQRCode.EFIntSize = EFIntSize(width: 256, height: 256))
+  #if compiler(>=5.3) && $NonescapableTypes
+  @objc public func generate() -> CoreGraphics.CGImage?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func minMagnification(greaterThanOrEqualTo size: CoreFoundation.CGFloat) -> Swift.Int?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func maxMagnification(lessThanOrEqualTo size: CoreFoundation.CGFloat) -> Swift.Int?
+  #endif
+  @objc deinit
+}
+public enum EFQRCodeMode {
+  @available(*, deprecated, message: "Use `nil` instead.")
+  case none
+  case grayscale
+  case binarization(threshold: CoreFoundation.CGFloat)
+}
+@objc @objcMembers public class EFQRCodeRecognizer : ObjectiveC.NSObject {
+  @objc public var image: CoreGraphics.CGImage {
+    @objc get
+    @objc set
+  }
+  @objc public init(image: CoreGraphics.CGImage)
+  @objc public func recognize() -> [Swift.String]
+  @objc deinit
+}
+@objc public enum EFWatermarkMode : Swift.Int {
+  case scaleToFill = 0
+  case scaleAspectFit = 1
+  case scaleAspectFill = 2
+  case center = 3
+  case top = 4
+  case bottom = 5
+  case left = 6
+  case right = 7
+  case topLeft = 8
+  case topRight = 9
+  case bottomLeft = 10
+  case bottomRight = 11
+  public func rectForWatermark(ofSize imageSize: CoreFoundation.CGSize, inCanvasOfSize canvasSize: CoreFoundation.CGSize) -> CoreFoundation.CGRect
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(rawValue: Swift.Int)
+  #endif
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+extension EFQRCode.EFInputCorrectionLevel : Swift.Equatable {}
+extension EFQRCode.EFInputCorrectionLevel : Swift.Hashable {}
+extension EFQRCode.EFInputCorrectionLevel : Swift.RawRepresentable {}
+@available(*, deprecated, message: "Use EFPointStyle instead.")
+extension EFQRCode.EFPointShape : Swift.Equatable {}
+@available(*, deprecated, message: "Use EFPointStyle instead.")
+extension EFQRCode.EFPointShape : Swift.Hashable {}
+@available(*, deprecated, message: "Use EFPointStyle instead.")
+extension EFQRCode.EFPointShape : Swift.RawRepresentable {}
+extension EFQRCode.EFWatermarkMode : Swift.Equatable {}
+extension EFQRCode.EFWatermarkMode : Swift.Hashable {}
+extension EFQRCode.EFWatermarkMode : Swift.RawRepresentable {}

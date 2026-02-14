@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import type {
   SecurityRule,
   SecuritySeverity,
@@ -119,10 +120,12 @@ const selectStyle: React.CSSProperties = {
   background: '#fff',
 };
 
+type SecurityTab = 'rules' | 'phishing' | 'whitelist' | 'contracts' | 'alerts';
+
 export default function SecurityPage() {
-  const [activeTab, setActiveTab] = useState<
-    'rules' | 'phishing' | 'whitelist' | 'contracts' | 'alerts'
-  >('rules');
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState<SecurityTab>('rules');
   const [search, setSearch] = useState('');
 
   const [rules, setRules] = useState<SecurityRule[]>([]);
@@ -143,6 +146,28 @@ export default function SecurityPage() {
   const [showCreateRule, setShowCreateRule] = useState(false);
   const [showCreatePhishing, setShowCreatePhishing] = useState(false);
   const [showCreateContract, setShowCreateContract] = useState(false);
+
+  const tabRoutes: Record<SecurityTab, string> = {
+    rules: '/security/rules',
+    phishing: '/security/phishing',
+    contracts: '/security/contracts',
+    whitelist: '/security/whitelist',
+    alerts: '/security/alerts',
+  };
+
+  useEffect(() => {
+    if (location.pathname.includes('/security/phishing')) {
+      setActiveTab('phishing');
+    } else if (location.pathname.includes('/security/contracts')) {
+      setActiveTab('contracts');
+    } else if (location.pathname.includes('/security/alerts')) {
+      setActiveTab('alerts');
+    } else if (location.pathname.includes('/security/whitelist')) {
+      setActiveTab('whitelist');
+    } else {
+      setActiveTab('rules');
+    }
+  }, [location.pathname]);
 
   const [newRule, setNewRule] = useState({
     name: '',
@@ -479,7 +504,7 @@ export default function SecurityPage() {
             <button
               key={tab}
               onClick={() => {
-                setActiveTab(tab);
+                navigate(tabRoutes[tab]);
                 setSearch('');
               }}
               style={{

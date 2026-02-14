@@ -1,0 +1,37 @@
+{
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/Alamofire/Source/Core/ParameterEncoder.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Alamofire.build/Objects-normal/arm64/ParameterEncoder.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Alamofire.build/Objects-normal/arm64/ParameterEncoder.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Alamofire.build/Objects-normal/arm64/ParameterEncoder.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Alamofire.build/Objects-normal/arm64/ParameterEncoder.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Alamofire.build/Objects-normal/arm64/ParameterEncoder.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/Alamofire/Source/Core/ParameterEncoding.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Alamofire.build/Objects-normal/arm64/ParameterEncoding.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Alamofire.build/Objects-normal/arm64/ParameterEncoding.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Alamofire.build/Objects-normal/arm64/ParameterEncoding.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Alamofire.build/Objects-normal/arm64/ParameterEncoding.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Alamofire.build/Objects-normal/arm64/ParameterEncoding.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/Alamofire/Source/Core/Protected.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Alamofire.build/Objects-normal/arm64/Protected.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Alamofire.build/Objects-normal/arm64/Protected.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Alamofire.build/Objects-normal/arm64/Protected.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Alamofire.build/Objects-normal/arm64/Protected.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Alamofire.build/Objects-normal/arm64/Protected.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/Alamofire/Source/Extensions/OperationQueue+Alamofire.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Alamofire.build/Objects-normal/arm64/OperationQueue+Alamofire.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Alamofire.build/Objects-normal/arm64/OperationQueue+Alamofire.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Alamofire.build/Objects-normal/arm64/OperationQueue+Alamofire.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Alamofire.build/Objects-normal/arm64/OperationQueue+Alamofire.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Alamofire.build/Objects-normal/arm64/OperationQueue+Alamofire.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/Alamofire/Source/Features/OfflineRetrier.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Alamofire.build/Objects-normal/arm64/OfflineRetrier.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Alamofire.build/Objects-normal/arm64/OfflineRetrier.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Alamofire.build/Objects-normal/arm64/OfflineRetrier.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Alamofire.build/Objects-normal/arm64/OfflineRetrier.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Alamofire.build/Objects-normal/arm64/OfflineRetrier.swiftdeps"
+  }
+}

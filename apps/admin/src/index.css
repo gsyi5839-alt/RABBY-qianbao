@@ -1,13 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
+:root {
+  color-scheme: dark;
+  --r-blue-default: rgba(79, 139, 255, 1);
+  --r-blue-light-1: rgba(79, 139, 255, 0.12);
+  --r-blue-light-2: rgba(79, 139, 255, 0.22);
+  --r-blue-disable: rgba(79, 139, 255, 0.4);
+  --r-green-default: rgba(22, 199, 132, 1);
+  --r-green-light: rgba(22, 199, 132, 0.16);
+  --r-orange-default: rgba(245, 158, 11, 1);
+  --r-orange-light: rgba(245, 158, 11, 0.16);
+  --r-red-default: rgba(234, 57, 67, 1);
+  --r-red-light: rgba(234, 57, 67, 0.15);
+  --r-red-dark: rgba(190, 35, 45, 1);
+  --r-neutral-title-1: rgba(234, 236, 239, 1);
+  --r-neutral-title-2: rgba(255, 255, 255, 1);
+  --r-neutral-body: rgba(205, 209, 214, 1);
+  --r-neutral-foot: rgba(146, 154, 165, 1);
+  --r-neutral-line: rgba(255, 255, 255, 0.08);
+  --r-neutral-bg-1: rgba(11, 14, 17, 1);
+  --r-neutral-bg-2: rgba(14, 20, 30, 1);
+  --r-neutral-bg-3: rgba(20, 26, 38, 1);
+  --r-neutral-bg-4: rgba(32, 38, 48, 1);
+  --r-neutral-card-1: rgba(32, 38, 48, 0.9);
+  --r-neutral-card-2: rgba(32, 38, 48, 0.75);
+  --r-neutral-card-3: rgba(32, 38, 48, 0.6);
+
+  --rb-brand-default: rgba(79, 139, 255, 1);
+  --rb-brand-light-1: rgba(79, 139, 255, 0.12);
+  --rb-brand-light-2: rgba(79, 139, 255, 0.25);
+  --rb-brand-disable: rgba(79, 139, 255, 0.4);
+  --rb-red-default: rgba(234, 57, 67, 1);
+  --rb-red-light-1: rgba(234, 57, 67, 0.12);
+  --rb-orange-default: rgba(245, 158, 11, 1);
+  --rb-orange-light-1: rgba(245, 158, 11, 0.12);
+  --rb-green-default: rgba(22, 199, 132, 1);
+  --rb-green-light-1: rgba(22, 199, 132, 0.14);
+  --rb-blue-default: rgba(79, 139, 255, 1);
+  --rb-blue-light-1: rgba(79, 139, 255, 0.14);
+  --rb-neutral-bg-0: rgba(11, 14, 17, 1);
+  --rb-neutral-bg-1: rgba(11, 14, 17, 1);
+  --rb-neutral-bg-2: rgba(20, 26, 38, 1);
+  --rb-neutral-bg-3: rgba(14, 20, 30, 1);
+  --rb-neutral-bg-4: rgba(32, 38, 48, 1);
+  --rb-neutral-line: rgba(255, 255, 255, 0.08);
+  --rb-neutral-title-1: rgba(234, 236, 239, 1);
+  --rb-neutral-card-1: rgba(32, 38, 48, 0.9);
+  --rb-neutral-body: rgba(205, 209, 214, 1);
+  --rb-neutral-foot: rgba(146, 154, 165, 1);
+  --rb-neutral-secondary: rgba(120, 131, 154, 1);
+
+  --rabby-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --rabby-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --rabby-shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.55);
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #192945;
+  color: var(--r-neutral-title-1);
+  background: radial-gradient(1200px 600px at 10% 0%, rgba(79, 139, 255, 0.18), transparent 55%), var(--r-neutral-bg-2);
 }
 
 input:focus, select:focus, textarea:focus, button:focus {

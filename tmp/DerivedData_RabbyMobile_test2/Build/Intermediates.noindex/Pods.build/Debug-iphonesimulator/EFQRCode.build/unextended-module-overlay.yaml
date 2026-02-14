@@ -1,0 +1,23 @@
+{
+  "version": 0,
+  "use-external-names": false,
+  "case-sensitive": false,
+  "roots": [{
+    "type": "directory",
+    "name": "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Products/Debug-iphonesimulator/EFQRCode/EFQRCode.framework/Modules",
+    "contents": [{
+      "type": "file",
+      "name": "module.modulemap",
+      "external-contents": "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/EFQRCode.build/unextended-module.modulemap",
+    }]
+    },
+    {
+    "type": "directory",
+    "name": "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Products/Debug-iphonesimulator/EFQRCode/EFQRCode.framework/Headers",
+    "contents": [{
+      "type": "file",
+      "name": "EFQRCode-Swift.h",
+      "external-contents": "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/EFQRCode.build/unextended-interface-header.h",
+    }]
+  }]
+}

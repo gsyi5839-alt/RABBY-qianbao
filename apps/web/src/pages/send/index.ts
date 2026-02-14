@@ -1,0 +1,1 @@
+export { SendTokenPage } from './SendTokenPage';

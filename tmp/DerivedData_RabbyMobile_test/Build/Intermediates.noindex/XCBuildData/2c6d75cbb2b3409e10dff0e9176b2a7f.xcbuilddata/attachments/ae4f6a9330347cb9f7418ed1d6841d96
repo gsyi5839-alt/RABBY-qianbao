@@ -1,0 +1,5 @@
+
+module EFQRCode.Swift {
+  header "EFQRCode-Swift.h"
+  requires objc
+}

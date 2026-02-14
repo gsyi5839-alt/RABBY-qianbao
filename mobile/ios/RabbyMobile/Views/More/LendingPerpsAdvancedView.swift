@@ -12,15 +12,15 @@ struct LendingView: View {
         VStack(spacing: 0) {
             // Tab selector
             Picker("", selection: $selectedTab) {
-                Text("My Positions").tag(0)
-                Text("Markets").tag(1)
+                Text(L("My Positions")).tag(0)
+                Text(L("Markets")).tag(1)
             }
             .pickerStyle(.segmented)
             .padding()
             
             if lendingManager.isLoading {
                 Spacer()
-                ProgressView("Loading...")
+                ProgressView(L("Loading..."))
                 Spacer()
             } else {
                 if selectedTab == 0 {
@@ -30,7 +30,7 @@ struct LendingView: View {
                 }
             }
         }
-        .navigationTitle("Lending")
+        .navigationTitle(L("Lending"))
         .onAppear { loadData() }
     }
     
@@ -39,8 +39,8 @@ struct LendingView: View {
             if lendingManager.positions.isEmpty {
                 VStack(spacing: 16) {
                     Image(systemName: "building.columns").font(.system(size: 48)).foregroundColor(.gray)
-                    Text("No lending positions").foregroundColor(.secondary)
-                    Text("Supply assets to earn interest").font(.caption).foregroundColor(.gray)
+                    Text(L("No lending positions")).foregroundColor(.secondary)
+                    Text(L("Supply assets to earn interest")).font(.caption).foregroundColor(.gray)
                 }
                 .frame(maxWidth: .infinity).padding(.vertical, 60)
             } else {
@@ -64,7 +64,7 @@ struct LendingView: View {
             
             if let healthRate = position.healthRate {
                 HStack {
-                    Text("Health Factor").font(.caption).foregroundColor(.secondary)
+                    Text(L("Health Factor")).font(.caption).foregroundColor(.secondary)
                     Spacer()
                     Text(String(format: "%.2f", healthRate)).font(.subheadline).fontWeight(.semibold)
                         .foregroundColor(healthColor(position.healthStatus))
@@ -75,7 +75,7 @@ struct LendingView: View {
             
             // Supply
             if !position.supplyTokens.isEmpty {
-                Text("Supplied").font(.caption).foregroundColor(.secondary)
+                Text(L("Supplied")).font(.caption).foregroundColor(.secondary)
                 ForEach(position.supplyTokens) { token in
                     HStack {
                         Text(token.symbol).font(.subheadline)
@@ -88,7 +88,7 @@ struct LendingView: View {
             
             // Borrow
             if !position.borrowTokens.isEmpty {
-                Text("Borrowed").font(.caption).foregroundColor(.secondary)
+                Text(L("Borrowed")).font(.caption).foregroundColor(.secondary)
                 ForEach(position.borrowTokens) { token in
                     HStack {
                         Text(token.symbol).font(.subheadline)
@@ -101,7 +101,7 @@ struct LendingView: View {
             
             // Net value
             HStack {
-                Text("Net Value").font(.subheadline).fontWeight(.semibold)
+                Text(L("Net Value")).font(.subheadline).fontWeight(.semibold)
                 Spacer()
                 Text("$\(String(format: "%.2f", position.netValue))").font(.subheadline).fontWeight(.bold)
             }
@@ -116,7 +116,7 @@ struct LendingView: View {
             if lendingManager.protocols.isEmpty {
                 VStack(spacing: 16) {
                     Image(systemName: "building.columns").font(.system(size: 48)).foregroundColor(.gray)
-                    Text("No lending markets found").foregroundColor(.secondary)
+                    Text(L("No lending markets found")).foregroundColor(.secondary)
                 }
                 .frame(maxWidth: .infinity).padding(.vertical, 60)
             } else {
@@ -209,9 +209,9 @@ struct PerpsView: View {
             .padding(.vertical, 8)
             
             Picker("", selection: $selectedTab) {
-                Text("Trade").tag(0)
-                Text("Positions").tag(1)
-                Text("Orders").tag(2)
+                Text(L("Trade")).tag(0)
+                Text(L("Positions")).tag(1)
+                Text(L("Orders")).tag(2)
             }
             .pickerStyle(.segmented).padding(.horizontal)
             
@@ -223,7 +223,7 @@ struct PerpsView: View {
                 ordersView
             }
         }
-        .navigationTitle("Perps Trading")
+        .navigationTitle(L("Perps Trading"))
     }
     
     private var tradeView: some View {
@@ -232,12 +232,12 @@ struct PerpsView: View {
                 // Long/Short toggle
                 HStack(spacing: 0) {
                     Button(action: { orderSide = "long" }) {
-                        Text("Long").fontWeight(.semibold).frame(maxWidth: .infinity).padding()
+                        Text(L("Long")).fontWeight(.semibold).frame(maxWidth: .infinity).padding()
                             .background(orderSide == "long" ? Color.green : Color(.systemGray6))
                             .foregroundColor(orderSide == "long" ? .white : .primary)
                     }
                     Button(action: { orderSide = "short" }) {
-                        Text("Short").fontWeight(.semibold).frame(maxWidth: .infinity).padding()
+                        Text(L("Short")).fontWeight(.semibold).frame(maxWidth: .infinity).padding()
                             .background(orderSide == "short" ? Color.red : Color(.systemGray6))
                             .foregroundColor(orderSide == "short" ? .white : .primary)
                     }
@@ -245,24 +245,24 @@ struct PerpsView: View {
                 .cornerRadius(12)
                 
                 // Order type
-                Picker("Order Type", selection: $orderType) {
-                    Text("Market").tag("market")
-                    Text("Limit").tag("limit")
+                Picker(L("Order Type"), selection: $orderType) {
+                    Text(L("Market")).tag("market")
+                    Text(L("Limit")).tag("limit")
                 }
                 .pickerStyle(.segmented)
                 
                 if orderType == "limit" {
-                    TextField("Limit Price", text: $limitPrice)
+                    TextField(L("Limit Price"), text: $limitPrice)
                         .textFieldStyle(.roundedBorder).keyboardType(.decimalPad)
                 }
                 
-                TextField("Size (USD)", text: $orderSize)
+                TextField(L("Size (USD)"), text: $orderSize)
                     .textFieldStyle(.roundedBorder).keyboardType(.decimalPad)
                 
                 // Leverage slider
                 VStack(alignment: .leading) {
                     HStack {
-                        Text("Leverage").font(.subheadline)
+                        Text(L("Leverage")).font(.subheadline)
                         Spacer()
                         Text("\(leverage)x").font(.subheadline).fontWeight(.bold)
                     }
@@ -280,7 +280,7 @@ struct PerpsView: View {
                 
                 // Slippage
                 HStack {
-                    Text("Slippage Tolerance").font(.caption).foregroundColor(.secondary)
+                    Text(L("Slippage Tolerance")).font(.caption).foregroundColor(.secondary)
                     Spacer()
                     Text("\(String(format: "%.1f", perpsManager.marketSlippage * 100))%").font(.caption)
                 }
@@ -294,7 +294,7 @@ struct PerpsView: View {
             if perpsManager.positions.isEmpty {
                 VStack(spacing: 16) {
                     Image(systemName: "chart.line.uptrend.xyaxis").font(.system(size: 48)).foregroundColor(.gray)
-                    Text("No open positions").foregroundColor(.secondary)
+                    Text(L("No open positions")).foregroundColor(.secondary)
                 }
                 .frame(maxWidth: .infinity).padding(.vertical, 60)
             } else {
@@ -302,30 +302,30 @@ struct PerpsView: View {
                     ForEach(perpsManager.positions) { pos in
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
-                                Text(pos.coin).font(.headline)
-                                Text(pos.side.uppercased()).font(.caption).fontWeight(.bold)
+                                Text(pos.symbol).font(.headline)
+                                Text(pos.side.displayName.uppercased()).font(.caption).fontWeight(.bold)
                                     .padding(.horizontal, 6).padding(.vertical, 2)
-                                    .background(pos.side == "long" ? Color.green.opacity(0.2) : Color.red.opacity(0.2))
-                                    .foregroundColor(pos.side == "long" ? .green : .red)
+                                    .background(pos.side == .long ? Color.green.opacity(0.2) : Color.red.opacity(0.2))
+                                    .foregroundColor(pos.side == .long ? .green : .red)
                                     .cornerRadius(4)
-                                Text("\(pos.leverage)x").font(.caption).foregroundColor(.secondary)
+                                Text("\(String(format: "%.0f", pos.leverage))x").font(.caption).foregroundColor(.secondary)
                                 Spacer()
-                                Text(pos.unrealizedPnl >= 0 ? "+$\(String(format: "%.2f", pos.unrealizedPnl))" : "-$\(String(format: "%.2f", abs(pos.unrealizedPnl)))")
-                                    .fontWeight(.bold).foregroundColor(pos.unrealizedPnl >= 0 ? .green : .red)
+                                Text(pos.formattedPnl)
+                                    .fontWeight(.bold).foregroundColor(pos.isProfitable ? .green : .red)
                             }
                             HStack {
                                 VStack(alignment: .leading) {
-                                    Text("Entry").font(.caption2).foregroundColor(.secondary)
+                                    Text(L("Entry")).font(.caption2).foregroundColor(.secondary)
                                     Text("$\(String(format: "%.2f", pos.entryPrice))").font(.caption)
                                 }
                                 Spacer()
                                 VStack {
-                                    Text("Mark").font(.caption2).foregroundColor(.secondary)
+                                    Text(L("Mark")).font(.caption2).foregroundColor(.secondary)
                                     Text("$\(String(format: "%.2f", pos.markPrice))").font(.caption)
                                 }
                                 Spacer()
                                 VStack(alignment: .trailing) {
-                                    Text("Size").font(.caption2).foregroundColor(.secondary)
+                                    Text(L("Size")).font(.caption2).foregroundColor(.secondary)
                                     Text("$\(String(format: "%.2f", pos.size))").font(.caption)
                                 }
                             }
@@ -343,7 +343,7 @@ struct PerpsView: View {
             if perpsManager.orders.isEmpty {
                 VStack(spacing: 16) {
                     Image(systemName: "list.clipboard").font(.system(size: 48)).foregroundColor(.gray)
-                    Text("No open orders").foregroundColor(.secondary)
+                    Text(L("No open orders")).foregroundColor(.secondary)
                 }
                 .frame(maxWidth: .infinity).padding(.vertical, 60)
             } else {
@@ -351,8 +351,8 @@ struct PerpsView: View {
                     ForEach(perpsManager.orders) { order in
                         HStack {
                             VStack(alignment: .leading) {
-                                Text("\(order.coin) \(order.side.capitalized)").fontWeight(.medium)
-                                Text("\(order.orderType.capitalized) · $\(String(format: "%.2f", order.size))").font(.caption).foregroundColor(.secondary)
+                                Text("\(order.symbol) \(order.side.displayName)").fontWeight(.medium)
+                                Text("\(order.orderType.displayName) · $\(String(format: "%.2f", order.size))").font(.caption).foregroundColor(.secondary)
                             }
                             Spacer()
                             if let price = order.price {
@@ -372,10 +372,13 @@ struct PerpsView: View {
     
     private func placeOrder() {
         Task {
-            _ = try? await perpsManager.placeOrder(
-                coin: selectedCoin, side: orderSide, size: Double(orderSize) ?? 0,
-                price: orderType == "limit" ? Double(limitPrice) : nil,
-                leverage: leverage, orderType: orderType
+            let side: PositionSide = orderSide == "long" ? .long : .short
+            let perpsOrderType: PerpsOrderType = orderType == "limit" ? .limit : .market
+            _ = try? await perpsManager.openPosition(
+                symbol: selectedCoin, side: side, size: Double(orderSize) ?? 0,
+                leverage: Double(leverage),
+                orderType: perpsOrderType,
+                price: orderType == "limit" ? Double(limitPrice) : nil
             )
             orderSize = ""
             limitPrice = ""
@@ -396,23 +399,23 @@ struct AdvancedSettingsView: View {
     
     var body: some View {
         List {
-            Section("Transaction") {
-                Toggle("Enable Gas Price Cache", isOn: $maxGasCache)
-                Toggle("Enable DApp Account Mode", isOn: $enabledDappAccount)
+            Section(L("Transaction")) {
+                Toggle(L("Enable Gas Price Cache"), isOn: $maxGasCache)
+                Toggle(L("Enable DApp Account Mode"), isOn: $enabledDappAccount)
             }
             
-            Section("Developer") {
-                NavigationLink("Custom RPC") { CustomRPCView() }
-                NavigationLink("Custom Testnet") { CustomTestnetView() }
+            Section(L("Developer")) {
+                NavigationLink(L("Custom RPC")) { CustomRPCView() }
+                NavigationLink(L("Custom Testnet")) { CustomTestnetView() }
             }
             
-            Section("Data") {
-                Button("Clear Transaction Cache") { /* TODO */ }
-                Button("Clear Token Cache") { /* TODO */ }
-                Button("Reset All Settings") { /* TODO */ }
+            Section(L("Data")) {
+                Button(L("Clear Transaction Cache")) { /* TODO */ }
+                Button(L("Clear Token Cache")) { /* TODO */ }
+                Button(L("Reset All Settings")) { /* TODO */ }
                     .foregroundColor(.red)
             }
         }
-        .navigationTitle("Advanced Settings")
+        .navigationTitle(L("Advanced Settings"))
     }
 }

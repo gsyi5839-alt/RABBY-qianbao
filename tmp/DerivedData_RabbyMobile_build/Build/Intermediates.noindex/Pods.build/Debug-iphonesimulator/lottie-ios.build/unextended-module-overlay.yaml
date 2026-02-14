@@ -1,0 +1,23 @@
+{
+  "version": 0,
+  "use-external-names": false,
+  "case-sensitive": false,
+  "roots": [{
+    "type": "directory",
+    "name": "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Products/Debug-iphonesimulator/lottie-ios/Lottie.framework/Modules",
+    "contents": [{
+      "type": "file",
+      "name": "module.modulemap",
+      "external-contents": "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/lottie-ios.build/unextended-module.modulemap",
+    }]
+    },
+    {
+    "type": "directory",
+    "name": "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Products/Debug-iphonesimulator/lottie-ios/Lottie.framework/Headers",
+    "contents": [{
+      "type": "file",
+      "name": "Lottie-Swift.h",
+      "external-contents": "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/lottie-ios.build/unextended-interface-header.h",
+    }]
+  }]
+}

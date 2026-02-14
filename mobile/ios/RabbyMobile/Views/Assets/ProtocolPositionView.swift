@@ -29,7 +29,7 @@ struct ProtocolPositionView: View {
             // Header
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("DeFi Positions")
+                    Text(L("DeFi Positions"))
                         .font(.headline)
                     Text(formatUSD(totalDeFiValue))
                         .font(.caption).foregroundColor(.secondary)
@@ -45,7 +45,7 @@ struct ProtocolPositionView: View {
             if isLoading && portfolios.isEmpty {
                 VStack(spacing: 12) {
                     ProgressView()
-                    Text("Loading DeFi positions...")
+                    Text(L("Loading DeFi positions..."))
                         .font(.caption).foregroundColor(.secondary)
                 }
                 .frame(maxWidth: .infinity)
@@ -54,7 +54,7 @@ struct ProtocolPositionView: View {
                 HStack(spacing: 8) {
                     Image(systemName: "building.columns")
                         .foregroundColor(.gray)
-                    Text("No DeFi positions")
+                    Text(L("No DeFi positions"))
                         .font(.subheadline).foregroundColor(.secondary)
                 }
                 .padding(.vertical, 16)

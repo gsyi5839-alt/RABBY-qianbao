@@ -1,0 +1,2939 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.2.4 effective-5.10 (swiftlang-6.2.4.1.4 clang-1700.6.4.2)
+// swift-module-flags: -target arm64-apple-ios15.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -Onone -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name WalletConnectSwiftV2
+// swift-module-flags-ignorable: -no-verify-emitted-module-interface -formal-cxx-interoperability-mode=off -interface-compiler-version 6.2.4
+import Combine
+import CryptoKit
+import DeviceCheck
+import Foundation
+import Foundation/*.Bundle*/
+import Network
+import Swift
+import UIKit
+@_exported import WalletConnectSwiftV2
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+public struct Account : Swift.Equatable, Swift.Hashable {
+  public let namespace: Swift.String
+  public let reference: Swift.String
+  public let address: Swift.String
+  public var blockchainIdentifier: Swift.String {
+    get
+  }
+  public var absoluteString: Swift.String {
+    get
+  }
+  public var blockchain: WalletConnectSwiftV2.Blockchain {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(_ string: Swift.String)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(chainIdentifier: Swift.String, address: Swift.String)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(blockchain: WalletConnectSwiftV2.Blockchain, address: Swift.String)
+  #endif
+  public static func == (a: WalletConnectSwiftV2.Account, b: WalletConnectSwiftV2.Account) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension WalletConnectSwiftV2.Account : Swift.LosslessStringConvertible {
+  public var description: Swift.String {
+    get
+  }
+}
+extension WalletConnectSwiftV2.Account : Swift.Codable {
+  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+extension CryptoKit.Curve25519.KeyAgreement.PublicKey : Swift.Equatable {
+  public static func == (lhs: CryptoKit.Curve25519.KeyAgreement.PublicKey, rhs: CryptoKit.Curve25519.KeyAgreement.PublicKey) -> Swift.Bool
+}
+extension CryptoKit.Curve25519.KeyAgreement.PrivateKey : Swift.Equatable {
+  public static func == (lhs: CryptoKit.Curve25519.KeyAgreement.PrivateKey, rhs: CryptoKit.Curve25519.KeyAgreement.PrivateKey) -> Swift.Bool
+}
+public struct AgreementPublicKey : WalletConnectSwiftV2.GenericPasswordConvertible, Swift.Equatable {
+  public init<D>(rawRepresentation data: D) throws where D : Foundation.ContiguousBytes
+  public init(hex: Swift.String) throws
+  public init(base64url: Swift.String) throws
+  public var rawRepresentation: Foundation.Data {
+    get
+  }
+  public var hexRepresentation: Swift.String {
+    get
+  }
+  public var did: Swift.String {
+    get
+  }
+  public static func == (a: WalletConnectSwiftV2.AgreementPublicKey, b: WalletConnectSwiftV2.AgreementPublicKey) -> Swift.Bool
+}
+extension WalletConnectSwiftV2.AgreementPublicKey : Swift.Codable {
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct AgreementPrivateKey : WalletConnectSwiftV2.GenericPasswordConvertible, Swift.Equatable {
+  public init()
+  public init(hex: Swift.String) throws
+  public init<D>(rawRepresentation: D) throws where D : Foundation.ContiguousBytes
+  public var rawRepresentation: Foundation.Data {
+    get
+  }
+  public var publicKey: WalletConnectSwiftV2.AgreementPublicKey {
+    get
+  }
+  public static func == (a: WalletConnectSwiftV2.AgreementPrivateKey, b: WalletConnectSwiftV2.AgreementPrivateKey) -> Swift.Bool
+}
+public struct AgreementKeys : Swift.Equatable {
+  public let sharedKey: WalletConnectSwiftV2.SymmetricKey
+  public let publicKey: WalletConnectSwiftV2.AgreementPublicKey
+  public func derivedTopic() -> Swift.String
+  public static func == (a: WalletConnectSwiftV2.AgreementKeys, b: WalletConnectSwiftV2.AgreementKeys) -> Swift.Bool
+}
+extension WalletConnectSwiftV2.AgreementKeys : WalletConnectSwiftV2.GenericPasswordConvertible {
+  public init<D>(rawRepresentation data: D) throws where D : Foundation.ContiguousBytes
+  public var rawRepresentation: Foundation.Data {
+    get
+  }
+}
+public struct AnyCodable {
+  public let value: Any
+  public init<C>(_ codable: C) where C : Swift.Decodable, C : Swift.Encodable
+  public init(any value: Any)
+  public func get<T>(_ type: T.Type) throws -> T where T : Swift.Decodable, T : Swift.Encodable
+  public var stringRepresentation: Swift.String {
+    get
+  }
+}
+extension WalletConnectSwiftV2.AnyCodable : Swift.Equatable {
+  public static func == (lhs: WalletConnectSwiftV2.AnyCodable, rhs: WalletConnectSwiftV2.AnyCodable) -> Swift.Bool
+}
+extension WalletConnectSwiftV2.AnyCodable : Swift.Hashable {
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension WalletConnectSwiftV2.AnyCodable : Swift.CustomStringConvertible {
+  public var description: Swift.String {
+    get
+  }
+}
+extension WalletConnectSwiftV2.AnyCodable : Swift.Decodable, Swift.Encodable {
+  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+public enum AnyCodableError : Swift.Error {
+  case nullFound
+  public static func == (a: WalletConnectSwiftV2.AnyCodableError, b: WalletConnectSwiftV2.AnyCodableError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum APNSEnvironment : Swift.String {
+  case production
+  case sandbox
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(rawValue: Swift.String)
+  #endif
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct AppMetadata : Swift.Codable, Swift.Equatable {
+  public struct Redirect : Swift.Codable, Swift.Equatable {
+    public let native: Swift.String?
+    public let universal: Swift.String?
+    public let linkMode: Swift.Bool?
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init(native: Swift.String, universal: Swift.String?, linkMode: Swift.Bool = false) throws
+    #endif
+    public static func == (a: WalletConnectSwiftV2.AppMetadata.Redirect, b: WalletConnectSwiftV2.AppMetadata.Redirect) -> Swift.Bool
+    public func encode(to encoder: any Swift.Encoder) throws
+    public init(from decoder: any Swift.Decoder) throws
+  }
+  public let name: Swift.String
+  public let description: Swift.String
+  public let url: Swift.String
+  public let icons: [Swift.String]
+  public let redirect: WalletConnectSwiftV2.AppMetadata.Redirect?
+  public init(name: Swift.String, description: Swift.String, url: Swift.String, icons: [Swift.String], redirect: WalletConnectSwiftV2.AppMetadata.Redirect)
+  public static func == (a: WalletConnectSwiftV2.AppMetadata, b: WalletConnectSwiftV2.AppMetadata) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension WalletConnectSwiftV2.AppMetadata {
+  public static func stub() -> WalletConnectSwiftV2.AppMetadata
+}
+@_hasMissingDesignatedInitializers public class Auth {
+  public static var instance: WalletConnectSwiftV2.AuthClient
+  public static func configure(crypto: any WalletConnectSwiftV2.CryptoProvider)
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers @available(*, deprecated, message: "Use SignClient for dApps and Web3Wallet interface for wallets instead.")
+public class AuthClient : WalletConnectSwiftV2.AuthClientProtocol {
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(*, deprecated, message: "Use SignClient for dApps and Web3Wallet interface for wallets instead.")
+  public var authRequestPublisher: Combine.AnyPublisher<(request: WalletConnectSwiftV2.AuthRequest, context: WalletConnectSwiftV2.VerifyContext?), Swift.Never> {
+    get
+  }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(*, deprecated, message: "Use SignClient for dApps and Web3Wallet interface for wallets instead.")
+  public var authResponsePublisher: Combine.AnyPublisher<(id: WalletConnectSwiftV2.RPCID, result: Swift.Result<WalletConnectSwiftV2.Cacao, WalletConnectSwiftV2.AuthErrors>), Swift.Never> {
+    get
+  }
+  #endif
+  @available(*, deprecated, message: "Use Web3Wallet interface for managing socket connection status.")
+  final public let socketConnectionStatusPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.SocketConnectionStatus, Swift.Never>
+  final public let logger: any WalletConnectSwiftV2.ConsoleLogging
+  @available(*, deprecated, message: "Use SignClient for sending authentication requests.")
+  public func request(_ params: WalletConnectSwiftV2.RequestParams, topic: Swift.String) async throws
+  @available(*, deprecated, message: "Use Web3Wallet interface for responding to authentication requests.")
+  public func respond(requestId: WalletConnectSwiftV2.RPCID, signature: WalletConnectSwiftV2.CacaoSignature, from account: WalletConnectSwiftV2.Account) async throws
+  @available(*, deprecated, message: "Use Web3Wallet interface for rejecting authentication requests.")
+  public func reject(requestId: WalletConnectSwiftV2.RPCID) async throws
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(*, deprecated, message: "Use SignClient for managing pending authentication requests.")
+  public func getPendingRequests() throws -> [(WalletConnectSwiftV2.AuthRequest, WalletConnectSwiftV2.VerifyContext?)]
+  #endif
+  @available(*, deprecated, message: "Use SignClient or Web3Wallet for message formatting.")
+  public func formatMessage(payload: WalletConnectSwiftV2.AuthPayloadStruct, address: Swift.String) throws -> Swift.String
+  @objc deinit
+}
+public struct AuthClientFactory {
+  public static func create(metadata: WalletConnectSwiftV2.AppMetadata, projectId: Swift.String, crypto: any WalletConnectSwiftV2.CryptoProvider, networkingClient: WalletConnectSwiftV2.NetworkingInteractor, pairingRegisterer: any WalletConnectSwiftV2.PairingRegisterer, groupIdentifier: Swift.String) -> WalletConnectSwiftV2.AuthClient
+}
+public protocol AuthClientProtocol {
+  #if compiler(>=5.3) && $NonescapableTypes
+  var authRequestPublisher: Combine.AnyPublisher<(request: WalletConnectSwiftV2.AuthRequest, context: WalletConnectSwiftV2.VerifyContext?), Swift.Never> { get }
+  #endif
+  func formatMessage(payload: WalletConnectSwiftV2.AuthPayloadStruct, address: Swift.String) throws -> Swift.String
+  func respond(requestId: WalletConnectSwiftV2.RPCID, signature: WalletConnectSwiftV2.CacaoSignature, from account: WalletConnectSwiftV2.Account) async throws
+  func reject(requestId: WalletConnectSwiftV2.RPCID) async throws
+  #if compiler(>=5.3) && $NonescapableTypes
+  func getPendingRequests() throws -> [(WalletConnectSwiftV2.AuthRequest, WalletConnectSwiftV2.VerifyContext?)]
+  #endif
+}
+public struct AuthenticationRequest : Swift.Equatable, Swift.Codable {
+  public let id: WalletConnectSwiftV2.RPCID
+  public let topic: Swift.String
+  public let payload: WalletConnectSwiftV2.AuthPayload
+  public let requester: WalletConnectSwiftV2.AppMetadata
+  public static func == (a: WalletConnectSwiftV2.AuthenticationRequest, b: WalletConnectSwiftV2.AuthenticationRequest) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public enum AuthError : Swift.Codable, Swift.Equatable, Swift.Error, Foundation.LocalizedError {
+  case methodUnsupported
+  case userDisconnected
+  case userRejeted
+  case malformedResponseParams
+  case malformedRequestParams
+  case messageCompromised
+  case signatureVerificationFailed
+  case userRejectedRequest
+  public static func == (a: WalletConnectSwiftV2.AuthError, b: WalletConnectSwiftV2.AuthError) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension WalletConnectSwiftV2.AuthError : WalletConnectSwiftV2.Reason {
+  public var code: Swift.Int {
+    get
+  }
+  public var message: Swift.String {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var errorDescription: Swift.String? {
+    get
+  }
+  #endif
+}
+public enum AuthErrors : Swift.Codable, Swift.Equatable, Swift.Error {
+  case methodUnsupported
+  case userDisconnected
+  case userRejeted
+  case malformedResponseParams
+  case malformedRequestParams
+  case messageCompromised
+  case signatureVerificationFailed
+  public static func == (a: WalletConnectSwiftV2.AuthErrors, b: WalletConnectSwiftV2.AuthErrors) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension WalletConnectSwiftV2.AuthErrors : WalletConnectSwiftV2.Reason {
+  public var code: Swift.Int {
+    get
+  }
+  public var message: Swift.String {
+    get
+  }
+}
+public typealias AuthObject = WalletConnectSwiftV2.Cacao
+public struct AuthPayload : Swift.Codable, Swift.Equatable {
+  public let domain: Swift.String
+  public let aud: Swift.String
+  public let version: Swift.String
+  public let nonce: Swift.String
+  public let chains: [Swift.String]
+  public let type: Swift.String
+  public let iat: Swift.String
+  public let nbf: Swift.String?
+  public let exp: Swift.String?
+  public let statement: Swift.String?
+  public let requestId: Swift.String?
+  public let resources: [Swift.String]?
+  public init(requestParams: WalletConnectSwiftV2.AuthRequestParams, iat: Swift.String)
+  public static func == (a: WalletConnectSwiftV2.AuthPayload, b: WalletConnectSwiftV2.AuthPayload) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct AuthPayloadBuilder {
+  public static func build(payload: WalletConnectSwiftV2.AuthPayload, supportedEVMChains: [WalletConnectSwiftV2.Blockchain], supportedMethods: [Swift.String]) throws -> WalletConnectSwiftV2.AuthPayload
+}
+public struct AuthPayloadStruct : Swift.Codable, Swift.Equatable {
+  public let domain: Swift.String
+  public let aud: Swift.String
+  public let version: Swift.String
+  public let nonce: Swift.String
+  public let chainId: Swift.String
+  public let type: Swift.String
+  public let iat: Swift.String
+  public let nbf: Swift.String?
+  public let exp: Swift.String?
+  public let statement: Swift.String?
+  public let requestId: Swift.String?
+  public let resources: [Swift.String]?
+  public func cacaoPayload(address: Swift.String) throws -> WalletConnectSwiftV2.CacaoPayload
+  public static func == (a: WalletConnectSwiftV2.AuthPayloadStruct, b: WalletConnectSwiftV2.AuthPayloadStruct) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct AuthRequest : Swift.Equatable, Swift.Codable {
+  public let id: WalletConnectSwiftV2.RPCID
+  public let topic: Swift.String
+  public let payload: WalletConnectSwiftV2.AuthPayloadStruct
+  public let requester: WalletConnectSwiftV2.AppMetadata
+  public static func == (a: WalletConnectSwiftV2.AuthRequest, b: WalletConnectSwiftV2.AuthRequest) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct AuthRequestParams {
+  public enum Errors : Swift.Error {
+    case invalidTtl
+    public static func == (a: WalletConnectSwiftV2.AuthRequestParams.Errors, b: WalletConnectSwiftV2.AuthRequestParams.Errors) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public let domain: Swift.String
+  public let chains: [Swift.String]
+  public let nonce: Swift.String
+  public let uri: Swift.String
+  public let nbf: Swift.String?
+  public let exp: Swift.String?
+  public let statement: Swift.String?
+  public let requestId: Swift.String?
+  public var resources: [Swift.String]?
+  public let methods: [Swift.String]?
+  public let ttl: Foundation.TimeInterval
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(domain: Swift.String, chains: [Swift.String], nonce: Swift.String, uri: Swift.String, nbf: Swift.String?, exp: Swift.String?, statement: Swift.String?, requestId: Swift.String?, resources: [Swift.String]?, methods: [Swift.String]?, ttl: Foundation.TimeInterval = 3600) throws
+  #endif
+}
+public struct AuthRespondParams : Swift.Equatable {
+  public init(id: WalletConnectSwiftV2.RPCID, signature: WalletConnectSwiftV2.CacaoSignature)
+  public static func == (a: WalletConnectSwiftV2.AuthRespondParams, b: WalletConnectSwiftV2.AuthRespondParams) -> Swift.Bool
+}
+public struct Base58 {
+  public static func encode(_ bytes: Foundation.Data) -> Swift.String
+  public static func decode(_ string: Swift.String) -> Foundation.Data
+}
+public enum DerivationPath {
+  case hardened(Swift.UInt32)
+  case notHardened(Swift.UInt32)
+}
+public protocol BIP44Provider {
+  func derive(entropy: Foundation.Data, path: [WalletConnectSwiftV2.DerivationPath]) -> Foundation.Data
+}
+public struct Blockchain : Swift.Equatable, Swift.Hashable {
+  public let namespace: Swift.String
+  public let reference: Swift.String
+  public var absoluteString: Swift.String {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(_ string: Swift.String)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(namespace: Swift.String, reference: Swift.String)
+  #endif
+  public static func == (a: WalletConnectSwiftV2.Blockchain, b: WalletConnectSwiftV2.Blockchain) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension WalletConnectSwiftV2.Blockchain : Swift.LosslessStringConvertible {
+  public var description: Swift.String {
+    get
+  }
+}
+extension WalletConnectSwiftV2.Blockchain : Swift.Codable {
+  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+public struct Cacao : Swift.Codable, Swift.Equatable {
+  public let h: WalletConnectSwiftV2.CacaoHeader
+  public let p: WalletConnectSwiftV2.CacaoPayload
+  public let s: WalletConnectSwiftV2.CacaoSignature
+  public init(h: WalletConnectSwiftV2.CacaoHeader, p: WalletConnectSwiftV2.CacaoPayload, s: WalletConnectSwiftV2.CacaoSignature)
+  public static func == (a: WalletConnectSwiftV2.Cacao, b: WalletConnectSwiftV2.Cacao) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct CacaoHeader : Swift.Codable, Swift.Equatable {
+  public let t: Swift.String
+  public init(t: Swift.String)
+  public static func == (a: WalletConnectSwiftV2.CacaoHeader, b: WalletConnectSwiftV2.CacaoHeader) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct CacaoPayload : Swift.Codable, Swift.Equatable {
+  public let iss: Swift.String
+  public let domain: Swift.String
+  public let aud: Swift.String
+  public let version: Swift.String
+  public let nonce: Swift.String
+  public let iat: Swift.String
+  public let nbf: Swift.String?
+  public let exp: Swift.String?
+  public let statement: Swift.String?
+  public let requestId: Swift.String?
+  public let resources: [Swift.String]?
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(iss: Swift.String, domain: Swift.String, aud: Swift.String, version: Swift.String, nonce: Swift.String, iat: Swift.String, nbf: Swift.String?, exp: Swift.String?, statement: Swift.String?, requestId: Swift.String?, resources: [Swift.String]?)
+  #endif
+  public static func == (a: WalletConnectSwiftV2.CacaoPayload, b: WalletConnectSwiftV2.CacaoPayload) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public enum CacaoSignatureType : Swift.String, Swift.Codable {
+  case eip191
+  case eip1271
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(rawValue: Swift.String)
+  #endif
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct CacaoSignature : Swift.Codable, Swift.Equatable {
+  public let t: WalletConnectSwiftV2.CacaoSignatureType
+  public let s: Swift.String
+  public let m: Swift.String?
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(t: WalletConnectSwiftV2.CacaoSignatureType, s: Swift.String, m: Swift.String? = nil)
+  #endif
+  public static func == (a: WalletConnectSwiftV2.CacaoSignature, b: WalletConnectSwiftV2.CacaoSignature) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension Foundation.CharacterSet {
+  public static var rfc3986: Foundation.CharacterSet {
+    get
+  }
+}
+public protocol ClientIdAuthenticating {
+  func createAuthToken(url: Swift.String) throws -> Swift.String
+}
+final public class ClientIdAuthenticator : WalletConnectSwiftV2.ClientIdAuthenticating {
+  public init(clientIdStorage: any WalletConnectSwiftV2.ClientIdStoring)
+  final public func createAuthToken(url: Swift.String) throws -> Swift.String
+  @objc deinit
+}
+public protocol ClientIdStoring {
+  func getOrCreateKeyPair() throws -> WalletConnectSwiftV2.SigningPrivateKey
+  func getClientId() throws -> Swift.String
+}
+public struct ClientIdStorage : WalletConnectSwiftV2.ClientIdStoring {
+  public init(defaults: any WalletConnectSwiftV2.KeyValueStorage, keychain: any WalletConnectSwiftV2.KeychainStorageProtocol, logger: any WalletConnectSwiftV2.ConsoleLogging)
+  public func getOrCreateKeyPair() throws -> WalletConnectSwiftV2.SigningPrivateKey
+  public func getClientId() throws -> Swift.String
+}
+final public class CodableStore<T> where T : Swift.Decodable, T : Swift.Encodable {
+  final public var storeUpdatePublisher: Combine.AnyPublisher<Swift.Void, Swift.Never> {
+    get
+  }
+  public init(defaults: any WalletConnectSwiftV2.KeyValueStorage, identifier: Swift.String)
+  final public func set(_ item: T, forKey key: Swift.String)
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func get(key: Swift.String) throws -> T?
+  #endif
+  final public func getAll() -> [T]
+  final public func delete(forKey key: Swift.String)
+  final public func delete(forKeys keys: [Swift.String])
+  final public func deleteAll()
+  @objc deinit
+}
+public protocol ConsoleLogging : WalletConnectSwiftV2.ErrorHandler {
+  var logsPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.Log, Swift.Never> { get }
+  #if compiler(>=5.3) && $NonescapableTypes
+  func debug(_ items: Any..., file: Swift.String, function: Swift.String, line: Swift.Int, properties: [Swift.String : Swift.String]?)
+  #endif
+  func info(_ items: Any..., file: Swift.String, function: Swift.String, line: Swift.Int)
+  func warn(_ items: Any..., file: Swift.String, function: Swift.String, line: Swift.Int)
+  func error(_ items: Any..., file: Swift.String, function: Swift.String, line: Swift.Int)
+  func setLogging(level: WalletConnectSwiftV2.LoggingLevel)
+}
+extension WalletConnectSwiftV2.ConsoleLogging {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func debug(_ items: Any..., file: Swift.String = #file, function: Swift.String = #function, line: Swift.Int = #line, properties: [Swift.String : Swift.String]? = nil)
+  #endif
+  public func info(_ items: Any..., file: Swift.String = #file, function: Swift.String = #function, line: Swift.Int = #line)
+  public func warn(_ items: Any..., file: Swift.String = #file, function: Swift.String = #function, line: Swift.Int = #line)
+  public func error(_ items: Any..., file: Swift.String = #file, function: Swift.String = #function, line: Swift.Int = #line)
+}
+public class ConsoleLogger {
+  public var logsPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.Log, Swift.Never> {
+    get
+  }
+  public func setLogging(level: WalletConnectSwiftV2.LoggingLevel)
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(prefix: Swift.String? = nil, loggingLevel: WalletConnectSwiftV2.LoggingLevel = .warn)
+  #endif
+  @objc deinit
+}
+extension WalletConnectSwiftV2.ConsoleLogger : WalletConnectSwiftV2.ConsoleLogging {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func debug(_ items: Any..., file: Swift.String, function: Swift.String, line: Swift.Int, properties: [Swift.String : Swift.String]?)
+  #endif
+  public func info(_ items: Any..., file: Swift.String, function: Swift.String, line: Swift.Int)
+  public func warn(_ items: Any..., file: Swift.String, function: Swift.String, line: Swift.Int)
+  public func error(_ items: Any..., file: Swift.String, function: Swift.String, line: Swift.Int)
+  public func handle(error: any Swift.Error)
+}
+public struct ConsoleLoggerMock : WalletConnectSwiftV2.ConsoleLogging {
+  public var logsPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.Log, Swift.Never> {
+    get
+  }
+  public init()
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func debug(_ items: Any..., file: Swift.String, function: Swift.String, line: Swift.Int, properties: [Swift.String : Swift.String]?)
+  #endif
+  public func info(_ items: Any..., file: Swift.String, function: Swift.String, line: Swift.Int)
+  public func warn(_ items: Any..., file: Swift.String, function: Swift.String, line: Swift.Int)
+  public func error(_ items: Any..., file: Swift.String, function: Swift.String, line: Swift.Int)
+  public func setLogging(level: WalletConnectSwiftV2.LoggingLevel)
+  public func handle(error: any Swift.Error)
+}
+public protocol CryptoProvider {
+  func recoverPubKey(signature: WalletConnectSwiftV2.EthereumSignature, message: Foundation.Data) throws -> Foundation.Data
+  func keccak256(_ data: Foundation.Data) -> Foundation.Data
+}
+extension Foundation.Data {
+  public static func randomBytes(count: Swift.Int) -> Foundation.Data
+}
+extension Foundation.Data {
+  public init(hex: Swift.String)
+  public func toHexString() -> Swift.String
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(base64url: Swift.String)
+  #endif
+}
+extension Foundation.Data {
+  public var prefixed: Foundation.Data {
+    get
+  }
+}
+extension Foundation.Date {
+  public var millisecondsSince1970: Swift.UInt64 {
+    get
+  }
+  public init(milliseconds: Swift.UInt64)
+}
+public struct DIDKey {
+  public let rawData: Foundation.Data
+  public init(did: Swift.String) throws
+  public init(rawData: Foundation.Data)
+  public var hexString: Swift.String {
+    get
+  }
+  public func multibase(variant: WalletConnectSwiftV2.DIDKeyVariant) -> Swift.String
+  public func did(variant: WalletConnectSwiftV2.DIDKeyVariant) -> Swift.String
+}
+public enum DIDKeyVariant {
+  case ED25519
+  case X25519
+  public static func == (a: WalletConnectSwiftV2.DIDKeyVariant, b: WalletConnectSwiftV2.DIDKeyVariant) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct DIDPKH {
+  public let account: WalletConnectSwiftV2.Account
+  public let did: Swift.String
+  public init(did: Swift.String) throws
+  public init(account: WalletConnectSwiftV2.Account)
+}
+extension WalletConnectSwiftV2.Account {
+  public init(DIDPKHString: Swift.String) throws
+  public var did: Swift.String {
+    get
+  }
+}
+public struct DIDWeb {
+  public let host: Swift.String
+  public init(url: Foundation.URL) throws
+  public init(did: Swift.String) throws
+  public init(host: Swift.String)
+  public var did: Swift.String {
+    get
+  }
+}
+public struct EIP55 {
+  public init(crypto: any WalletConnectSwiftV2.CryptoProvider)
+  public func encode(_ string: Swift.String) -> Swift.String
+  public func encode(_ data: Foundation.Data) -> Swift.String
+}
+public enum Either<L, R> {
+  case left(L)
+  case right(R)
+}
+extension WalletConnectSwiftV2.Either {
+  public init(_ left: L)
+  public init(_ right: R)
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var left: L? {
+    get
+  }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var right: R? {
+    get
+  }
+  #endif
+}
+extension WalletConnectSwiftV2.Either : Swift.Equatable where L : Swift.Equatable, R : Swift.Equatable {
+  public static func == (lhs: WalletConnectSwiftV2.Either<L, R>, rhs: WalletConnectSwiftV2.Either<L, R>) -> Swift.Bool
+}
+extension WalletConnectSwiftV2.Either : Swift.Hashable where L : Swift.Hashable, R : Swift.Hashable {
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension WalletConnectSwiftV2.Either : Swift.Codable where L : Swift.Decodable, L : Swift.Encodable, R : Swift.Decodable, R : Swift.Encodable {
+  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+extension WalletConnectSwiftV2.Either : Swift.CustomStringConvertible {
+  public var description: Swift.String {
+    get
+  }
+}
+public enum DataConversionError : Swift.Error {
+  case stringToDataFailed
+  case dataToStringFailed
+  public static func == (a: WalletConnectSwiftV2.DataConversionError, b: WalletConnectSwiftV2.DataConversionError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension Swift.Encodable {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func json(dateEncodingStrategy: Foundation.JSONEncoder.DateEncodingStrategy? = nil) throws -> Swift.String
+  #endif
+  public func asJSONEncodedString() throws -> Swift.String
+}
+@_hasMissingDesignatedInitializers public actor ENSResolver {
+  public func resolveEns(account: WalletConnectSwiftV2.Account) async throws -> Swift.String
+  public func resolveAddress(ens: Swift.String, blockchain: WalletConnectSwiftV2.Blockchain) async throws -> WalletConnectSwiftV2.Account
+  @objc deinit
+  @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
+  @_semantics("defaultActor") nonisolated final public var unownedExecutor: _Concurrency.UnownedSerialExecutor {
+    get
+  }
+}
+final public class ENSResolverFactory {
+  final public let crypto: any WalletConnectSwiftV2.CryptoProvider
+  public init(crypto: any WalletConnectSwiftV2.CryptoProvider)
+  final public func create() -> WalletConnectSwiftV2.ENSResolver
+  final public func create(projectId: Swift.String) -> WalletConnectSwiftV2.ENSResolver
+  @objc deinit
+}
+public struct Envelope : Swift.Equatable {
+  public enum CodingType : Swift.Equatable, Swift.Codable {
+    case base64Encoded
+    case base64UrlEncoded
+    public static func == (a: WalletConnectSwiftV2.Envelope.CodingType, b: WalletConnectSwiftV2.Envelope.CodingType) -> Swift.Bool
+    public func encode(to encoder: any Swift.Encoder) throws
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+    public init(from decoder: any Swift.Decoder) throws
+  }
+  public enum Errors : Swift.String, Swift.Error {
+    case malformedEnvelope
+    case unsupportedEnvelopeType
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(rawValue: Swift.String)
+    #endif
+    public typealias RawValue = Swift.String
+    public var rawValue: Swift.String {
+      get
+    }
+  }
+  public static func == (a: WalletConnectSwiftV2.Envelope, b: WalletConnectSwiftV2.Envelope) -> Swift.Bool
+}
+extension WalletConnectSwiftV2.Envelope {
+  public enum EnvelopeType : Swift.Equatable {
+    case type0
+    case type1(pubKey: Foundation.Data)
+    case type2
+    public static func == (a: WalletConnectSwiftV2.Envelope.EnvelopeType, b: WalletConnectSwiftV2.Envelope.EnvelopeType) -> Swift.Bool
+  }
+}
+public enum EnvironmentInfo {
+  public static var userAgent: Swift.String {
+    get
+  }
+  public static var protocolName: Swift.String {
+    get
+  }
+  public static var sdkName: Swift.String {
+    get
+  }
+  public static var packageVersion: Swift.String {
+    get
+  }
+  public static var operatingSystem: Swift.String {
+    get
+  }
+}
+public protocol ErrorHandler {
+  func handle(error: any Swift.Error)
+}
+public struct EthereumSignature {
+  public let v: Swift.UInt8
+  public let r: [Swift.UInt8]
+  public let s: [Swift.UInt8]
+  public init(v: Swift.UInt8, r: [Swift.UInt8], s: [Swift.UInt8])
+  public init(serialized: Foundation.Data)
+  public var serialized: Foundation.Data {
+    get
+  }
+  public func hex() -> Swift.String
+}
+public protocol EthereumSigner {
+  func sign(message: Foundation.Data, with key: Foundation.Data) throws -> WalletConnectSwiftV2.EthereumSignature
+}
+@_hasMissingDesignatedInitializers public class Events {
+  public static var instance: WalletConnectSwiftV2.EventsClient
+  @objc deinit
+}
+public protocol EventsClientProtocol {
+  func startTrace(topic: Swift.String)
+  func saveEvent(_ event: any WalletConnectSwiftV2.TraceEvent)
+  func setTopic(_ topic: Swift.String)
+  func setTelemetryEnabled(_ enabled: Swift.Bool)
+}
+@_hasMissingDesignatedInitializers public class EventsClient : WalletConnectSwiftV2.EventsClientProtocol {
+  public func setLogging(level: WalletConnectSwiftV2.LoggingLevel)
+  public func startTrace(topic: Swift.String)
+  public func setTopic(_ topic: Swift.String)
+  public func saveEvent(_ event: any WalletConnectSwiftV2.TraceEvent)
+  public func setTelemetryEnabled(_ enabled: Swift.Bool)
+  @objc deinit
+}
+public class MockEventsClient : WalletConnectSwiftV2.EventsClientProtocol {
+  public init()
+  public func startTrace(topic: Swift.String)
+  public func setTopic(_ topic: Swift.String)
+  public func saveEvent(_ event: any WalletConnectSwiftV2.TraceEvent)
+  public func setTelemetryEnabled(_ enabled: Swift.Bool)
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class EventsClientFactory {
+  @objc deinit
+}
+public protocol TraceEvent : Swift.CustomStringConvertible {
+  var description: Swift.String { get }
+}
+public protocol GenericPasswordConvertible {
+  init<D>(rawRepresentation data: D) throws where D : Foundation.ContiguousBytes
+  var rawRepresentation: Foundation.Data { get }
+}
+final public class GroupKeychainStorage : WalletConnectSwiftV2.KeychainStorageProtocol {
+  public init(keychainService: any WalletConnectSwiftV2.KeychainServiceProtocol = KeychainServiceWrapper(), serviceIdentifier: Swift.String)
+  final public func add<T>(_ item: T, forKey key: Swift.String) throws where T : WalletConnectSwiftV2.GenericPasswordConvertible
+  final public func add(data: Foundation.Data, forKey key: Swift.String) throws
+  final public func read<T>(key: Swift.String) throws -> T where T : WalletConnectSwiftV2.GenericPasswordConvertible
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func readData(key: Swift.String) throws -> Foundation.Data?
+  #endif
+  final public func update<T>(_ item: T, forKey key: Swift.String) throws where T : WalletConnectSwiftV2.GenericPasswordConvertible
+  final public func update(data: Foundation.Data, forKey key: Swift.String) throws
+  final public func delete(key: Swift.String) throws
+  final public func deleteAll() throws
+  @objc deinit
+}
+extension Foundation.Data {
+  public func sha256() -> Foundation.Data
+}
+public protocol HTTPClient {
+  func request<T>(_ type: T.Type, at service: any WalletConnectSwiftV2.HTTPService) async throws -> T where T : Swift.Decodable
+  func request(service: any WalletConnectSwiftV2.HTTPService) async throws
+  func updateHost(host: Swift.String) async
+}
+public enum HTTPError : Swift.Error, Swift.Equatable {
+  case malformedURL(any WalletConnectSwiftV2.HTTPService)
+  case couldNotConnect
+  case dataTaskError(any Swift.Error)
+  case noResponse
+  case badStatusCode(Swift.Int)
+  case responseDataNil
+  case jsonDecodeFailed(any Swift.Error, Foundation.Data)
+  public static func == (lhs: WalletConnectSwiftV2.HTTPError, rhs: WalletConnectSwiftV2.HTTPError) -> Swift.Bool
+}
+public actor HTTPNetworkClient : WalletConnectSwiftV2.HTTPClient {
+  public init(host: Swift.String, session: Foundation.URLSession = .shared)
+  public func request<T>(_ type: T.Type, at service: any WalletConnectSwiftV2.HTTPService) async throws -> T where T : Swift.Decodable
+  public func request(service: any WalletConnectSwiftV2.HTTPService) async throws
+  public func updateHost(host: Swift.String) async
+  @objc deinit
+  @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
+  @_semantics("defaultActor") nonisolated final public var unownedExecutor: _Concurrency.UnownedSerialExecutor {
+    get
+  }
+}
+public enum HTTPMethod : Swift.String {
+  case get
+  case post
+  case delete
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(rawValue: Swift.String)
+  #endif
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public protocol HTTPService {
+  var scheme: Swift.String { get }
+  var path: Swift.String { get }
+  var method: WalletConnectSwiftV2.HTTPMethod { get }
+  #if compiler(>=5.3) && $NonescapableTypes
+  var body: Foundation.Data? { get }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  var queryParameters: [Swift.String : Swift.String]? { get }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  var additionalHeaderFields: [Swift.String : Swift.String]? { get }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func resolve(for host: Swift.String) -> Foundation.URLRequest?
+  #endif
+}
+extension WalletConnectSwiftV2.HTTPService {
+  public var scheme: Swift.String {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func resolve(for host: Swift.String) -> Foundation.URLRequest?
+  #endif
+}
+public protocol IATProvider {
+  var iat: Swift.String { get }
+}
+public struct DefaultIATProvider : WalletConnectSwiftV2.IATProvider {
+  public init()
+  public var iat: Swift.String {
+    get
+  }
+}
+extension Foundation.JSONEncoder {
+  public static var jwt: Foundation.JSONEncoder {
+    get
+  }
+}
+public struct JsonRpcID {
+  public static func generate() -> Swift.Int64
+  public static func timestamp(from id: Swift.Int64) -> Foundation.Date
+}
+public struct JSONRPCError : Swift.Error, Swift.Equatable, Swift.Codable {
+  public let code: Swift.Int
+  public let message: Swift.String
+  public let data: WalletConnectSwiftV2.AnyCodable?
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(code: Swift.Int, message: Swift.String, data: WalletConnectSwiftV2.AnyCodable? = nil)
+  #endif
+  public static func == (a: WalletConnectSwiftV2.JSONRPCError, b: WalletConnectSwiftV2.JSONRPCError) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension WalletConnectSwiftV2.JSONRPCError {
+  public static let parseError: WalletConnectSwiftV2.JSONRPCError
+  public static let invalidRequest: WalletConnectSwiftV2.JSONRPCError
+  public static let methodNotFound: WalletConnectSwiftV2.JSONRPCError
+  public static let invalidParams: WalletConnectSwiftV2.JSONRPCError
+  public static let internalError: WalletConnectSwiftV2.JSONRPCError
+}
+public protocol JWTWrapper : Swift.Decodable, Swift.Encodable {
+  var jwtString: Swift.String { get }
+  init(jwtString: Swift.String)
+}
+public protocol JWTClaims : WalletConnectSwiftV2.JWTEncodable {
+  var iss: Swift.String { get }
+  var iat: Swift.UInt64 { get }
+  var exp: Swift.UInt64 { get }
+  #if compiler(>=5.3) && $NonescapableTypes
+  var act: Swift.String? { get }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  static var action: Swift.String? { get }
+  #endif
+}
+public protocol JWTClaimsCodable {
+  associatedtype Claims : WalletConnectSwiftV2.JWTClaims
+  associatedtype Wrapper : WalletConnectSwiftV2.JWTWrapper
+  init(claims: Self.Claims) throws
+  func encode(iss: Swift.String) throws -> Self.Claims
+}
+extension WalletConnectSwiftV2.JWTClaimsCodable {
+  public static func decodeAndVerify(from wrapper: Self.Wrapper) throws -> (Self, Self.Claims)
+  public func signAndCreateWrapper(keyPair: WalletConnectSwiftV2.SigningPrivateKey) throws -> Self.Wrapper
+  public func defaultIat() -> Swift.UInt64
+  public func defaultIatMilliseconds() -> Swift.UInt64
+  public func expiry(days: Swift.Int) -> Swift.UInt64
+}
+public protocol JWTEncodable : Swift.Decodable, Swift.Encodable, Swift.Equatable {
+  func encode(jsonEncoder: Foundation.JSONEncoder) throws -> Swift.String
+  static func decode(from string: Swift.String) throws -> Self
+}
+extension WalletConnectSwiftV2.JWTEncodable {
+  public func encode(jsonEncoder: Foundation.JSONEncoder) throws -> Swift.String
+  public static func decode(from string: Swift.String) throws -> Self
+}
+public struct JWTValidator {
+  public init(jwtString: Swift.String)
+  public func isValid(publicKey: WalletConnectSwiftV2.SigningPublicKey) throws -> Swift.Bool
+}
+public struct P256JWTValidator {
+  public init(jwtString: Swift.String)
+  public func isValid(publicKey: CryptoKit.P256.Signing.PublicKey) throws -> Swift.Bool
+}
+public enum KeychainError : Swift.Error, Foundation.LocalizedError {
+  case itemNotFound
+  case other(Darwin.OSStatus)
+  public init(_ status: Darwin.OSStatus)
+  public var status: Darwin.OSStatus {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var errorDescription: Swift.String? {
+    get
+  }
+  #endif
+}
+extension WalletConnectSwiftV2.KeychainError : Swift.CustomStringConvertible {
+  public var description: Swift.String {
+    get
+  }
+}
+public protocol KeychainServiceProtocol {
+  #if compiler(>=5.3) && $NonescapableTypes
+  func add(_ attributes: CoreFoundation.CFDictionary, _ result: Swift.UnsafeMutablePointer<CoreFoundation.CFTypeRef?>?) -> Darwin.OSStatus
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func copyMatching(_ query: CoreFoundation.CFDictionary, _ result: Swift.UnsafeMutablePointer<CoreFoundation.CFTypeRef?>?) -> Darwin.OSStatus
+  #endif
+  func update(_ query: CoreFoundation.CFDictionary, _ attributesToUpdate: CoreFoundation.CFDictionary) -> Darwin.OSStatus
+  func delete(_ query: CoreFoundation.CFDictionary) -> Darwin.OSStatus
+}
+final public class KeychainServiceWrapper : WalletConnectSwiftV2.KeychainServiceProtocol {
+  public init()
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func add(_ attributes: CoreFoundation.CFDictionary, _ result: Swift.UnsafeMutablePointer<CoreFoundation.CFTypeRef?>?) -> Darwin.OSStatus
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func copyMatching(_ query: CoreFoundation.CFDictionary, _ result: Swift.UnsafeMutablePointer<CoreFoundation.CFTypeRef?>?) -> Darwin.OSStatus
+  #endif
+  final public func update(_ query: CoreFoundation.CFDictionary, _ attributesToUpdate: CoreFoundation.CFDictionary) -> Darwin.OSStatus
+  final public func delete(_ query: CoreFoundation.CFDictionary) -> Darwin.OSStatus
+  @objc deinit
+}
+public protocol KeychainStorageProtocol {
+  func add<T>(_ item: T, forKey key: Swift.String) throws where T : WalletConnectSwiftV2.GenericPasswordConvertible
+  func read<T>(key: Swift.String) throws -> T where T : WalletConnectSwiftV2.GenericPasswordConvertible
+  func delete(key: Swift.String) throws
+  func deleteAll() throws
+}
+final public class KeychainStorage : WalletConnectSwiftV2.KeychainStorageProtocol {
+  public init(keychainService: any WalletConnectSwiftV2.KeychainServiceProtocol = KeychainServiceWrapper(), serviceIdentifier: Swift.String, accessGroup: Swift.String)
+  final public func add<T>(_ item: T, forKey key: Swift.String) throws where T : WalletConnectSwiftV2.GenericPasswordConvertible
+  final public func add(data: Foundation.Data, forKey key: Swift.String) throws
+  final public func read<T>(key: Swift.String) throws -> T where T : WalletConnectSwiftV2.GenericPasswordConvertible
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func readData(key: Swift.String) throws -> Foundation.Data?
+  #endif
+  final public func update<T>(_ item: T, forKey key: Swift.String) throws where T : WalletConnectSwiftV2.GenericPasswordConvertible
+  final public func update(data: Foundation.Data, forKey key: Swift.String) throws
+  final public func delete(key: Swift.String) throws
+  final public func deleteAll() throws
+  @objc deinit
+}
+public protocol DatabaseObject : Swift.Decodable, Swift.Encodable, Swift.Equatable {
+  var databaseId: Swift.String { get }
+}
+public class KeyedDatabase<Element> where Element : WalletConnectSwiftV2.DatabaseObject {
+  public typealias Index = [Swift.String : [Swift.String : Element]]
+  public var index: WalletConnectSwiftV2.KeyedDatabase<Element>.Index {
+    get
+    set
+  }
+  public var onUpdate: (() -> Swift.Void)?
+  public init(storage: any WalletConnectSwiftV2.KeyValueStorage, identifier: Swift.String)
+  public func getAll() -> [Element]
+  public func getAll(for key: Swift.String) -> [Element]
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func getElement(for key: Swift.String, id: Swift.String) -> Element?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func find(id: Swift.String) -> (key: Swift.String, element: Element)?
+  #endif
+  public func exists(for key: Swift.String, id: Swift.String) -> Swift.Bool
+  @discardableResult
+  public func set(elements: [Element], for key: Swift.String) -> Swift.Bool
+  @discardableResult
+  public func replace(elements: [Element], for key: Swift.String) -> Swift.Bool
+  @discardableResult
+  public func set(element: Element, for key: Swift.String) -> Swift.Bool
+  @discardableResult
+  public func delete(id: Swift.String, for key: Swift.String) -> Swift.Bool
+  @discardableResult
+  public func deleteAll(for key: Swift.String) -> Swift.Bool
+  @objc deinit
+}
+public protocol KeyManagementServiceProtocol {
+  func createX25519KeyPair() throws -> WalletConnectSwiftV2.AgreementPublicKey
+  func createSymmetricKey(_ topic: Swift.String) throws -> WalletConnectSwiftV2.SymmetricKey
+  func setPrivateKey(_ privateKey: WalletConnectSwiftV2.AgreementPrivateKey) throws
+  func setPublicKey(publicKey: WalletConnectSwiftV2.AgreementPublicKey, for topic: Swift.String) throws
+  func setAgreementSecret(_ agreementSecret: WalletConnectSwiftV2.AgreementKeys, topic: Swift.String) throws
+  func setSymmetricKey(_ symmetricKey: WalletConnectSwiftV2.SymmetricKey, for topic: Swift.String) throws
+  func setTopic(_ topic: Swift.String, for key: Swift.String) throws
+  #if compiler(>=5.3) && $NonescapableTypes
+  func getPrivateKey(for publicKey: WalletConnectSwiftV2.AgreementPublicKey) throws -> WalletConnectSwiftV2.AgreementPrivateKey?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func getAgreementSecret(for topic: Swift.String) -> WalletConnectSwiftV2.AgreementKeys?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func getSymmetricKey(for topic: Swift.String) -> WalletConnectSwiftV2.SymmetricKey?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func getSymmetricKeyRepresentable(for topic: Swift.String) -> Foundation.Data?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func getPublicKey(for topic: Swift.String) -> WalletConnectSwiftV2.AgreementPublicKey?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func getTopic(for key: Swift.String) -> Swift.String?
+  #endif
+  func deletePrivateKey(for publicKey: Swift.String)
+  func deleteAgreementSecret(for topic: Swift.String)
+  func deleteSymmetricKey(for topic: Swift.String)
+  func deletePublicKey(for topic: Swift.String)
+  func deleteAll() throws
+  func deleteTopic(for key: Swift.String)
+  func performKeyAgreement(selfPublicKey: WalletConnectSwiftV2.AgreementPublicKey, peerPublicKey hexRepresentation: Swift.String) throws -> WalletConnectSwiftV2.AgreementKeys
+}
+public class KeyManagementService : WalletConnectSwiftV2.KeyManagementServiceProtocol {
+  public init(keychain: any WalletConnectSwiftV2.KeychainStorageProtocol)
+  public func createX25519KeyPair() throws -> WalletConnectSwiftV2.AgreementPublicKey
+  public func createSymmetricKey(_ topic: Swift.String) throws -> WalletConnectSwiftV2.SymmetricKey
+  public func setSymmetricKey(_ symmetricKey: WalletConnectSwiftV2.SymmetricKey, for topic: Swift.String) throws
+  public func setPrivateKey(_ privateKey: WalletConnectSwiftV2.AgreementPrivateKey) throws
+  public func setPublicKey(publicKey: WalletConnectSwiftV2.AgreementPublicKey, for topic: Swift.String) throws
+  public func setAgreementSecret(_ agreementSecret: WalletConnectSwiftV2.AgreementKeys, topic: Swift.String) throws
+  public func setTopic(_ topic: Swift.String, for key: Swift.String) throws
+  public func deleteTopic(for key: Swift.String)
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func getSymmetricKey(for topic: Swift.String) -> WalletConnectSwiftV2.SymmetricKey?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func getSymmetricKeyRepresentable(for topic: Swift.String) -> Foundation.Data?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func getPrivateKey(for publicKey: WalletConnectSwiftV2.AgreementPublicKey) throws -> WalletConnectSwiftV2.AgreementPrivateKey?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func getTopic(for key: Swift.String) -> Swift.String?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func getAgreementSecret(for topic: Swift.String) -> WalletConnectSwiftV2.AgreementKeys?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func getPublicKey(for topic: Swift.String) -> WalletConnectSwiftV2.AgreementPublicKey?
+  #endif
+  public func deletePrivateKey(for publicKey: Swift.String)
+  public func deleteAgreementSecret(for topic: Swift.String)
+  public func deleteSymmetricKey(for topic: Swift.String)
+  public func deletePublicKey(for topic: Swift.String)
+  public func performKeyAgreement(selfPublicKey: WalletConnectSwiftV2.AgreementPublicKey, peerPublicKey hexRepresentation: Swift.String) throws -> WalletConnectSwiftV2.AgreementKeys
+  public func deleteAll() throws
+  @objc deinit
+}
+public protocol KeyValueStorage {
+  #if compiler(>=5.3) && $NonescapableTypes
+  func set(_ value: Any?, forKey defaultName: Swift.String)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func object(forKey defaultName: Swift.String) -> Any?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func data(forKey defaultName: Swift.String) -> Foundation.Data?
+  #endif
+  func removeObject(forKey defaultName: Swift.String)
+  func dictionaryRepresentation() -> [Swift.String : Any]
+  func bool(forKey defaultName: Swift.String) -> Swift.Bool
+}
+extension Foundation.UserDefaults : WalletConnectSwiftV2.KeyValueStorage {
+}
+final public class RuntimeKeyValueStorage : WalletConnectSwiftV2.KeyValueStorage {
+  public init(storage: [Swift.String : Any] = [:])
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func set(_ value: Any?, forKey defaultName: Swift.String)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func object(forKey defaultName: Swift.String) -> Any?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func data(forKey defaultName: Swift.String) -> Foundation.Data?
+  #endif
+  final public func removeObject(forKey defaultName: Swift.String)
+  final public func dictionaryRepresentation() -> [Swift.String : Any]
+  final public func bool(forKey defaultName: Swift.String) -> Swift.Bool
+  @objc deinit
+}
+public struct LogMessage {
+  public let message: Swift.String
+  public let properties: [Swift.String : Swift.String]?
+  public var aggregated: Swift.String {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(message: Swift.String, properties: [Swift.String : Swift.String]? = nil)
+  #endif
+}
+public enum Log {
+  case error(WalletConnectSwiftV2.LogMessage)
+  case warn(WalletConnectSwiftV2.LogMessage)
+  case info(WalletConnectSwiftV2.LogMessage)
+  case debug(WalletConnectSwiftV2.LogMessage)
+}
+public enum LoggingLevel : Swift.Comparable {
+  case off
+  case error
+  case warn
+  case info
+  case debug
+  public static func < (a: WalletConnectSwiftV2.LoggingLevel, b: WalletConnectSwiftV2.LoggingLevel) -> Swift.Bool
+  public static func == (a: WalletConnectSwiftV2.LoggingLevel, b: WalletConnectSwiftV2.LoggingLevel) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct MessageSigner {
+  public func sign(payload: WalletConnectSwiftV2.CacaoPayload, privateKey: Foundation.Data, type: WalletConnectSwiftV2.CacaoSignatureType) throws -> WalletConnectSwiftV2.CacaoSignature
+  public func sign(message: Swift.String, privateKey: Foundation.Data, type: WalletConnectSwiftV2.CacaoSignatureType) throws -> WalletConnectSwiftV2.CacaoSignature
+}
+public struct MessageSignerFactory {
+  public let signerFactory: any WalletConnectSwiftV2.SignerFactory
+  public init(signerFactory: any WalletConnectSwiftV2.SignerFactory)
+  public func create() -> WalletConnectSwiftV2.MessageSigner
+}
+public struct MessageVerifier {
+  public func verify(signature: WalletConnectSwiftV2.CacaoSignature, message: Swift.String, account: WalletConnectSwiftV2.Account) async throws
+  public func verify(signature: WalletConnectSwiftV2.CacaoSignature, message: Swift.String, address: Swift.String, chainId: Swift.String) async throws
+  public func verify(signature: Swift.String, message: Swift.String, address: Swift.String, chainId: Swift.String) async throws
+}
+public struct MessageVerifierFactory {
+  public let crypto: any WalletConnectSwiftV2.CryptoProvider
+  public init(crypto: any WalletConnectSwiftV2.CryptoProvider)
+  public func create() -> WalletConnectSwiftV2.MessageVerifier
+  public func create(projectId: Swift.String) -> WalletConnectSwiftV2.MessageVerifier
+}
+public enum AutoNamespacesError : Swift.Error, Foundation.LocalizedError {
+  case requiredChainsNotSatisfied
+  case requiredAccountsNotSatisfied
+  case requiredMethodsNotSatisfied
+  case requiredEventsNotSatisfied
+  case emptySessionNamespacesForbidden
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var errorDescription: Swift.String? {
+    get
+  }
+  #endif
+  public static func == (a: WalletConnectSwiftV2.AutoNamespacesError, b: WalletConnectSwiftV2.AutoNamespacesError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct ProposalNamespace : Swift.Equatable, Swift.Codable {
+  public let chains: [WalletConnectSwiftV2.Blockchain]?
+  public let methods: Swift.Set<Swift.String>
+  public let events: Swift.Set<Swift.String>
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(chains: [WalletConnectSwiftV2.Blockchain]? = nil, methods: Swift.Set<Swift.String>, events: Swift.Set<Swift.String>)
+  #endif
+  public static func == (a: WalletConnectSwiftV2.ProposalNamespace, b: WalletConnectSwiftV2.ProposalNamespace) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct SessionNamespace : Swift.Equatable, Swift.Codable {
+  public var chains: [WalletConnectSwiftV2.Blockchain]?
+  public var accounts: [WalletConnectSwiftV2.Account]
+  public var methods: Swift.Set<Swift.String>
+  public var events: Swift.Set<Swift.String>
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(chains: [WalletConnectSwiftV2.Blockchain]? = nil, accounts: [WalletConnectSwiftV2.Account], methods: Swift.Set<Swift.String>, events: Swift.Set<Swift.String>)
+  #endif
+  public static func == (a: WalletConnectSwiftV2.SessionNamespace, b: WalletConnectSwiftV2.SessionNamespace) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public enum AutoNamespaces {
+  public static func build(sessionProposal: WalletConnectSwiftV2.Session.Proposal, chains: [WalletConnectSwiftV2.Blockchain], methods: [Swift.String], events: [Swift.String], accounts: [WalletConnectSwiftV2.Account]) throws -> [Swift.String : WalletConnectSwiftV2.SessionNamespace]
+}
+@_hasMissingDesignatedInitializers public class Networking {
+  public static var instance: any WalletConnectSwiftV2.NetworkingClient {
+    get
+  }
+  public static var interactor: WalletConnectSwiftV2.NetworkingInteractor
+  public static var groupIdentifier: Swift.String {
+    get
+  }
+  public static var projectId: Swift.String {
+    get
+  }
+  public static func configure(relayHost: Swift.String = "relay.walletconnect.com", groupIdentifier: Swift.String, projectId: Swift.String, socketFactory: any WalletConnectSwiftV2.WebSocketFactory, socketConnectionType: WalletConnectSwiftV2.SocketConnectionType = .automatic)
+  @objc deinit
+}
+public protocol NetworkingClient {
+  var socketConnectionStatusPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.SocketConnectionStatus, Swift.Never> { get }
+  var logsPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.Log, Swift.Never> { get }
+  func setLogging(level: WalletConnectSwiftV2.LoggingLevel)
+  func connect() throws
+  func disconnect(closeCode: Foundation.URLSessionWebSocketTask.CloseCode) throws
+}
+public struct NetworkingClientFactory {
+  public static func create(relayClient: WalletConnectSwiftV2.RelayClient, groupIdentifier: Swift.String) -> WalletConnectSwiftV2.NetworkingInteractor
+  public static func create(relayClient: WalletConnectSwiftV2.RelayClient, logger: any WalletConnectSwiftV2.ConsoleLogging, keychainStorage: any WalletConnectSwiftV2.KeychainStorageProtocol, keyValueStorage: any WalletConnectSwiftV2.KeyValueStorage, kmsLogger: any WalletConnectSwiftV2.ConsoleLogging = ConsoleLogger(prefix: "🔐", loggingLevel: .off)) -> WalletConnectSwiftV2.NetworkingInteractor
+}
+public class NetworkingInteractor : WalletConnectSwiftV2.NetworkInteracting {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var requestPublisher: Combine.AnyPublisher<(topic: Swift.String, request: WalletConnectSwiftV2.RPCRequest, decryptedPayload: Foundation.Data, publishedAt: Foundation.Date, derivedTopic: Swift.String?, encryptedMessage: Swift.String, attestation: Swift.String?), Swift.Never> {
+    get
+  }
+  #endif
+  public var logsPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.Log, Swift.Never> {
+    get
+  }
+  public var isSocketConnected: Swift.Bool {
+    get
+  }
+  public var networkConnectionStatusPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.NetworkConnectionStatus, Swift.Never>
+  public var socketConnectionStatusPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.SocketConnectionStatus, Swift.Never>
+  public init(relayClient: WalletConnectSwiftV2.RelayClient, serializer: any WalletConnectSwiftV2.Serializing, logger: any WalletConnectSwiftV2.ConsoleLogging, rpcHistory: WalletConnectSwiftV2.RPCHistory)
+  public func setLogging(level: WalletConnectSwiftV2.LoggingLevel)
+  public func subscribe(topic: Swift.String) async throws
+  public func unsubscribe(topic: Swift.String)
+  public func batchSubscribe(topics: [Swift.String]) async throws
+  public func batchUnsubscribe(topics: [Swift.String]) async throws
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func subscribeOnRequest<RequestParams>(protocolMethod: any WalletConnectSwiftV2.ProtocolMethod, requestOfType: RequestParams.Type, errorHandler: (any WalletConnectSwiftV2.ErrorHandler)?, subscription: @escaping (WalletConnectSwiftV2.RequestSubscriptionPayload<RequestParams>) async throws -> Swift.Void) where RequestParams : Swift.Decodable, RequestParams : Swift.Encodable
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func subscribeOnResponse<Request, Response>(protocolMethod: any WalletConnectSwiftV2.ProtocolMethod, requestOfType: Request.Type, responseOfType: Response.Type, errorHandler: (any WalletConnectSwiftV2.ErrorHandler)?, subscription: @escaping (WalletConnectSwiftV2.ResponseSubscriptionPayload<Request, Response>) async throws -> Swift.Void) where Request : Swift.Decodable, Request : Swift.Encodable, Response : Swift.Decodable, Response : Swift.Encodable
+  #endif
+  public func requestSubscription<RequestParams>(on request: any WalletConnectSwiftV2.ProtocolMethod) -> Combine.AnyPublisher<WalletConnectSwiftV2.RequestSubscriptionPayload<RequestParams>, Swift.Never> where RequestParams : Swift.Decodable, RequestParams : Swift.Encodable
+  public func awaitResponse<Request, Response>(request: WalletConnectSwiftV2.RPCRequest, topic: Swift.String, method: any WalletConnectSwiftV2.ProtocolMethod, requestOfType: Request.Type, responseOfType: Response.Type, envelopeType: WalletConnectSwiftV2.Envelope.EnvelopeType) async throws -> Response where Request : Swift.Decodable, Request : Swift.Encodable, Response : Swift.Decodable, Response : Swift.Encodable
+  public func responseSubscription<Request, Response>(on request: any WalletConnectSwiftV2.ProtocolMethod) -> Combine.AnyPublisher<WalletConnectSwiftV2.ResponseSubscriptionPayload<Request, Response>, Swift.Never> where Request : Swift.Decodable, Request : Swift.Encodable, Response : Swift.Decodable, Response : Swift.Encodable
+  public func responseErrorSubscription<Request>(on request: any WalletConnectSwiftV2.ProtocolMethod) -> Combine.AnyPublisher<WalletConnectSwiftV2.ResponseSubscriptionErrorPayload<Request>, Swift.Never> where Request : Swift.Decodable, Request : Swift.Encodable
+  public func request(_ request: WalletConnectSwiftV2.RPCRequest, topic: Swift.String, protocolMethod: any WalletConnectSwiftV2.ProtocolMethod, envelopeType: WalletConnectSwiftV2.Envelope.EnvelopeType) async throws
+  public func respond(topic: Swift.String, response: WalletConnectSwiftV2.RPCResponse, protocolMethod: any WalletConnectSwiftV2.ProtocolMethod, envelopeType: WalletConnectSwiftV2.Envelope.EnvelopeType) async throws
+  public func respondSuccess(topic: Swift.String, requestId: WalletConnectSwiftV2.RPCID, protocolMethod: any WalletConnectSwiftV2.ProtocolMethod, envelopeType: WalletConnectSwiftV2.Envelope.EnvelopeType) async throws
+  public func getClientId() throws -> Swift.String
+  public func respondError(topic: Swift.String, requestId: WalletConnectSwiftV2.RPCID, protocolMethod: any WalletConnectSwiftV2.ProtocolMethod, reason: any WalletConnectSwiftV2.Reason, envelopeType: WalletConnectSwiftV2.Envelope.EnvelopeType) async throws
+  public func handleHistoryRequest(topic: Swift.String, request: WalletConnectSwiftV2.RPCRequest)
+  @objc deinit
+}
+extension WalletConnectSwiftV2.NetworkingInteractor : WalletConnectSwiftV2.NetworkingClient {
+  public func connect() throws
+  public func disconnect(closeCode: Foundation.URLSessionWebSocketTask.CloseCode) throws
+}
+public protocol NetworkInteracting {
+  var isSocketConnected: Swift.Bool { get }
+  var socketConnectionStatusPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.SocketConnectionStatus, Swift.Never> { get }
+  var networkConnectionStatusPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.NetworkConnectionStatus, Swift.Never> { get }
+  #if compiler(>=5.3) && $NonescapableTypes
+  var requestPublisher: Combine.AnyPublisher<(topic: Swift.String, request: WalletConnectSwiftV2.RPCRequest, decryptedPayload: Foundation.Data, publishedAt: Foundation.Date, derivedTopic: Swift.String?, encryptedMessage: Swift.String, attestation: Swift.String?), Swift.Never> { get }
+  #endif
+  func subscribe(topic: Swift.String) async throws
+  func unsubscribe(topic: Swift.String)
+  func batchSubscribe(topics: [Swift.String]) async throws
+  func batchUnsubscribe(topics: [Swift.String]) async throws
+  func request(_ request: WalletConnectSwiftV2.RPCRequest, topic: Swift.String, protocolMethod: any WalletConnectSwiftV2.ProtocolMethod, envelopeType: WalletConnectSwiftV2.Envelope.EnvelopeType) async throws
+  func respond(topic: Swift.String, response: WalletConnectSwiftV2.RPCResponse, protocolMethod: any WalletConnectSwiftV2.ProtocolMethod, envelopeType: WalletConnectSwiftV2.Envelope.EnvelopeType) async throws
+  func respondSuccess(topic: Swift.String, requestId: WalletConnectSwiftV2.RPCID, protocolMethod: any WalletConnectSwiftV2.ProtocolMethod, envelopeType: WalletConnectSwiftV2.Envelope.EnvelopeType) async throws
+  func respondError(topic: Swift.String, requestId: WalletConnectSwiftV2.RPCID, protocolMethod: any WalletConnectSwiftV2.ProtocolMethod, reason: any WalletConnectSwiftV2.Reason, envelopeType: WalletConnectSwiftV2.Envelope.EnvelopeType) async throws
+  func handleHistoryRequest(topic: Swift.String, request: WalletConnectSwiftV2.RPCRequest)
+  func requestSubscription<Request>(on request: any WalletConnectSwiftV2.ProtocolMethod) -> Combine.AnyPublisher<WalletConnectSwiftV2.RequestSubscriptionPayload<Request>, Swift.Never> where Request : Swift.Decodable, Request : Swift.Encodable
+  func responseSubscription<Request, Response>(on request: any WalletConnectSwiftV2.ProtocolMethod) -> Combine.AnyPublisher<WalletConnectSwiftV2.ResponseSubscriptionPayload<Request, Response>, Swift.Never> where Request : Swift.Decodable, Request : Swift.Encodable, Response : Swift.Decodable, Response : Swift.Encodable
+  func responseErrorSubscription<Request>(on request: any WalletConnectSwiftV2.ProtocolMethod) -> Combine.AnyPublisher<WalletConnectSwiftV2.ResponseSubscriptionErrorPayload<Request>, Swift.Never> where Request : Swift.Decodable, Request : Swift.Encodable
+  #if compiler(>=5.3) && $NonescapableTypes
+  func subscribeOnRequest<RequestParams>(protocolMethod: any WalletConnectSwiftV2.ProtocolMethod, requestOfType: RequestParams.Type, errorHandler: (any WalletConnectSwiftV2.ErrorHandler)?, subscription: @escaping (WalletConnectSwiftV2.RequestSubscriptionPayload<RequestParams>) async throws -> Swift.Void) where RequestParams : Swift.Decodable, RequestParams : Swift.Encodable
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func subscribeOnResponse<Request, Response>(protocolMethod: any WalletConnectSwiftV2.ProtocolMethod, requestOfType: Request.Type, responseOfType: Response.Type, errorHandler: (any WalletConnectSwiftV2.ErrorHandler)?, subscription: @escaping (WalletConnectSwiftV2.ResponseSubscriptionPayload<Request, Response>) async throws -> Swift.Void) where Request : Swift.Decodable, Request : Swift.Encodable, Response : Swift.Decodable, Response : Swift.Encodable
+  #endif
+  func awaitResponse<Request, Response>(request: WalletConnectSwiftV2.RPCRequest, topic: Swift.String, method: any WalletConnectSwiftV2.ProtocolMethod, requestOfType: Request.Type, responseOfType: Response.Type, envelopeType: WalletConnectSwiftV2.Envelope.EnvelopeType) async throws -> Response where Request : Swift.Decodable, Request : Swift.Encodable, Response : Swift.Decodable, Response : Swift.Encodable
+  func getClientId() throws -> Swift.String
+}
+extension WalletConnectSwiftV2.NetworkInteracting {
+  public func request(_ request: WalletConnectSwiftV2.RPCRequest, topic: Swift.String, protocolMethod: any WalletConnectSwiftV2.ProtocolMethod) async throws
+  public func respond(topic: Swift.String, response: WalletConnectSwiftV2.RPCResponse, protocolMethod: any WalletConnectSwiftV2.ProtocolMethod) async throws
+  public func respondSuccess(topic: Swift.String, requestId: WalletConnectSwiftV2.RPCID, protocolMethod: any WalletConnectSwiftV2.ProtocolMethod) async throws
+  public func respondError(topic: Swift.String, requestId: WalletConnectSwiftV2.RPCID, protocolMethod: any WalletConnectSwiftV2.ProtocolMethod, reason: any WalletConnectSwiftV2.Reason) async throws
+}
+public enum NetworkConnectionStatus {
+  case connected
+  case notConnected
+  public static func == (a: WalletConnectSwiftV2.NetworkConnectionStatus, b: WalletConnectSwiftV2.NetworkConnectionStatus) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public protocol NetworkMonitoring : AnyObject {
+  var isConnected: Swift.Bool { get }
+  var networkConnectionStatusPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.NetworkConnectionStatus, Swift.Never> { get }
+}
+final public class NetworkMonitor : WalletConnectSwiftV2.NetworkMonitoring {
+  final public var isConnected: Swift.Bool {
+    get
+  }
+  final public var networkConnectionStatusPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.NetworkConnectionStatus, Swift.Never> {
+    get
+  }
+  public init()
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class OriginVerifier {
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class Pair {
+  public static var instance: any WalletConnectSwiftV2.PairingInteracting {
+    get
+  }
+  public static var registerer: any WalletConnectSwiftV2.PairingRegisterer {
+    get
+  }
+  public static var metadata: WalletConnectSwiftV2.AppMetadata {
+    get
+  }
+  public static func configure(metadata: WalletConnectSwiftV2.AppMetadata)
+  @objc deinit
+}
+extension WalletConnectSwiftV2.Pair {
+  public struct Config {
+  }
+}
+public enum PairError : Swift.Codable, Swift.Equatable, Swift.Error, WalletConnectSwiftV2.Reason {
+  case methodUnsupported
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(code: Swift.Int)
+  #endif
+  public var code: Swift.Int {
+    get
+  }
+  public var message: Swift.String {
+    get
+  }
+  public static func == (a: WalletConnectSwiftV2.PairError, b: WalletConnectSwiftV2.PairError) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct Pairing {
+  public let topic: Swift.String
+  public let peer: WalletConnectSwiftV2.AppMetadata?
+  public let expiryDate: Foundation.Date
+  public let active: Swift.Bool
+}
+@_hasMissingDesignatedInitializers public class PairingClient : WalletConnectSwiftV2.PairingRegisterer, WalletConnectSwiftV2.PairingInteracting, WalletConnectSwiftV2.PairingClientProtocol {
+  public var pingResponsePublisher: Combine.AnyPublisher<Swift.String, Swift.Never> {
+    get
+  }
+  public var pairingDeletePublisher: Combine.AnyPublisher<(code: Swift.Int, message: Swift.String), Swift.Never> {
+    get
+  }
+  public var pairingStatePublisher: Combine.AnyPublisher<Swift.Bool, Swift.Never> {
+    get
+  }
+  final public let socketConnectionStatusPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.SocketConnectionStatus, Swift.Never>
+  public var pairingExpirationPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.Pairing, Swift.Never> {
+    get
+  }
+  public var logsPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.Log, Swift.Never> {
+    get
+  }
+  public func pair(uri: WalletConnectSwiftV2.WalletConnectURI) async throws
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func create(methods: [Swift.String]? = nil) async throws -> WalletConnectSwiftV2.WalletConnectURI
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func activate(pairingTopic: Swift.String, peerMetadata: WalletConnectSwiftV2.AppMetadata?)
+  #endif
+  public func setReceived(pairingTopic: Swift.String)
+  public func getPairings() -> [WalletConnectSwiftV2.Pairing]
+  public func getPairing(for topic: Swift.String) throws -> WalletConnectSwiftV2.Pairing
+  public func ping(topic: Swift.String) async throws
+  public func disconnect(topic: Swift.String) async
+  public func validatePairingExistance(_ topic: Swift.String) throws
+  public func register<RequestParams>(method: any WalletConnectSwiftV2.ProtocolMethod) -> Combine.AnyPublisher<WalletConnectSwiftV2.RequestSubscriptionPayload<RequestParams>, Swift.Never> where RequestParams : Swift.Decodable, RequestParams : Swift.Encodable
+  public func cleanup() throws
+  @objc deinit
+}
+public struct PairingClientFactory {
+  public static func create(networkingClient: WalletConnectSwiftV2.NetworkingInteractor, eventsClient: WalletConnectSwiftV2.EventsClient, groupIdentifier: Swift.String) -> WalletConnectSwiftV2.PairingClient
+  public static func create(logger: any WalletConnectSwiftV2.ConsoleLogging, keyValueStorage: any WalletConnectSwiftV2.KeyValueStorage, keychainStorage: any WalletConnectSwiftV2.KeychainStorageProtocol, networkingClient: WalletConnectSwiftV2.NetworkingInteractor, eventsClient: any WalletConnectSwiftV2.EventsClientProtocol) -> WalletConnectSwiftV2.PairingClient
+}
+public protocol PairingClientProtocol {
+  var logsPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.Log, Swift.Never> { get }
+  var pairingDeletePublisher: Combine.AnyPublisher<(code: Swift.Int, message: Swift.String), Swift.Never> { get }
+  var pairingStatePublisher: Combine.AnyPublisher<Swift.Bool, Swift.Never> { get }
+  var pairingExpirationPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.Pairing, Swift.Never> { get }
+  func pair(uri: WalletConnectSwiftV2.WalletConnectURI) async throws
+  func disconnect(topic: Swift.String) async
+  func getPairings() -> [WalletConnectSwiftV2.Pairing]
+}
+final public class PairingDeleteRequestSubscriber {
+  public init(networkingInteractor: any WalletConnectSwiftV2.NetworkInteracting, kms: any WalletConnectSwiftV2.KeyManagementServiceProtocol, pairingStorage: any WalletConnectSwiftV2.WCPairingStorage, logger: any WalletConnectSwiftV2.ConsoleLogging)
+  @objc deinit
+}
+public enum PairingExecutionTraceEvents : Swift.String, WalletConnectSwiftV2.TraceEvent {
+  case pairingUriValidationSuccess
+  case pairingStarted
+  case noWssConnection
+  case storeNewPairing
+  case subscribingPairingTopic
+  case subscribePairingTopicSuccess
+  case pairingHasPendingRequest
+  case emitSessionProposal
+  public var description: Swift.String {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(rawValue: Swift.String)
+  #endif
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum PairingTraceErrorEvents : Swift.String {
+  case noInternetConnection
+  case malformedPairingUri
+  case activePairingAlreadyExists
+  case subscribePairingTopicFailure
+  case pairingExpired
+  case proposalExpired
+  public var description: Swift.String {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(rawValue: Swift.String)
+  #endif
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public protocol PairingInteracting {
+  func pair(uri: WalletConnectSwiftV2.WalletConnectURI) async throws
+  #if compiler(>=5.3) && $NonescapableTypes
+  func create(methods: [Swift.String]?) async throws -> WalletConnectSwiftV2.WalletConnectURI
+  #endif
+  func getPairings() -> [WalletConnectSwiftV2.Pairing]
+  func getPairing(for topic: Swift.String) throws -> WalletConnectSwiftV2.Pairing
+  func ping(topic: Swift.String) async throws
+  func disconnect(topic: Swift.String) async throws
+  func cleanup() throws
+}
+extension WalletConnectSwiftV2.PairingInteracting {
+  public func create() async throws -> WalletConnectSwiftV2.WalletConnectURI
+}
+public class PairingPingService {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var onResponse: ((Swift.String) -> Swift.Void)? {
+    get
+    set
+  }
+  #endif
+  public init(pairingStorage: any WalletConnectSwiftV2.WCPairingStorage, networkingInteractor: any WalletConnectSwiftV2.NetworkInteracting, logger: any WalletConnectSwiftV2.ConsoleLogging)
+  public func ping(topic: Swift.String) async throws
+  @objc deinit
+}
+public protocol PairingRegisterer {
+  func register<RequestParams>(method: any WalletConnectSwiftV2.ProtocolMethod) -> Combine.AnyPublisher<WalletConnectSwiftV2.RequestSubscriptionPayload<RequestParams>, Swift.Never> where RequestParams : Swift.Decodable, RequestParams : Swift.Encodable
+  #if compiler(>=5.3) && $NonescapableTypes
+  func activate(pairingTopic: Swift.String, peerMetadata: WalletConnectSwiftV2.AppMetadata?)
+  #endif
+  func setReceived(pairingTopic: Swift.String)
+  func validatePairingExistance(_ topic: Swift.String) throws
+}
+@_hasMissingDesignatedInitializers public class PairingRequestsSubscriber {
+  @objc deinit
+}
+public protocol WCPairingStorage : AnyObject {
+  #if compiler(>=5.3) && $NonescapableTypes
+  var onPairingExpiration: ((WalletConnectSwiftV2.WCPairing) -> Swift.Void)? { get set }
+  #endif
+  func hasPairing(forTopic topic: Swift.String) -> Swift.Bool
+  func setPairing(_ pairing: WalletConnectSwiftV2.WCPairing)
+  #if compiler(>=5.3) && $NonescapableTypes
+  func getPairing(forTopic topic: Swift.String) -> WalletConnectSwiftV2.WCPairing?
+  #endif
+  func getAll() -> [WalletConnectSwiftV2.WCPairing]
+  func delete(topic: Swift.String)
+  func deleteAll()
+}
+final public class PairingStorage : WalletConnectSwiftV2.WCPairingStorage {
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public var onPairingExpiration: ((WalletConnectSwiftV2.WCPairing) -> Swift.Void)? {
+    get
+    set
+  }
+  #endif
+  public init(storage: WalletConnectSwiftV2.SequenceStore<WalletConnectSwiftV2.WCPairing>)
+  final public func hasPairing(forTopic topic: Swift.String) -> Swift.Bool
+  final public func setPairing(_ pairing: WalletConnectSwiftV2.WCPairing)
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func getPairing(forTopic topic: Swift.String) -> WalletConnectSwiftV2.WCPairing?
+  #endif
+  final public func getAll() -> [WalletConnectSwiftV2.WCPairing]
+  final public func delete(topic: Swift.String)
+  final public func deleteAll()
+  @objc deinit
+}
+public enum PairingType {
+  public struct DeleteParams : Swift.Codable, Swift.Equatable {
+    public static func == (a: WalletConnectSwiftV2.PairingType.DeleteParams, b: WalletConnectSwiftV2.PairingType.DeleteParams) -> Swift.Bool
+    public func encode(to encoder: any Swift.Encoder) throws
+    public init(from decoder: any Swift.Decoder) throws
+  }
+  public struct Reason : Swift.Codable, Swift.Equatable {
+    public static func == (a: WalletConnectSwiftV2.PairingType.Reason, b: WalletConnectSwiftV2.PairingType.Reason) -> Swift.Bool
+    public func encode(to encoder: any Swift.Encoder) throws
+    public init(from decoder: any Swift.Decoder) throws
+  }
+  public struct PingParams : Swift.Codable, Swift.Equatable {
+    public init()
+    public static func == (a: WalletConnectSwiftV2.PairingType.PingParams, b: WalletConnectSwiftV2.PairingType.PingParams) -> Swift.Bool
+    public func encode(to encoder: any Swift.Encoder) throws
+    public init(from decoder: any Swift.Decoder) throws
+  }
+}
+public enum PairStorageIdentifiers : Swift.String {
+  case pairings
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(rawValue: Swift.String)
+  #endif
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public class PingRequester {
+  public init(networkingInteractor: any WalletConnectSwiftV2.NetworkInteracting, method: any WalletConnectSwiftV2.ProtocolMethod)
+  public func ping(topic: Swift.String) async throws
+  @objc deinit
+}
+public class PingResponder {
+  public init(networkingInteractor: any WalletConnectSwiftV2.NetworkInteracting, method: any WalletConnectSwiftV2.ProtocolMethod, logger: any WalletConnectSwiftV2.ConsoleLogging)
+  @objc deinit
+}
+public class PingResponseSubscriber {
+  public var onResponse: ((Swift.String) -> Swift.Void)?
+  public init(networkingInteractor: any WalletConnectSwiftV2.NetworkInteracting, method: any WalletConnectSwiftV2.ProtocolMethod, logger: any WalletConnectSwiftV2.ConsoleLogging)
+  @objc deinit
+}
+public protocol ProtocolMethod {
+  var method: Swift.String { get }
+  var requestConfig: WalletConnectSwiftV2.RelayConfig { get }
+  var responseConfig: WalletConnectSwiftV2.RelayConfig { get }
+}
+public struct RelayConfig {
+  public init(tag: Swift.Int, prompt: Swift.Bool, ttl: Swift.Int)
+}
+@_hasMissingDesignatedInitializers public class Push {
+  public static let pushHost: Swift.String
+  public static var instance: WalletConnectSwiftV2.PushClient
+  public static func configure(pushHost: Swift.String = pushHost, environment: WalletConnectSwiftV2.APNSEnvironment)
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class PushClient : WalletConnectSwiftV2.PushClientProtocol {
+  public var logsPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.Log, Swift.Never> {
+    get
+  }
+  public func register(deviceToken: Foundation.Data, enableEncrypted: Swift.Bool = false) async throws
+  public func unregister() async throws
+  public func register(deviceToken: Swift.String) async throws
+  @objc deinit
+}
+public struct PushClientFactory {
+  public static func create(projectId: Swift.String, pushHost: Swift.String, groupIdentifier: Swift.String, environment: WalletConnectSwiftV2.APNSEnvironment) -> WalletConnectSwiftV2.PushClient
+  public static func create(projectId: Swift.String, pushHost: Swift.String, keyValueStorage: any WalletConnectSwiftV2.KeyValueStorage, keychainStorage: any WalletConnectSwiftV2.KeychainStorageProtocol, environment: WalletConnectSwiftV2.APNSEnvironment) -> WalletConnectSwiftV2.PushClient
+}
+public protocol PushClientProtocol {
+  func register(deviceToken: Foundation.Data, enableEncrypted: Swift.Bool) async throws
+  func register(deviceToken: Swift.String) async throws
+}
+extension WalletConnectSwiftV2.PushClientProtocol {
+  public func register(deviceToken: Foundation.Data, enableEncrypted: Swift.Bool = false) async throws
+}
+public class Queue<T> {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var head: T? {
+    get
+  }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var tail: T? {
+    get
+  }
+  #endif
+  public init(elements: [T] = [])
+  public func enqueue(_ value: T)
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func dequeue() -> T?
+  #endif
+  @objc deinit
+}
+public protocol Reason {
+  var code: Swift.Int { get }
+  var message: Swift.String { get }
+}
+@_hasMissingDesignatedInitializers public class RecapFactory {
+  public static func createRecap(resource: Swift.String, actions: [Swift.String]) -> [Swift.String : [Swift.String : [Swift.String : [WalletConnectSwiftV2.AnyCodable]]]]
+  @objc deinit
+}
+public struct RecapData : Swift.Codable {
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct RecapUrn {
+  public let urn: Swift.String
+  public let recapData: WalletConnectSwiftV2.RecapData
+  public init(urn: Swift.String) throws
+}
+extension Foundation.Data {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(base64urlEncoded: Swift.String)
+  #endif
+  public func base64urlEncodedString() -> Swift.String
+}
+@_hasMissingDesignatedInitializers public class RecapUrnMergingService {
+  public enum Errors : Swift.Error {
+    case emptyRecapUrns
+    case encodingFailed
+    public static func == (a: WalletConnectSwiftV2.RecapUrnMergingService.Errors, b: WalletConnectSwiftV2.RecapUrnMergingService.Errors) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public static func merge(recapUrns: [WalletConnectSwiftV2.RecapUrn]) throws -> WalletConnectSwiftV2.RecapUrn
+  @objc deinit
+}
+public enum RejectionReason {
+  case userRejected
+  case unsupportedChains
+  case unsupportedMethods
+  case unsupportedAccounts
+  case unsupportedEvents
+  public static func == (a: WalletConnectSwiftV2.RejectionReason, b: WalletConnectSwiftV2.RejectionReason) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension WalletConnectSwiftV2.RejectionReason {
+  public init(from error: WalletConnectSwiftV2.AutoNamespacesError)
+}
+@_hasMissingDesignatedInitializers public class Relay {
+  public static var instance: WalletConnectSwiftV2.RelayClient
+  public static func configure(relayHost: Swift.String = "relay.walletconnect.com", projectId: Swift.String, groupIdentifier: Swift.String, socketFactory: any WalletConnectSwiftV2.WebSocketFactory, socketConnectionType: WalletConnectSwiftV2.SocketConnectionType = .automatic)
+  @objc deinit
+}
+public enum SocketConnectionStatus {
+  case connected
+  case disconnected
+  public static func == (a: WalletConnectSwiftV2.SocketConnectionStatus, b: WalletConnectSwiftV2.SocketConnectionStatus) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers final public class RelayClient {
+  final public var isSocketConnected: Swift.Bool {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public var messagePublisher: Combine.AnyPublisher<(topic: Swift.String, message: Swift.String, publishedAt: Foundation.Date, attestation: Swift.String?), Swift.Never> {
+    get
+  }
+  #endif
+  final public var socketConnectionStatusPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.SocketConnectionStatus, Swift.Never> {
+    get
+  }
+  final public var networkConnectionStatusPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.NetworkConnectionStatus, Swift.Never> {
+    get
+  }
+  final public var logsPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.Log, Swift.Never> {
+    get
+  }
+  final public func setLogging(level: WalletConnectSwiftV2.LoggingLevel)
+  final public func connect() throws
+  final public func disconnect(closeCode: Foundation.URLSessionWebSocketTask.CloseCode) throws
+  final public func publish(topic: Swift.String, payload: Swift.String, tag: Swift.Int, prompt: Swift.Bool, ttl: Swift.Int) async throws
+  final public func subscribe(topic: Swift.String) async throws
+  final public func batchSubscribe(topics: [Swift.String]) async throws
+  final public func unsubscribe(topic: Swift.String) async throws
+  final public func batchUnsubscribe(topics: [Swift.String]) async throws
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func unsubscribe(topic: Swift.String, completion: (((any Swift.Error)?) -> Swift.Void)?)
+  #endif
+  final public func getClientId() throws -> Swift.String
+  @objc deinit
+}
+public struct RelayClientFactory {
+  public static func create(relayHost: Swift.String, projectId: Swift.String, socketFactory: any WalletConnectSwiftV2.WebSocketFactory, groupIdentifier: Swift.String, socketConnectionType: WalletConnectSwiftV2.SocketConnectionType) -> WalletConnectSwiftV2.RelayClient
+  public static func create(relayHost: Swift.String, projectId: Swift.String, keyValueStorage: any WalletConnectSwiftV2.KeyValueStorage, keychainStorage: any WalletConnectSwiftV2.KeychainStorageProtocol, socketFactory: any WalletConnectSwiftV2.WebSocketFactory, socketConnectionType: WalletConnectSwiftV2.SocketConnectionType = .automatic, networkMonitor: any WalletConnectSwiftV2.NetworkMonitoring, logger: any WalletConnectSwiftV2.ConsoleLogging) -> WalletConnectSwiftV2.RelayClient
+}
+public struct RelayProtocolOptions : Swift.Codable, Swift.Equatable {
+  public let `protocol`: Swift.String
+  public let data: Swift.String?
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(protocol: Swift.String, data: Swift.String?)
+  #endif
+  public static func == (a: WalletConnectSwiftV2.RelayProtocolOptions, b: WalletConnectSwiftV2.RelayProtocolOptions) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension WalletConnectSwiftV2.RelayProtocolOptions {
+  public static func stub() -> WalletConnectSwiftV2.RelayProtocolOptions
+}
+public struct Request : Swift.Codable, Swift.Equatable {
+  public enum Errors : Swift.Error {
+    case invalidTtl
+    case requestExpired
+    public static func == (a: WalletConnectSwiftV2.Request.Errors, b: WalletConnectSwiftV2.Request.Errors) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public let id: WalletConnectSwiftV2.RPCID
+  public let topic: Swift.String
+  public let method: Swift.String
+  public let params: WalletConnectSwiftV2.AnyCodable
+  public let chainId: WalletConnectSwiftV2.Blockchain
+  public var expiryTimestamp: Swift.UInt64?
+  public init(topic: Swift.String, method: Swift.String, params: WalletConnectSwiftV2.AnyCodable, chainId: WalletConnectSwiftV2.Blockchain, ttl: Foundation.TimeInterval = 300) throws
+  public static func == (a: WalletConnectSwiftV2.Request, b: WalletConnectSwiftV2.Request) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct RequestParams {
+  public let domain: Swift.String
+  public let chainId: Swift.String
+  public let nonce: Swift.String
+  public let aud: Swift.String
+  public let nbf: Swift.String?
+  public let exp: Swift.String?
+  public let statement: Swift.String?
+  public let requestId: Swift.String?
+  public let resources: [Swift.String]?
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(domain: Swift.String, chainId: Swift.String, nonce: Swift.String, aud: Swift.String, nbf: Swift.String?, exp: Swift.String?, statement: Swift.String?, requestId: Swift.String?, resources: [Swift.String]?)
+  #endif
+}
+public struct RequestSubscriptionPayload<Request> : Swift.Codable, WalletConnectSwiftV2.SubscriptionPayload where Request : Swift.Decodable, Request : Swift.Encodable {
+  public let id: WalletConnectSwiftV2.RPCID
+  public let encryptedMessage: Swift.String
+  public let attestation: Swift.String?
+  public let topic: Swift.String
+  public let request: Request
+  public let decryptedPayload: Foundation.Data
+  public let publishedAt: Foundation.Date
+  public let derivedTopic: Swift.String?
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(id: WalletConnectSwiftV2.RPCID, topic: Swift.String, request: Request, decryptedPayload: Foundation.Data, publishedAt: Foundation.Date, derivedTopic: Swift.String?, encryptedMessage: Swift.String, attestation: Swift.String?)
+  #endif
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct RespondParams : Swift.Equatable {
+  public init(id: WalletConnectSwiftV2.RPCID, signature: WalletConnectSwiftV2.CacaoSignature)
+  public static func == (a: WalletConnectSwiftV2.RespondParams, b: WalletConnectSwiftV2.RespondParams) -> Swift.Bool
+}
+public struct Response : Swift.Codable {
+  public let id: WalletConnectSwiftV2.RPCID
+  public let topic: Swift.String
+  public let chainId: Swift.String?
+  public let result: WalletConnectSwiftV2.RPCResult
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct ResponseSubscriptionErrorPayload<Request> : Swift.Codable, WalletConnectSwiftV2.SubscriptionPayload where Request : Swift.Decodable, Request : Swift.Encodable {
+  public let id: WalletConnectSwiftV2.RPCID
+  public let topic: Swift.String
+  public let request: Request
+  public let error: WalletConnectSwiftV2.JSONRPCError
+  public init(id: WalletConnectSwiftV2.RPCID, topic: Swift.String, request: Request, error: WalletConnectSwiftV2.JSONRPCError)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct ResponseSubscriptionPayload<Request, Response> : WalletConnectSwiftV2.SubscriptionPayload where Request : Swift.Decodable, Request : Swift.Encodable, Response : Swift.Decodable, Response : Swift.Encodable {
+  public let id: WalletConnectSwiftV2.RPCID
+  public let topic: Swift.String
+  public let request: Request
+  public let response: Response
+  public let publishedAt: Foundation.Date
+  public let derivedTopic: Swift.String?
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(id: WalletConnectSwiftV2.RPCID, topic: Swift.String, request: Request, response: Response, publishedAt: Foundation.Date, derivedTopic: Swift.String?)
+  #endif
+}
+public protocol RPCHistoryProtocol {
+  func deleteAll(forTopic topic: Swift.String)
+  func deleteAll(forTopics topics: [Swift.String])
+}
+@_hasMissingDesignatedInitializers final public class RPCHistory : WalletConnectSwiftV2.RPCHistoryProtocol {
+  public struct Record : Swift.Codable {
+    public enum Origin : Swift.String, Swift.Codable {
+      case local
+      case remote
+      #if compiler(>=5.3) && $NonescapableTypes
+      public init?(rawValue: Swift.String)
+      #endif
+      public typealias RawValue = Swift.String
+      public var rawValue: Swift.String {
+        get
+      }
+    }
+    public enum TransportType : Swift.Codable {
+      case relay
+      case linkMode
+      public static func == (a: WalletConnectSwiftV2.RPCHistory.Record.TransportType, b: WalletConnectSwiftV2.RPCHistory.Record.TransportType) -> Swift.Bool
+      public func encode(to encoder: any Swift.Encoder) throws
+      public func hash(into hasher: inout Swift.Hasher)
+      public var hashValue: Swift.Int {
+        get
+      }
+      public init(from decoder: any Swift.Decoder) throws
+    }
+    public let id: WalletConnectSwiftV2.RPCID
+    public let topic: Swift.String
+    public let request: WalletConnectSwiftV2.RPCRequest
+    public let response: WalletConnectSwiftV2.RPCResponse?
+    public var timestamp: Foundation.Date?
+    public let transportType: WalletConnectSwiftV2.RPCHistory.Record.TransportType?
+    public func encode(to encoder: any Swift.Encoder) throws
+    public init(from decoder: any Swift.Decoder) throws
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func get(recordId: WalletConnectSwiftV2.RPCID) -> WalletConnectSwiftV2.RPCHistory.Record?
+  #endif
+  final public func set(_ request: WalletConnectSwiftV2.RPCRequest, forTopic topic: Swift.String, emmitedBy origin: WalletConnectSwiftV2.RPCHistory.Record.Origin, time: any WalletConnectSwiftV2.TimeProvider = DefaultTimeProvider(), transportType: WalletConnectSwiftV2.RPCHistory.Record.TransportType) throws
+  @discardableResult
+  final public func resolve(_ response: WalletConnectSwiftV2.RPCResponse) throws -> WalletConnectSwiftV2.RPCHistory.Record
+  @discardableResult
+  final public func validate(_ response: WalletConnectSwiftV2.RPCResponse) throws -> WalletConnectSwiftV2.RPCHistory.Record
+  final public func deleteAll(forTopics topics: [Swift.String])
+  final public func getAll<Object>(of type: Object.Type, topic: Swift.String) -> [Object] where Object : Swift.Decodable, Object : Swift.Encodable
+  final public func getAll<Object>(of type: Object.Type) -> [Object] where Object : Swift.Decodable, Object : Swift.Encodable
+  final public func getAllWithIDs<Object>(of type: Object.Type) -> [(id: WalletConnectSwiftV2.RPCID, value: Object)] where Object : Swift.Decodable, Object : Swift.Encodable
+  final public func delete(id: WalletConnectSwiftV2.RPCID)
+  final public func deleteAll(forTopic topic: Swift.String)
+  final public func getPending() -> [WalletConnectSwiftV2.RPCHistory.Record]
+  final public func deleteAll()
+  @objc deinit
+}
+public struct RPCHistoryFactory {
+  public static func createForNetwork(keyValueStorage: any WalletConnectSwiftV2.KeyValueStorage) -> WalletConnectSwiftV2.RPCHistory
+  public static func createForRelay(keyValueStorage: any WalletConnectSwiftV2.KeyValueStorage) -> WalletConnectSwiftV2.RPCHistory
+}
+public typealias RPCID = WalletConnectSwiftV2.Either<Swift.String, Swift.Int64>
+public protocol IdentifierGenerator {
+  func next() -> WalletConnectSwiftV2.RPCID
+}
+extension WalletConnectSwiftV2.Either where L == Swift.String, R == Swift.Int64 {
+  public init()
+  public var string: Swift.String {
+    get
+  }
+  public var integer: Swift.Int64 {
+    get
+  }
+  public var timestamp: Foundation.Date {
+    get
+  }
+}
+public struct RPCRequest : Swift.Equatable {
+  public static var defaultIdentifierGenerator: any WalletConnectSwiftV2.IdentifierGenerator
+  public let jsonrpc: Swift.String
+  public let method: Swift.String
+  public let params: WalletConnectSwiftV2.AnyCodable?
+  public let id: WalletConnectSwiftV2.RPCID?
+  public init<C>(method: Swift.String, checkedParams params: C, idGenerator: any WalletConnectSwiftV2.IdentifierGenerator = defaultIdentifierGenerator) throws where C : Swift.Decodable, C : Swift.Encodable
+  public init<C>(method: Swift.String, checkedParams params: C, id: Swift.Int64) throws where C : Swift.Decodable, C : Swift.Encodable
+  public init<C>(method: Swift.String, checkedParams params: C, id: Swift.String) throws where C : Swift.Decodable, C : Swift.Encodable
+  public init<C>(method: Swift.String, params: C, idGenerator: any WalletConnectSwiftV2.IdentifierGenerator = defaultIdentifierGenerator) where C : Swift.Decodable, C : Swift.Encodable
+  public init<C>(method: Swift.String, params: C, id: Swift.Int64) where C : Swift.Decodable, C : Swift.Encodable
+  public init<C>(method: Swift.String, params: C, rpcid: WalletConnectSwiftV2.RPCID) where C : Swift.Decodable, C : Swift.Encodable
+  public init<C>(method: Swift.String, params: C, id: Swift.String) where C : Swift.Decodable, C : Swift.Encodable
+  public init(method: Swift.String, idGenerator: any WalletConnectSwiftV2.IdentifierGenerator = defaultIdentifierGenerator)
+  public init(method: Swift.String, id: Swift.Int64)
+  public init(method: Swift.String, id: Swift.String)
+  public static func == (a: WalletConnectSwiftV2.RPCRequest, b: WalletConnectSwiftV2.RPCRequest) -> Swift.Bool
+}
+extension WalletConnectSwiftV2.RPCRequest {
+  public static func notification<C>(method: Swift.String, params: C) -> WalletConnectSwiftV2.RPCRequest where C : Swift.Decodable, C : Swift.Encodable
+  public static func notification(method: Swift.String) -> WalletConnectSwiftV2.RPCRequest
+  public var isNotification: Swift.Bool {
+    get
+  }
+}
+extension WalletConnectSwiftV2.RPCRequest : Swift.Codable {
+  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+public struct RPCResponse : Swift.Equatable {
+  public let jsonrpc: Swift.String
+  public let id: WalletConnectSwiftV2.RPCID?
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var result: WalletConnectSwiftV2.AnyCodable? {
+    get
+  }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var error: WalletConnectSwiftV2.JSONRPCError? {
+    get
+  }
+  #endif
+  public let outcome: WalletConnectSwiftV2.RPCResult
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(id: WalletConnectSwiftV2.RPCID?, outcome: WalletConnectSwiftV2.RPCResult)
+  #endif
+  public init<C>(matchingRequest: WalletConnectSwiftV2.RPCRequest, result: C) where C : Swift.Decodable, C : Swift.Encodable
+  public init(matchingRequest: WalletConnectSwiftV2.RPCRequest, error: WalletConnectSwiftV2.JSONRPCError)
+  public init<C>(id: Swift.Int64, result: C) where C : Swift.Decodable, C : Swift.Encodable
+  public init<C>(id: Swift.String, result: C) where C : Swift.Decodable, C : Swift.Encodable
+  public init<C>(id: WalletConnectSwiftV2.RPCID, result: C) where C : Swift.Decodable, C : Swift.Encodable
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(id: WalletConnectSwiftV2.RPCID?, error: WalletConnectSwiftV2.JSONRPCError)
+  #endif
+  public init(id: Swift.Int64, error: WalletConnectSwiftV2.JSONRPCError)
+  public init(id: Swift.String, error: WalletConnectSwiftV2.JSONRPCError)
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(id: Swift.Int64, errorCode: Swift.Int, message: Swift.String, associatedData: WalletConnectSwiftV2.AnyCodable? = nil)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(id: Swift.String, errorCode: Swift.Int, message: Swift.String, associatedData: WalletConnectSwiftV2.AnyCodable? = nil)
+  #endif
+  public init(errorWithoutID: WalletConnectSwiftV2.JSONRPCError)
+  public static func == (a: WalletConnectSwiftV2.RPCResponse, b: WalletConnectSwiftV2.RPCResponse) -> Swift.Bool
+}
+extension WalletConnectSwiftV2.RPCResponse : Swift.Codable {
+  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+public enum RPCResult : Swift.Codable, Swift.Equatable {
+  case response(WalletConnectSwiftV2.AnyCodable)
+  case error(WalletConnectSwiftV2.JSONRPCError)
+  public var value: any Swift.Decodable & Swift.Encodable {
+    get
+  }
+  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: any Swift.Encoder) throws
+  public static func == (a: WalletConnectSwiftV2.RPCResult, b: WalletConnectSwiftV2.RPCResult) -> Swift.Bool
+}
+extension Swift.Sequence {
+  public func asyncForEach(_ operation: @escaping (Self.Element) async throws -> Swift.Void) async throws
+}
+public protocol SequenceObject : Swift.Decodable, Swift.Encodable {
+  var expiryDate: Foundation.Date { get }
+  var topic: Swift.String { get }
+}
+final public class SequenceStore<T> where T : WalletConnectSwiftV2.SequenceObject {
+  final public var onSequenceUpdate: (() -> Swift.Void)?
+  final public var onSequenceExpiration: ((_ sequence: T) -> Swift.Void)?
+  public init(store: WalletConnectSwiftV2.CodableStore<T>, dateInitializer: @escaping () -> Foundation.Date = Date.init)
+  final public func hasSequence(forTopic topic: Swift.String) -> Swift.Bool
+  final public func setSequence(_ sequence: T)
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func getSequence(forTopic topic: Swift.String) throws -> T?
+  #endif
+  final public func getAll() -> [T]
+  final public func delete(topic: Swift.String)
+  final public func deleteAll()
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class Serializer : WalletConnectSwiftV2.Serializing {
+  final public let logger: any WalletConnectSwiftV2.ConsoleLogging
+  public var logsPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.Log, Swift.Never> {
+    get
+  }
+  public init(kms: any WalletConnectSwiftV2.KeyManagementServiceProtocol, logger: any WalletConnectSwiftV2.ConsoleLogging)
+  public func setLogging(level: WalletConnectSwiftV2.LoggingLevel)
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func serialize(topic: Swift.String?, encodable: any Swift.Encodable, envelopeType: WalletConnectSwiftV2.Envelope.EnvelopeType, codingType: WalletConnectSwiftV2.Envelope.CodingType) throws -> Swift.String
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func deserialize<T>(topic: Swift.String, codingType: WalletConnectSwiftV2.Envelope.CodingType, envelopeString: Swift.String) throws -> (T, derivedTopic: Swift.String?, decryptedPayload: Foundation.Data) where T : Swift.Decodable, T : Swift.Encodable
+  #endif
+  @objc deinit
+}
+public protocol Serializing {
+  var logsPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.Log, Swift.Never> { get }
+  var logger: any WalletConnectSwiftV2.ConsoleLogging { get }
+  func setLogging(level: WalletConnectSwiftV2.LoggingLevel)
+  #if compiler(>=5.3) && $NonescapableTypes
+  func serialize(topic: Swift.String?, encodable: any Swift.Encodable, envelopeType: WalletConnectSwiftV2.Envelope.EnvelopeType, codingType: WalletConnectSwiftV2.Envelope.CodingType) throws -> Swift.String
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func deserialize<T>(topic: Swift.String, codingType: WalletConnectSwiftV2.Envelope.CodingType, envelopeString: Swift.String) throws -> (T, derivedTopic: Swift.String?, decryptedPayload: Foundation.Data) where T : Swift.Decodable, T : Swift.Encodable
+  #endif
+}
+extension WalletConnectSwiftV2.Serializing {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func tryDeserialize<T>(topic: Swift.String, codingType: WalletConnectSwiftV2.Envelope.CodingType, envelopeString: Swift.String) -> (T, derivedTopic: Swift.String?, decryptedPayload: Foundation.Data)? where T : Swift.Decodable, T : Swift.Encodable
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func serialize(topic: Swift.String?, encodable: any Swift.Encodable, envelopeType: WalletConnectSwiftV2.Envelope.EnvelopeType = .type0, codingType: WalletConnectSwiftV2.Envelope.CodingType = .base64Encoded) throws -> Swift.String
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func tryDeserializeRequestOrResponse(topic: Swift.String, codingType: WalletConnectSwiftV2.Envelope.CodingType, envelopeString: Swift.String) -> WalletConnectSwiftV2.Either<(request: WalletConnectSwiftV2.RPCRequest, derivedTopic: Swift.String?, decryptedPayload: Foundation.Data), (response: WalletConnectSwiftV2.RPCResponse, derivedTopic: Swift.String?, decryptedPayload: Foundation.Data)>?
+  #endif
+}
+public struct Session : Swift.Codable {
+  public let topic: Swift.String
+  public let pairingTopic: Swift.String
+  public let peer: WalletConnectSwiftV2.AppMetadata
+  public let requiredNamespaces: [Swift.String : WalletConnectSwiftV2.ProposalNamespace]
+  public let namespaces: [Swift.String : WalletConnectSwiftV2.SessionNamespace]
+  public let sessionProperties: [Swift.String : Swift.String]?
+  public let expiryDate: Foundation.Date
+  public static var defaultTimeToLive: Swift.Int64 {
+    get
+  }
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension WalletConnectSwiftV2.Session {
+  public struct Proposal : Swift.Equatable, Swift.Codable {
+    public var id: Swift.String
+    public let pairingTopic: Swift.String
+    public let proposer: WalletConnectSwiftV2.AppMetadata
+    public let requiredNamespaces: [Swift.String : WalletConnectSwiftV2.ProposalNamespace]
+    public let optionalNamespaces: [Swift.String : WalletConnectSwiftV2.ProposalNamespace]?
+    public let sessionProperties: [Swift.String : Swift.String]?
+    public static func == (a: WalletConnectSwiftV2.Session.Proposal, b: WalletConnectSwiftV2.Session.Proposal) -> Swift.Bool
+    public func encode(to encoder: any Swift.Encoder) throws
+    public init(from decoder: any Swift.Decoder) throws
+  }
+  public struct Event : Swift.Equatable, Swift.Hashable {
+    public let name: Swift.String
+    public let data: WalletConnectSwiftV2.AnyCodable
+    public init(name: Swift.String, data: WalletConnectSwiftV2.AnyCodable)
+    public static func == (a: WalletConnectSwiftV2.Session.Event, b: WalletConnectSwiftV2.Session.Event) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public var accounts: [WalletConnectSwiftV2.Account] {
+    get
+  }
+}
+public enum SessionApproveExecutionTraceEvents : Swift.String, WalletConnectSwiftV2.TraceEvent {
+  case approvingSessionProposal
+  case sessionNamespacesValidationStarted
+  case sessionNamespacesValidationSuccess
+  case responseApproveSent
+  case settleRequestSent
+  case sessionSettleSuccess
+  public var description: Swift.String {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(rawValue: Swift.String)
+  #endif
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum ApproveSessionTraceErrorEvents : Swift.String {
+  case sessionNamespacesValidationFailure
+  case proposalNotFound
+  case proposalExpired
+  case networkNotConnected
+  case agreementMissingOrInvalid
+  case relayNotFound
+  case sessionSettleFailure
+  public var description: Swift.String {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(rawValue: Swift.String)
+  #endif
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum SessionAuthenticateTraceEvents : Swift.String, WalletConnectSwiftV2.TraceEvent {
+  case signatureVerificationStarted
+  case signatureVerificationSuccess
+  case requestParamsRetrieved
+  case agreementKeysGenerated
+  case agreementSecretSet
+  case sessionKeysGenerated
+  case sessionSecretSet
+  case responseParamsCreated
+  case responseSent
+  public var description: Swift.String {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(rawValue: Swift.String)
+  #endif
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum SessionAuthenticateErrorEvents : Swift.String {
+  case signatureVerificationFailed
+  case requestParamsRetrievalFailed
+  case agreementKeysGenerationFailed
+  case agreementSecretSetFailed
+  case sessionKeysGenerationFailed
+  case sessionSecretSetFailed
+  case sessionCreationFailed
+  case responseSendFailed
+  public var description: Swift.String {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(rawValue: Swift.String)
+  #endif
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public class SetStore<T> : Swift.CustomStringConvertible where T : Swift.Hashable {
+  public init(label: Swift.String)
+  public func insert(_ element: T)
+  public func remove(_ element: T)
+  public func contains(_ element: T) -> Swift.Bool
+  public var description: Swift.String {
+    get
+  }
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class Sign {
+  public static var instance: WalletConnectSwiftV2.SignClient
+  public static func configure(crypto: any WalletConnectSwiftV2.CryptoProvider)
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class SignClient : WalletConnectSwiftV2.SignClientProtocol {
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public var sessionProposalPublisher: Combine.AnyPublisher<(proposal: WalletConnectSwiftV2.Session.Proposal, context: WalletConnectSwiftV2.VerifyContext?), Swift.Never> {
+    get
+  }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public var sessionRequestPublisher: Combine.AnyPublisher<(request: WalletConnectSwiftV2.Request, context: WalletConnectSwiftV2.VerifyContext?), Swift.Never> {
+    get
+  }
+  #endif
+  final public var socketConnectionStatusPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.SocketConnectionStatus, Swift.Never> {
+    get
+  }
+  final public var sessionSettlePublisher: Combine.AnyPublisher<WalletConnectSwiftV2.Session, Swift.Never> {
+    get
+  }
+  final public var sessionDeletePublisher: Combine.AnyPublisher<(Swift.String, any WalletConnectSwiftV2.Reason), Swift.Never> {
+    get
+  }
+  final public var sessionResponsePublisher: Combine.AnyPublisher<WalletConnectSwiftV2.Response, Swift.Never> {
+    get
+  }
+  final public var sessionRejectionPublisher: Combine.AnyPublisher<(WalletConnectSwiftV2.Session.Proposal, any WalletConnectSwiftV2.Reason), Swift.Never> {
+    get
+  }
+  final public var sessionUpdatePublisher: Combine.AnyPublisher<(sessionTopic: Swift.String, namespaces: [Swift.String : WalletConnectSwiftV2.SessionNamespace]), Swift.Never> {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public var sessionEventPublisher: Combine.AnyPublisher<(event: WalletConnectSwiftV2.Session.Event, sessionTopic: Swift.String, chainId: WalletConnectSwiftV2.Blockchain?), Swift.Never> {
+    get
+  }
+  #endif
+  final public var sessionExtendPublisher: Combine.AnyPublisher<(sessionTopic: Swift.String, date: Foundation.Date), Swift.Never> {
+    get
+  }
+  final public var pingResponsePublisher: Combine.AnyPublisher<Swift.String, Swift.Never> {
+    get
+  }
+  final public var sessionsPublisher: Combine.AnyPublisher<[WalletConnectSwiftV2.Session], Swift.Never> {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public var authenticateRequestPublisher: Combine.AnyPublisher<(request: WalletConnectSwiftV2.AuthenticationRequest, context: WalletConnectSwiftV2.VerifyContext?), Swift.Never> {
+    get
+  }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public var authResponsePublisher: Combine.AnyPublisher<(id: WalletConnectSwiftV2.RPCID, result: Swift.Result<(WalletConnectSwiftV2.Session?, [WalletConnectSwiftV2.Cacao]), WalletConnectSwiftV2.AuthError>), Swift.Never> {
+    get
+  }
+  #endif
+  final public var logsPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.Log, Swift.Never> {
+    get
+  }
+  final public var sessionProposalExpirationPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.Session.Proposal, Swift.Never> {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public var pendingProposalsPublisher: Combine.AnyPublisher<[(proposal: WalletConnectSwiftV2.Session.Proposal, context: WalletConnectSwiftV2.VerifyContext?)], Swift.Never> {
+    get
+  }
+  #endif
+  final public var requestExpirationPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.RPCID, Swift.Never> {
+    get
+  }
+  final public let logger: any WalletConnectSwiftV2.ConsoleLogging
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func connect(requiredNamespaces: [Swift.String : WalletConnectSwiftV2.ProposalNamespace], optionalNamespaces: [Swift.String : WalletConnectSwiftV2.ProposalNamespace]? = nil, sessionProperties: [Swift.String : Swift.String]? = nil) async throws -> WalletConnectSwiftV2.WalletConnectURI
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func connect(requiredNamespaces: [Swift.String : WalletConnectSwiftV2.ProposalNamespace], optionalNamespaces: [Swift.String : WalletConnectSwiftV2.ProposalNamespace]? = nil, sessionProperties: [Swift.String : Swift.String]? = nil, topic: Swift.String) async throws
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func authenticate(_ params: WalletConnectSwiftV2.AuthRequestParams, walletUniversalLink: Swift.String? = nil) async throws -> WalletConnectSwiftV2.WalletConnectURI?
+  #endif
+  @discardableResult
+  final public func authenticateLinkMode(_ params: WalletConnectSwiftV2.AuthRequestParams, walletUniversalLink: Swift.String) async throws -> Swift.String
+  final public func dispatchEnvelope(_ envelope: Swift.String) throws
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func approveSessionAuthenticate(requestId: WalletConnectSwiftV2.RPCID, auths: [WalletConnectSwiftV2.Cacao]) async throws -> WalletConnectSwiftV2.Session?
+  #endif
+  final public func rejectSession(requestId: WalletConnectSwiftV2.RPCID) async throws
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func getPendingAuthRequests() throws -> [(WalletConnectSwiftV2.AuthenticationRequest, WalletConnectSwiftV2.VerifyContext?)]
+  #endif
+  final public func buildSignedAuthObject(authPayload: WalletConnectSwiftV2.AuthPayload, signature: WalletConnectSwiftV2.CacaoSignature, account: WalletConnectSwiftV2.Account) throws -> WalletConnectSwiftV2.AuthObject
+  final public func buildAuthPayload(payload: WalletConnectSwiftV2.AuthPayload, supportedEVMChains: [WalletConnectSwiftV2.Blockchain], supportedMethods: [Swift.String]) throws -> WalletConnectSwiftV2.AuthPayload
+  final public func formatAuthMessage(payload: WalletConnectSwiftV2.AuthPayload, account: WalletConnectSwiftV2.Account) throws -> Swift.String
+  final public func verifySIWE(signature: Swift.String, message: Swift.String, address: Swift.String, chainId: Swift.String) async throws
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func approve(proposalId: Swift.String, namespaces: [Swift.String : WalletConnectSwiftV2.SessionNamespace], sessionProperties: [Swift.String : Swift.String]? = nil) async throws -> WalletConnectSwiftV2.Session
+  #endif
+  final public func rejectSession(proposalId: Swift.String, reason: WalletConnectSwiftV2.RejectionReason) async throws
+  final public func update(topic: Swift.String, namespaces: [Swift.String : WalletConnectSwiftV2.SessionNamespace]) async throws
+  final public func extend(topic: Swift.String) async throws
+  final public func request(params: WalletConnectSwiftV2.Request) async throws
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func requestLinkMode(params: WalletConnectSwiftV2.Request) async throws -> Swift.String?
+  #endif
+  final public func respond(topic: Swift.String, requestId: WalletConnectSwiftV2.RPCID, response: WalletConnectSwiftV2.RPCResult) async throws
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func respondLinkMode(topic: Swift.String, requestId: WalletConnectSwiftV2.RPCID, response: WalletConnectSwiftV2.RPCResult) async throws -> Swift.String?
+  #endif
+  final public func ping(topic: Swift.String) async throws
+  final public func emit(topic: Swift.String, event: WalletConnectSwiftV2.Session.Event, chainId: WalletConnectSwiftV2.Blockchain) async throws
+  final public func disconnect(topic: Swift.String) async throws
+  final public func getSessions() -> [WalletConnectSwiftV2.Session]
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func getPendingRequests(topic: Swift.String? = nil) -> [(request: WalletConnectSwiftV2.Request, context: WalletConnectSwiftV2.VerifyContext?)]
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func getPendingProposals(topic: Swift.String? = nil) -> [(proposal: WalletConnectSwiftV2.Session.Proposal, context: WalletConnectSwiftV2.VerifyContext?)]
+  #endif
+  final public func cleanup() async throws
+  final public func cleanup() throws
+  final public func setLogging(level: WalletConnectSwiftV2.LoggingLevel)
+  @objc deinit
+}
+public struct SignClientFactory {
+  public static func create(metadata: WalletConnectSwiftV2.AppMetadata, pairingClient: WalletConnectSwiftV2.PairingClient, projectId: Swift.String, crypto: any WalletConnectSwiftV2.CryptoProvider, networkingClient: WalletConnectSwiftV2.NetworkingInteractor, groupIdentifier: Swift.String, eventsClient: any WalletConnectSwiftV2.EventsClientProtocol) -> WalletConnectSwiftV2.SignClient
+}
+public protocol SignClientProtocol {
+  var logger: any WalletConnectSwiftV2.ConsoleLogging { get }
+  #if compiler(>=5.3) && $NonescapableTypes
+  var sessionProposalPublisher: Combine.AnyPublisher<(proposal: WalletConnectSwiftV2.Session.Proposal, context: WalletConnectSwiftV2.VerifyContext?), Swift.Never> { get }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  var sessionRequestPublisher: Combine.AnyPublisher<(request: WalletConnectSwiftV2.Request, context: WalletConnectSwiftV2.VerifyContext?), Swift.Never> { get }
+  #endif
+  var sessionsPublisher: Combine.AnyPublisher<[WalletConnectSwiftV2.Session], Swift.Never> { get }
+  var socketConnectionStatusPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.SocketConnectionStatus, Swift.Never> { get }
+  var sessionSettlePublisher: Combine.AnyPublisher<WalletConnectSwiftV2.Session, Swift.Never> { get }
+  var sessionDeletePublisher: Combine.AnyPublisher<(Swift.String, any WalletConnectSwiftV2.Reason), Swift.Never> { get }
+  var sessionResponsePublisher: Combine.AnyPublisher<WalletConnectSwiftV2.Response, Swift.Never> { get }
+  var sessionRejectionPublisher: Combine.AnyPublisher<(WalletConnectSwiftV2.Session.Proposal, any WalletConnectSwiftV2.Reason), Swift.Never> { get }
+  #if compiler(>=5.3) && $NonescapableTypes
+  var sessionEventPublisher: Combine.AnyPublisher<(event: WalletConnectSwiftV2.Session.Event, sessionTopic: Swift.String, chainId: WalletConnectSwiftV2.Blockchain?), Swift.Never> { get }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  var authenticateRequestPublisher: Combine.AnyPublisher<(request: WalletConnectSwiftV2.AuthenticationRequest, context: WalletConnectSwiftV2.VerifyContext?), Swift.Never> { get }
+  #endif
+  var logsPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.Log, Swift.Never> { get }
+  var sessionProposalExpirationPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.Session.Proposal, Swift.Never> { get }
+  #if compiler(>=5.3) && $NonescapableTypes
+  var pendingProposalsPublisher: Combine.AnyPublisher<[(proposal: WalletConnectSwiftV2.Session.Proposal, context: WalletConnectSwiftV2.VerifyContext?)], Swift.Never> { get }
+  #endif
+  var requestExpirationPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.RPCID, Swift.Never> { get }
+  #if compiler(>=5.3) && $NonescapableTypes
+  func connect(requiredNamespaces: [Swift.String : WalletConnectSwiftV2.ProposalNamespace], optionalNamespaces: [Swift.String : WalletConnectSwiftV2.ProposalNamespace]?, sessionProperties: [Swift.String : Swift.String]?, topic: Swift.String) async throws
+  #endif
+  func request(params: WalletConnectSwiftV2.Request) async throws
+  #if compiler(>=5.3) && $NonescapableTypes
+  func approve(proposalId: Swift.String, namespaces: [Swift.String : WalletConnectSwiftV2.SessionNamespace], sessionProperties: [Swift.String : Swift.String]?) async throws -> WalletConnectSwiftV2.Session
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func authenticate(_ params: WalletConnectSwiftV2.AuthRequestParams, walletUniversalLink: Swift.String?) async throws -> WalletConnectSwiftV2.WalletConnectURI?
+  #endif
+  func rejectSession(proposalId: Swift.String, reason: WalletConnectSwiftV2.RejectionReason) async throws
+  func rejectSession(requestId: WalletConnectSwiftV2.RPCID) async throws
+  func update(topic: Swift.String, namespaces: [Swift.String : WalletConnectSwiftV2.SessionNamespace]) async throws
+  func extend(topic: Swift.String) async throws
+  #if compiler(>=5.3) && $NonescapableTypes
+  func approveSessionAuthenticate(requestId: WalletConnectSwiftV2.RPCID, auths: [WalletConnectSwiftV2.AuthObject]) async throws -> WalletConnectSwiftV2.Session?
+  #endif
+  func buildSignedAuthObject(authPayload: WalletConnectSwiftV2.AuthPayload, signature: WalletConnectSwiftV2.CacaoSignature, account: WalletConnectSwiftV2.Account) throws -> WalletConnectSwiftV2.AuthObject
+  func respond(topic: Swift.String, requestId: WalletConnectSwiftV2.RPCID, response: WalletConnectSwiftV2.RPCResult) async throws
+  func emit(topic: Swift.String, event: WalletConnectSwiftV2.Session.Event, chainId: WalletConnectSwiftV2.Blockchain) async throws
+  func disconnect(topic: Swift.String) async throws
+  func getSessions() -> [WalletConnectSwiftV2.Session]
+  func formatAuthMessage(payload: WalletConnectSwiftV2.AuthPayload, account: WalletConnectSwiftV2.Account) throws -> Swift.String
+  func buildAuthPayload(payload: WalletConnectSwiftV2.AuthPayload, supportedEVMChains: [WalletConnectSwiftV2.Blockchain], supportedMethods: [Swift.String]) throws -> WalletConnectSwiftV2.AuthPayload
+  func dispatchEnvelope(_ envelope: Swift.String) throws
+  func cleanup() async throws
+  #if compiler(>=5.3) && $NonescapableTypes
+  func getPendingRequests(topic: Swift.String?) -> [(request: WalletConnectSwiftV2.Request, context: WalletConnectSwiftV2.VerifyContext?)]
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func getPendingAuthRequests() throws -> [(WalletConnectSwiftV2.AuthenticationRequest, WalletConnectSwiftV2.VerifyContext?)]
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func getPendingProposals(topic: Swift.String?) -> [(proposal: WalletConnectSwiftV2.Session.Proposal, context: WalletConnectSwiftV2.VerifyContext?)]
+  #endif
+}
+public class SignDecryptionService {
+  public init(groupIdentifier: Swift.String) throws
+  public func decryptProposal(topic: Swift.String, ciphertext: Swift.String) throws -> WalletConnectSwiftV2.Session.Proposal
+  public func decryptRequest(topic: Swift.String, ciphertext: Swift.String) throws -> WalletConnectSwiftV2.Request
+  public func decryptAuthRequest(topic: Swift.String, ciphertext: Swift.String) throws -> WalletConnectSwiftV2.AuthenticationRequest
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func getMetadata(topic: Swift.String) -> WalletConnectSwiftV2.AppMetadata?
+  #endif
+  @objc deinit
+}
+public protocol SignerFactory {
+  func createEthereumSigner() -> any WalletConnectSwiftV2.EthereumSigner
+}
+extension CryptoKit.Curve25519.Signing.PublicKey : Swift.Equatable {
+  public static func == (lhs: CryptoKit.Curve25519.Signing.PublicKey, rhs: CryptoKit.Curve25519.Signing.PublicKey) -> Swift.Bool
+}
+extension CryptoKit.Curve25519.Signing.PrivateKey : Swift.Equatable {
+  public static func == (lhs: CryptoKit.Curve25519.Signing.PrivateKey, rhs: CryptoKit.Curve25519.Signing.PrivateKey) -> Swift.Bool
+}
+public struct SigningPublicKey : WalletConnectSwiftV2.GenericPasswordConvertible, Swift.Equatable {
+  public init<D>(rawRepresentation data: D) throws where D : Foundation.ContiguousBytes
+  public init(hex: Swift.String) throws
+  public var rawRepresentation: Foundation.Data {
+    get
+  }
+  public var hexRepresentation: Swift.String {
+    get
+  }
+  public func isValid(signature: Foundation.Data, for digest: Foundation.Data) -> Swift.Bool
+  public var did: Swift.String {
+    get
+  }
+  public static func == (a: WalletConnectSwiftV2.SigningPublicKey, b: WalletConnectSwiftV2.SigningPublicKey) -> Swift.Bool
+}
+extension WalletConnectSwiftV2.SigningPublicKey : Swift.Codable {
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct SigningPrivateKey : WalletConnectSwiftV2.GenericPasswordConvertible, Swift.Equatable {
+  public init()
+  public init<D>(rawRepresentation: D) throws where D : Foundation.ContiguousBytes
+  public var rawRepresentation: Foundation.Data {
+    get
+  }
+  public var publicKey: WalletConnectSwiftV2.SigningPublicKey {
+    get
+  }
+  public func signature(_ data: Foundation.Data) throws -> Foundation.Data
+  public static func == (a: WalletConnectSwiftV2.SigningPrivateKey, b: WalletConnectSwiftV2.SigningPrivateKey) -> Swift.Bool
+}
+public protocol SIWEFromCacaoFormatting {
+  func formatMessage(from payload: WalletConnectSwiftV2.CacaoPayload, includeRecapInTheStatement: Swift.Bool) throws -> Swift.String
+}
+extension WalletConnectSwiftV2.SIWEFromCacaoFormatting {
+  public func formatMessage(from payload: WalletConnectSwiftV2.CacaoPayload) throws -> Swift.String
+}
+public struct SIWEFromCacaoPayloadFormatter : WalletConnectSwiftV2.SIWEFromCacaoFormatting {
+  public init()
+  public func formatMessage(from payload: WalletConnectSwiftV2.CacaoPayload, includeRecapInTheStatement: Swift.Bool) throws -> Swift.String
+}
+@_hasMissingDesignatedInitializers public class SiweStatementBuilder {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func buildSiweStatement(statement: Swift.String?, mergedRecapUrn: WalletConnectSwiftV2.RecapUrn?) throws -> Swift.String
+  #endif
+  @objc deinit
+}
+public enum SocketConnectionType {
+  case automatic
+  case manual
+  public static func == (a: WalletConnectSwiftV2.SocketConnectionType, b: WalletConnectSwiftV2.SocketConnectionType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension Swift.String {
+  public func toHexEncodedString(uppercase: Swift.Bool = true, prefix: Swift.String = "", separator: Swift.String = "") -> Swift.String
+  public static func generateTopic() -> Swift.String
+  public func asURL() throws -> Foundation.URL
+}
+extension Swift.String : WalletConnectSwiftV2.GenericPasswordConvertible {
+  public init<D>(rawRepresentation data: D) throws where D : Foundation.ContiguousBytes
+  public var rawRepresentation: Foundation.Data {
+    get
+  }
+}
+public protocol SubscriptionPayload {
+  var id: WalletConnectSwiftV2.RPCID { get }
+  var topic: Swift.String { get }
+}
+public struct SymmetricKey : Swift.Equatable {
+  public var hexRepresentation: Swift.String {
+    get
+  }
+  public init(key: CryptoKit.SymmetricKey)
+  public init(size: WalletConnectSwiftV2.SymmetricKey.Size = .bits256)
+  public init(hex: Swift.String) throws
+  public func derivedTopic() -> Swift.String
+  public static func == (a: WalletConnectSwiftV2.SymmetricKey, b: WalletConnectSwiftV2.SymmetricKey) -> Swift.Bool
+}
+extension WalletConnectSwiftV2.SymmetricKey : WalletConnectSwiftV2.GenericPasswordConvertible {
+  public var rawRepresentation: Foundation.Data {
+    get
+  }
+  public init<D>(rawRepresentation data: D) throws where D : Foundation.ContiguousBytes
+}
+extension WalletConnectSwiftV2.SymmetricKey {
+  public enum Size {
+    case bits256
+    public static func == (a: WalletConnectSwiftV2.SymmetricKey.Size, b: WalletConnectSwiftV2.SymmetricKey.Size) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public typealias CancellableTask = _Concurrency.Task<Swift.Void, Swift.Never>
+extension _Concurrency.Task where Success == (), Failure == Swift.Never {
+  final public class DisposeBag {
+    public init()
+    @objc deinit
+  }
+  public func store(in set: inout _Concurrency.Task<Success, Failure>.DisposeBag)
+}
+extension Swift.Double {
+  public static var day: Foundation.TimeInterval {
+    get
+  }
+  public static var hour: Foundation.TimeInterval {
+    get
+  }
+  public static var minute: Foundation.TimeInterval {
+    get
+  }
+}
+public protocol TimeProvider {
+  var currentDate: Foundation.Date { get }
+}
+public struct DefaultTimeProvider : WalletConnectSwiftV2.TimeProvider {
+  public init()
+  public var currentDate: Foundation.Date {
+    get
+  }
+}
+extension Swift.UInt8 {
+  public var data: Foundation.Data {
+    get
+  }
+}
+extension Swift.Array where Element == Swift.UInt8 {
+  public func toHexString() -> Swift.String
+}
+final public class UnfairLock {
+  public init()
+  @objc deinit
+  @discardableResult
+  final public func locked<ReturnValue>(_ f: () throws -> ReturnValue) rethrows -> ReturnValue
+}
+public protocol VerifyClientProtocol {
+  func verify(_ verificationType: WalletConnectSwiftV2.VerificationType) async throws -> WalletConnectSwiftV2.VerifyResponse
+  #if compiler(>=5.3) && $NonescapableTypes
+  func createVerifyContext(origin: Swift.String?, domain: Swift.String, isScam: Swift.Bool?, isVerified: Swift.Bool?) -> WalletConnectSwiftV2.VerifyContext
+  #endif
+  func createVerifyContextForLinkMode(redirectUniversalLink: Swift.String, domain: Swift.String) -> WalletConnectSwiftV2.VerifyContext
+}
+public enum VerificationType {
+  case v1(assertionId: Swift.String)
+  case v2(attestationJWT: Swift.String, messageId: Swift.String)
+}
+@_hasMissingDesignatedInitializers public actor VerifyClient : WalletConnectSwiftV2.VerifyClientProtocol {
+  public func registerAttestationIfNeeded() async throws
+  public func verify(_ verificationType: WalletConnectSwiftV2.VerificationType) async throws -> WalletConnectSwiftV2.VerifyResponse
+  #if compiler(>=5.3) && $NonescapableTypes
+  nonisolated public func createVerifyContext(origin: Swift.String?, domain: Swift.String, isScam: Swift.Bool?, isVerified: Swift.Bool?) -> WalletConnectSwiftV2.VerifyContext
+  #endif
+  nonisolated public func createVerifyContextForLinkMode(redirectUniversalLink: Swift.String, domain: Swift.String) -> WalletConnectSwiftV2.VerifyContext
+  public func registerAssertion() async throws
+  @objc deinit
+  @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
+  @_semantics("defaultActor") nonisolated final public var unownedExecutor: _Concurrency.UnownedSerialExecutor {
+    get
+  }
+}
+public struct VerifyClientMock : WalletConnectSwiftV2.VerifyClientProtocol {
+  public init()
+  public func verify(_ verificationType: WalletConnectSwiftV2.VerificationType) async throws -> WalletConnectSwiftV2.VerifyResponse
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func createVerifyContext(origin: Swift.String?, domain: Swift.String, isScam: Swift.Bool?, isVerified: Swift.Bool?) -> WalletConnectSwiftV2.VerifyContext
+  #endif
+  public func createVerifyContextForLinkMode(redirectUniversalLink: Swift.String, domain: Swift.String) -> WalletConnectSwiftV2.VerifyContext
+}
+@_hasMissingDesignatedInitializers public class VerifyClientFactory {
+  public static func create() -> WalletConnectSwiftV2.VerifyClient
+  @objc deinit
+}
+public struct VerifyContext : Swift.Equatable, Swift.Hashable, Swift.Codable {
+  public enum ValidationStatus : Swift.Codable {
+    case unknown
+    case valid
+    case invalid
+    case scam
+    public static func == (a: WalletConnectSwiftV2.VerifyContext.ValidationStatus, b: WalletConnectSwiftV2.VerifyContext.ValidationStatus) -> Swift.Bool
+    public func encode(to encoder: any Swift.Encoder) throws
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+    public init(from decoder: any Swift.Decoder) throws
+  }
+  public let origin: Swift.String?
+  public let validation: WalletConnectSwiftV2.VerifyContext.ValidationStatus
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(origin: Swift.String?, validation: WalletConnectSwiftV2.VerifyContext.ValidationStatus)
+  #endif
+  public static func == (a: WalletConnectSwiftV2.VerifyContext, b: WalletConnectSwiftV2.VerifyContext) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct VerifyResponse : Swift.Decodable {
+  public let origin: Swift.String?
+  public let isScam: Swift.Bool?
+  public let isVerified: Swift.Bool?
+  public init(from decoder: any Swift.Decoder) throws
+}
+public enum VerifyStorageIdentifiers : Swift.String {
+  case context
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(rawValue: Swift.String)
+  #endif
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct WalletConnectURI : Swift.Equatable {
+  public enum Errors : Swift.Error {
+    case expired
+    case invalidFormat
+    public static func == (a: WalletConnectSwiftV2.WalletConnectURI.Errors, b: WalletConnectSwiftV2.WalletConnectURI.Errors) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public let topic: Swift.String
+  public let version: Swift.String
+  public let symKey: Swift.String
+  public let relay: WalletConnectSwiftV2.RelayProtocolOptions
+  public let methods: [Swift.String]?
+  public let expiryTimestamp: Swift.UInt64
+  public var absoluteString: Swift.String {
+    get
+  }
+  public var deeplinkUri: Swift.String {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(topic: Swift.String, symKey: Swift.String, relay: WalletConnectSwiftV2.RelayProtocolOptions, methods: [Swift.String]? = nil)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  @available(*, deprecated, message: "Use the throwing initializer instead")
+  public init?(string: Swift.String)
+  #endif
+  public init(uriString: Swift.String) throws
+  public init(deeplinkUri: Foundation.URL) throws
+  public static func == (a: WalletConnectSwiftV2.WalletConnectURI, b: WalletConnectSwiftV2.WalletConnectURI) -> Swift.Bool
+}
+extension WalletConnectSwiftV2.WalletConnectURI.Errors : Foundation.LocalizedError {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var errorDescription: Swift.String? {
+    get
+  }
+  #endif
+}
+extension WalletConnectSwiftV2.WalletConnectURI {
+  public init(connectionOptions: UIKit.UIScene.ConnectionOptions) throws
+  public init(urlContext: UIKit.UIOpenURLContext) throws
+}
+public struct WCPairing : WalletConnectSwiftV2.SequenceObject {
+  public let topic: Swift.String
+  public let relay: WalletConnectSwiftV2.RelayProtocolOptions
+  public var peerMetadata: WalletConnectSwiftV2.AppMetadata? {
+    get
+  }
+  public var expiryDate: Foundation.Date {
+    get
+  }
+  public var active: Swift.Bool {
+    get
+  }
+  public var requestReceived: Swift.Bool {
+    get
+  }
+  public var methods: [Swift.String]? {
+    get
+  }
+  public static var dateInitializer: () -> Foundation.Date
+  public static var timeToLiveInactive: Foundation.TimeInterval {
+    get
+  }
+  public static var timeToLiveActive: Foundation.TimeInterval {
+    get
+  }
+  public init(uri: WalletConnectSwiftV2.WalletConnectURI)
+  public mutating func activate()
+  public mutating func receivedRequest()
+  #if compiler(>=5.3) && $NonescapableTypes
+  public mutating func updatePeerMetadata(_ metadata: WalletConnectSwiftV2.AppMetadata?)
+  #endif
+  public mutating func updateExpiry(_ ttl: Foundation.TimeInterval = WCPairing.timeToLiveActive) throws
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension WalletConnectSwiftV2.WalletConnectURI {
+  public static func stub() -> WalletConnectSwiftV2.WalletConnectURI
+}
+@_hasMissingDesignatedInitializers public class Web3Wallet {
+  public static var instance: WalletConnectSwiftV2.Web3WalletClient
+  public static func configure(metadata: WalletConnectSwiftV2.AppMetadata, crypto: any WalletConnectSwiftV2.CryptoProvider, pushHost: Swift.String = "echo.walletconnect.com", environment: WalletConnectSwiftV2.APNSEnvironment = .production)
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class Web3WalletClient {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var sessionProposalPublisher: Combine.AnyPublisher<(proposal: WalletConnectSwiftV2.Session.Proposal, context: WalletConnectSwiftV2.VerifyContext?), Swift.Never> {
+    get
+  }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var sessionRequestPublisher: Combine.AnyPublisher<(request: WalletConnectSwiftV2.Request, context: WalletConnectSwiftV2.VerifyContext?), Swift.Never> {
+    get
+  }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var authenticateRequestPublisher: Combine.AnyPublisher<(request: WalletConnectSwiftV2.AuthenticationRequest, context: WalletConnectSwiftV2.VerifyContext?), Swift.Never> {
+    get
+  }
+  #endif
+  public var sessionsPublisher: Combine.AnyPublisher<[WalletConnectSwiftV2.Session], Swift.Never> {
+    get
+  }
+  public var socketConnectionStatusPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.SocketConnectionStatus, Swift.Never> {
+    get
+  }
+  public var sessionSettlePublisher: Combine.AnyPublisher<WalletConnectSwiftV2.Session, Swift.Never> {
+    get
+  }
+  public var sessionDeletePublisher: Combine.AnyPublisher<(Swift.String, any WalletConnectSwiftV2.Reason), Swift.Never> {
+    get
+  }
+  public var sessionResponsePublisher: Combine.AnyPublisher<WalletConnectSwiftV2.Response, Swift.Never> {
+    get
+  }
+  public var pairingDeletePublisher: Combine.AnyPublisher<(code: Swift.Int, message: Swift.String), Swift.Never> {
+    get
+  }
+  public var pairingStatePublisher: Combine.AnyPublisher<Swift.Bool, Swift.Never> {
+    get
+  }
+  public var pairingExpirationPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.Pairing, Swift.Never> {
+    get
+  }
+  public var logsPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.Log, Swift.Never> {
+    get
+  }
+  public var sessionProposalExpirationPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.Session.Proposal, Swift.Never> {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var pendingProposalsPublisher: Combine.AnyPublisher<[(proposal: WalletConnectSwiftV2.Session.Proposal, context: WalletConnectSwiftV2.VerifyContext?)], Swift.Never> {
+    get
+  }
+  #endif
+  public var requestExpirationPublisher: Combine.AnyPublisher<WalletConnectSwiftV2.RPCID, Swift.Never> {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func approve(proposalId: Swift.String, namespaces: [Swift.String : WalletConnectSwiftV2.SessionNamespace], sessionProperties: [Swift.String : Swift.String]? = nil) async throws -> WalletConnectSwiftV2.Session
+  #endif
+  public func rejectSession(proposalId: Swift.String, reason: WalletConnectSwiftV2.RejectionReason) async throws
+  public func update(topic: Swift.String, namespaces: [Swift.String : WalletConnectSwiftV2.SessionNamespace]) async throws
+  public func extend(topic: Swift.String) async throws
+  public func respond(topic: Swift.String, requestId: WalletConnectSwiftV2.RPCID, response: WalletConnectSwiftV2.RPCResult) async throws
+  public func emit(topic: Swift.String, event: WalletConnectSwiftV2.Session.Event, chainId: WalletConnectSwiftV2.Blockchain) async throws
+  public func pair(uri: WalletConnectSwiftV2.WalletConnectURI) async throws
+  public func disconnectPairing(topic: Swift.String) async
+  public func disconnect(topic: Swift.String) async throws
+  public func getSessions() -> [WalletConnectSwiftV2.Session]
+  public func formatAuthMessage(payload: WalletConnectSwiftV2.AuthPayload, account: WalletConnectSwiftV2.Account) throws -> Swift.String
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func approveSessionAuthenticate(requestId: WalletConnectSwiftV2.RPCID, auths: [WalletConnectSwiftV2.AuthObject]) async throws -> WalletConnectSwiftV2.Session?
+  #endif
+  public func rejectSession(requestId: WalletConnectSwiftV2.RPCID) async throws
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func getPendingAuthRequests() throws -> [(WalletConnectSwiftV2.AuthenticationRequest, WalletConnectSwiftV2.VerifyContext?)]
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func getPendingRequests(topic: Swift.String? = nil) -> [(request: WalletConnectSwiftV2.Request, context: WalletConnectSwiftV2.VerifyContext?)]
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func getPendingProposals(topic: Swift.String? = nil) -> [(proposal: WalletConnectSwiftV2.Session.Proposal, context: WalletConnectSwiftV2.VerifyContext?)]
+  #endif
+  public func buildSignedAuthObject(authPayload: WalletConnectSwiftV2.AuthPayload, signature: WalletConnectSwiftV2.CacaoSignature, account: WalletConnectSwiftV2.Account) throws -> WalletConnectSwiftV2.AuthObject
+  public func buildAuthPayload(payload: WalletConnectSwiftV2.AuthPayload, supportedEVMChains: [WalletConnectSwiftV2.Blockchain], supportedMethods: [Swift.String]) throws -> WalletConnectSwiftV2.AuthPayload
+  public func dispatchEnvelope(_ envelope: Swift.String) throws
+  public func register(deviceToken: Foundation.Data, enableEncrypted: Swift.Bool = false) async throws
+  public func cleanup() async throws
+  public func getPairings() -> [WalletConnectSwiftV2.Pairing]
+  @objc deinit
+}
+extension WalletConnectSwiftV2.Web3WalletClient {
+  public func register(deviceToken: Swift.String, enableEncrypted: Swift.Bool = false) async throws
+}
+public struct Web3WalletClientFactory {
+  public static func create(signClient: any WalletConnectSwiftV2.SignClientProtocol, pairingClient: any WalletConnectSwiftV2.PairingClientProtocol, pushClient: any WalletConnectSwiftV2.PushClientProtocol) -> WalletConnectSwiftV2.Web3WalletClient
+}
+final public class Web3WalletDecryptionService {
+  public enum RequestMethod : Swift.UInt {
+    case sessionRequest
+    case sessionProposal
+    case authRequest
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(rawValue: Swift.UInt)
+    #endif
+    public typealias RawValue = Swift.UInt
+    public var rawValue: Swift.UInt {
+      get
+    }
+  }
+  public init(groupIdentifier: Swift.String) throws
+  public static func canHandle(tag: Swift.UInt) -> Swift.Bool
+  #if compiler(>=5.3) && $NonescapableTypes
+  final public func getMetadata(topic: Swift.String) -> WalletConnectSwiftV2.AppMetadata?
+  #endif
+  final public func decryptMessage(topic: Swift.String, ciphertext: Swift.String, tag: Swift.UInt) throws -> any WalletConnectSwiftV2.DecryptedPayloadProtocol
+  @objc deinit
+}
+public protocol DecryptedPayloadProtocol {
+  var requestMethod: WalletConnectSwiftV2.Web3WalletDecryptionService.RequestMethod { get }
+}
+public struct RequestPayload : WalletConnectSwiftV2.DecryptedPayloadProtocol {
+  public var requestMethod: WalletConnectSwiftV2.Web3WalletDecryptionService.RequestMethod {
+    get
+  }
+  public var request: WalletConnectSwiftV2.Request
+}
+public struct ProposalPayload : WalletConnectSwiftV2.DecryptedPayloadProtocol {
+  public var requestMethod: WalletConnectSwiftV2.Web3WalletDecryptionService.RequestMethod {
+    get
+  }
+  public var proposal: WalletConnectSwiftV2.Session.Proposal
+}
+public struct AuthRequestPayload : WalletConnectSwiftV2.DecryptedPayloadProtocol {
+  public var requestMethod: WalletConnectSwiftV2.Web3WalletDecryptionService.RequestMethod {
+    get
+  }
+  public var authRequest: WalletConnectSwiftV2.AuthenticationRequest
+}
+public protocol WebSocketConnecting : AnyObject {
+  var isConnected: Swift.Bool { get }
+  #if compiler(>=5.3) && $NonescapableTypes
+  var onConnect: (() -> Swift.Void)? { get set }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  var onDisconnect: (((any Swift.Error)?) -> Swift.Void)? { get set }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  var onText: ((Swift.String) -> Swift.Void)? { get set }
+  #endif
+  var request: Foundation.URLRequest { get set }
+  func connect()
+  func disconnect()
+  #if compiler(>=5.3) && $NonescapableTypes
+  func write(string: Swift.String, completion: (() -> Swift.Void)?)
+  #endif
+}
+public protocol WebSocketFactory {
+  func create(with url: Foundation.URL) -> any WalletConnectSwiftV2.WebSocketConnecting
+}
+extension WalletConnectSwiftV2.AnyCodableError : Swift.Equatable {}
+extension WalletConnectSwiftV2.AnyCodableError : Swift.Hashable {}
+extension WalletConnectSwiftV2.APNSEnvironment : Swift.Equatable {}
+extension WalletConnectSwiftV2.APNSEnvironment : Swift.Hashable {}
+extension WalletConnectSwiftV2.APNSEnvironment : Swift.RawRepresentable {}
+extension WalletConnectSwiftV2.AuthError : Swift.Hashable {}
+extension WalletConnectSwiftV2.AuthErrors : Swift.Hashable {}
+extension WalletConnectSwiftV2.AuthRequestParams.Errors : Swift.Equatable {}
+extension WalletConnectSwiftV2.AuthRequestParams.Errors : Swift.Hashable {}
+extension WalletConnectSwiftV2.CacaoSignatureType : Swift.Equatable {}
+extension WalletConnectSwiftV2.CacaoSignatureType : Swift.Hashable {}
+extension WalletConnectSwiftV2.CacaoSignatureType : Swift.RawRepresentable {}
+extension WalletConnectSwiftV2.DIDKeyVariant : Swift.Equatable {}
+extension WalletConnectSwiftV2.DIDKeyVariant : Swift.Hashable {}
+extension WalletConnectSwiftV2.DataConversionError : Swift.Equatable {}
+extension WalletConnectSwiftV2.DataConversionError : Swift.Hashable {}
+extension WalletConnectSwiftV2.Envelope.CodingType : Swift.Hashable {}
+extension WalletConnectSwiftV2.Envelope.Errors : Swift.Equatable {}
+extension WalletConnectSwiftV2.Envelope.Errors : Swift.Hashable {}
+extension WalletConnectSwiftV2.Envelope.Errors : Swift.RawRepresentable {}
+extension WalletConnectSwiftV2.HTTPMethod : Swift.Equatable {}
+extension WalletConnectSwiftV2.HTTPMethod : Swift.Hashable {}
+extension WalletConnectSwiftV2.HTTPMethod : Swift.RawRepresentable {}
+extension WalletConnectSwiftV2.LoggingLevel : Swift.Hashable {}
+extension WalletConnectSwiftV2.AutoNamespacesError : Swift.Equatable {}
+extension WalletConnectSwiftV2.AutoNamespacesError : Swift.Hashable {}
+extension WalletConnectSwiftV2.NetworkConnectionStatus : Swift.Equatable {}
+extension WalletConnectSwiftV2.NetworkConnectionStatus : Swift.Hashable {}
+extension WalletConnectSwiftV2.PairError : Swift.Hashable {}
+extension WalletConnectSwiftV2.PairingExecutionTraceEvents : Swift.Equatable {}
+extension WalletConnectSwiftV2.PairingExecutionTraceEvents : Swift.Hashable {}
+extension WalletConnectSwiftV2.PairingExecutionTraceEvents : Swift.RawRepresentable {}
+extension WalletConnectSwiftV2.PairingTraceErrorEvents : WalletConnectSwiftV2.TraceEvent {}
+extension WalletConnectSwiftV2.PairingTraceErrorEvents : Swift.Equatable {}
+extension WalletConnectSwiftV2.PairingTraceErrorEvents : Swift.Hashable {}
+extension WalletConnectSwiftV2.PairingTraceErrorEvents : Swift.RawRepresentable {}
+extension WalletConnectSwiftV2.PairStorageIdentifiers : Swift.Equatable {}
+extension WalletConnectSwiftV2.PairStorageIdentifiers : Swift.Hashable {}
+extension WalletConnectSwiftV2.PairStorageIdentifiers : Swift.RawRepresentable {}
+extension WalletConnectSwiftV2.RecapUrnMergingService.Errors : Swift.Equatable {}
+extension WalletConnectSwiftV2.RecapUrnMergingService.Errors : Swift.Hashable {}
+extension WalletConnectSwiftV2.RejectionReason : Swift.Equatable {}
+extension WalletConnectSwiftV2.RejectionReason : Swift.Hashable {}
+extension WalletConnectSwiftV2.SocketConnectionStatus : Swift.Equatable {}
+extension WalletConnectSwiftV2.SocketConnectionStatus : Swift.Hashable {}
+extension WalletConnectSwiftV2.Request.Errors : Swift.Equatable {}
+extension WalletConnectSwiftV2.Request.Errors : Swift.Hashable {}
+extension WalletConnectSwiftV2.RPCHistory.Record.Origin : Swift.Equatable {}
+extension WalletConnectSwiftV2.RPCHistory.Record.Origin : Swift.Hashable {}
+extension WalletConnectSwiftV2.RPCHistory.Record.Origin : Swift.RawRepresentable {}
+extension WalletConnectSwiftV2.RPCHistory.Record.TransportType : Swift.Equatable {}
+extension WalletConnectSwiftV2.RPCHistory.Record.TransportType : Swift.Hashable {}
+extension WalletConnectSwiftV2.SessionApproveExecutionTraceEvents : Swift.Equatable {}
+extension WalletConnectSwiftV2.SessionApproveExecutionTraceEvents : Swift.Hashable {}
+extension WalletConnectSwiftV2.SessionApproveExecutionTraceEvents : Swift.RawRepresentable {}
+extension WalletConnectSwiftV2.ApproveSessionTraceErrorEvents : WalletConnectSwiftV2.TraceEvent {}
+extension WalletConnectSwiftV2.ApproveSessionTraceErrorEvents : Swift.Equatable {}
+extension WalletConnectSwiftV2.ApproveSessionTraceErrorEvents : Swift.Hashable {}
+extension WalletConnectSwiftV2.ApproveSessionTraceErrorEvents : Swift.RawRepresentable {}
+extension WalletConnectSwiftV2.SessionAuthenticateTraceEvents : Swift.Equatable {}
+extension WalletConnectSwiftV2.SessionAuthenticateTraceEvents : Swift.Hashable {}
+extension WalletConnectSwiftV2.SessionAuthenticateTraceEvents : Swift.RawRepresentable {}
+extension WalletConnectSwiftV2.SessionAuthenticateErrorEvents : WalletConnectSwiftV2.TraceEvent {}
+extension WalletConnectSwiftV2.SessionAuthenticateErrorEvents : Swift.Equatable {}
+extension WalletConnectSwiftV2.SessionAuthenticateErrorEvents : Swift.Hashable {}
+extension WalletConnectSwiftV2.SessionAuthenticateErrorEvents : Swift.RawRepresentable {}
+extension WalletConnectSwiftV2.SocketConnectionType : Swift.Equatable {}
+extension WalletConnectSwiftV2.SocketConnectionType : Swift.Hashable {}
+extension WalletConnectSwiftV2.SymmetricKey.Size : Swift.Equatable {}
+extension WalletConnectSwiftV2.SymmetricKey.Size : Swift.Hashable {}
+extension WalletConnectSwiftV2.VerifyContext.ValidationStatus : Swift.Equatable {}
+extension WalletConnectSwiftV2.VerifyContext.ValidationStatus : Swift.Hashable {}
+extension WalletConnectSwiftV2.VerifyStorageIdentifiers : Swift.Equatable {}
+extension WalletConnectSwiftV2.VerifyStorageIdentifiers : Swift.Hashable {}
+extension WalletConnectSwiftV2.VerifyStorageIdentifiers : Swift.RawRepresentable {}
+extension WalletConnectSwiftV2.WalletConnectURI.Errors : Swift.Equatable {}
+extension WalletConnectSwiftV2.WalletConnectURI.Errors : Swift.Hashable {}
+extension WalletConnectSwiftV2.Web3WalletDecryptionService.RequestMethod : Swift.Equatable {}
+extension WalletConnectSwiftV2.Web3WalletDecryptionService.RequestMethod : Swift.Hashable {}
+extension WalletConnectSwiftV2.Web3WalletDecryptionService.RequestMethod : Swift.RawRepresentable {}

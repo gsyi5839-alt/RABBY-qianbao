@@ -1,0 +1,86 @@
+{
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/web3.swift/web3swift/lib/CryptoSwift/UInt32+Extensions.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/UInt32+Extensions.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/UInt32+Extensions.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/UInt32+Extensions.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/UInt32+Extensions.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/UInt32+Extensions.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/web3.swift/web3swift/lib/CryptoSwift/UInt64+Extensions.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/UInt64+Extensions.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/UInt64+Extensions.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/UInt64+Extensions.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/UInt64+Extensions.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/UInt64+Extensions.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/web3.swift/web3swift/lib/CryptoSwift/Utils.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/Utils.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/Utils.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/Utils.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/Utils.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/Utils.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/web3.swift/web3swift/lib/CryptoSwift/ZeroPadding.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/ZeroPadding.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/ZeroPadding.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/ZeroPadding.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/ZeroPadding.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/ZeroPadding.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/web3.swift/web3swift/src/Account/TypedData.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/TypedData.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/TypedData.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/TypedData.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/TypedData.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/TypedData.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/web3.swift/web3swift/src/Client/NetworkProviders/WebSocketConfiguration.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/WebSocketConfiguration.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/WebSocketConfiguration.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/WebSocketConfiguration.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/WebSocketConfiguration.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/WebSocketConfiguration.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/web3.swift/web3swift/src/Client/NetworkProviders/WebSocketNetworkProvider.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/WebSocketNetworkProvider.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/WebSocketNetworkProvider.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/WebSocketNetworkProvider.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/WebSocketNetworkProvider.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/WebSocketNetworkProvider.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/web3.swift/web3swift/src/Extensions/String+Numeric.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/String+Numeric.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/String+Numeric.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/String+Numeric.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/String+Numeric.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/String+Numeric.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/web3.swift/web3swift/src/Extensions/URLSessionExtensions.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/URLSessionExtensions.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/URLSessionExtensions.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/URLSessionExtensions.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/URLSessionExtensions.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/URLSessionExtensions.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/web3.swift/web3swift/src/SIWE/SiweVerifier.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/SiweVerifier.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/SiweVerifier.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/SiweVerifier.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/SiweVerifier.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/SiweVerifier.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/web3.swift/web3swift/src/ZKSync/ZKSyncProvider.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/ZKSyncProvider.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/ZKSyncProvider.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/ZKSyncProvider.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/ZKSyncProvider.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/ZKSyncProvider.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/web3.swift/web3swift/src/ZKSync/ZKSyncTransaction.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/ZKSyncTransaction.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/ZKSyncTransaction.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/ZKSyncTransaction.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/ZKSyncTransaction.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/ZKSyncTransaction.swiftdeps"
+  }
+}

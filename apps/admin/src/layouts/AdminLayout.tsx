@@ -3,14 +3,14 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 const MENU_ITEMS = [
-  { key: '/dashboard', icon: '\u{1F4CA}', label: 'Dashboard' },
-  { key: '/users', icon: '\u{1F465}', label: 'Users' },
-  { key: '/chains', icon: '\u26D3\uFE0F', label: 'Chains' },
-  { key: '/tokens', icon: '\u{1FA99}', label: 'Tokens' },
-  { key: '/security', icon: '\u{1F512}', label: 'Security' },
-  { key: '/dapps', icon: '\u{1F4F1}', label: 'DApps' },
-  { key: '/audit', icon: '\u{1F4DC}', label: 'Audit Log' },
-  { key: '/system', icon: '\u2699\uFE0F', label: 'System' },
+  { key: '/dashboard', icon: 'DB', label: 'Dashboard' },
+  { key: '/users', icon: 'US', label: 'Users' },
+  { key: '/chains', icon: 'CH', label: 'Chains' },
+  { key: '/tokens', icon: 'TK', label: 'Tokens' },
+  { key: '/security', icon: 'SC', label: 'Security' },
+  { key: '/dapps', icon: 'DA', label: 'DApps' },
+  { key: '/audit', icon: 'AU', label: 'Audit Log' },
+  { key: '/system', icon: 'SY', label: 'System' },
 ];
 
 export default function AdminLayout() {
@@ -56,7 +56,7 @@ export default function AdminLayout() {
               height: 28,
               borderRadius: 8,
               background:
-                'linear-gradient(135deg, var(--r-blue-default, #4c65ff), #7084ff)',
+                'linear-gradient(135deg, var(--r-blue-default, #4f8bff), #7aa8ff)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -155,7 +155,7 @@ export default function AdminLayout() {
                 fontSize: 12,
               }}
             >
-              \u{1F514}
+              Bell
             </button>
             <button
               style={{
@@ -167,7 +167,7 @@ export default function AdminLayout() {
                 fontSize: 12,
               }}
             >
-              admin \u25BE
+              admin v
             </button>
             <button
               onClick={() => {

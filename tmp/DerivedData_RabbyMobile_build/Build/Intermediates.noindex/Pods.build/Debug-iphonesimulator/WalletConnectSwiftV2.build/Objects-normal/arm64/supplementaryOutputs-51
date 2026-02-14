@@ -1,0 +1,163 @@
+{
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/WalletConnectSwiftV2/Sources/Auth/Services/Wallet/WalletRequestSubscriber.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletRequestSubscriber.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletRequestSubscriber.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletRequestSubscriber.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletRequestSubscriber.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletRequestSubscriber.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/WalletConnectSwiftV2/Sources/Auth/Services/Wallet/WalletRespondService.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletRespondService.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletRespondService.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletRespondService.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletRespondService.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletRespondService.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/WalletConnectSwiftV2/Sources/WalletConnectPairing/Services/Wallet/WalletPairService.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletPairService.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletPairService.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletPairService.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletPairService.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletPairService.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/WalletConnectSwiftV2/Sources/WalletConnectPairing/Types/WCPairing.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WCPairing.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WCPairing.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WCPairing.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WCPairing.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WCPairing.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/WalletConnectSwiftV2/Sources/WalletConnectRelay/RPC/WalletConnectRPCID.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletConnectRPCID.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletConnectRPCID.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletConnectRPCID.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletConnectRPCID.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletConnectRPCID.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/WalletConnectSwiftV2/Sources/WalletConnectRelay/SocketConnectionHandler/WebSocket.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WebSocket.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WebSocket.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WebSocket.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WebSocket.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WebSocket.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/WalletConnectSwiftV2/Sources/WalletConnectSign/LinkAndRelayDispatchers/WalletErrorResponder.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletErrorResponder.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletErrorResponder.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletErrorResponder.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletErrorResponder.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletErrorResponder.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/WalletConnectSwiftV2/Sources/WalletConnectSign/Types/Session/WCSession.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WCSession.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WCSession.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WCSession.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WCSession.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WCSession.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/WalletConnectSwiftV2/Sources/WalletConnectSign/WalletConnectError.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletConnectError.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletConnectError.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletConnectError.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletConnectError.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletConnectError.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/WalletConnectSwiftV2/Sources/WalletConnectUtils/WalletConnectURI.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletConnectURI.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletConnectURI.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletConnectURI.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletConnectURI.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/WalletConnectURI.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/WalletConnectSwiftV2/Sources/WalletConnectVerify/Register/VerifyResponse.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyResponse.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyResponse.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyResponse.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyResponse.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyResponse.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/WalletConnectSwiftV2/Sources/WalletConnectVerify/Register/VerifyService.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyService.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyService.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyService.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyService.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyService.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/WalletConnectSwiftV2/Sources/WalletConnectVerify/Storage/VerifyStorageIdentifiers.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyStorageIdentifiers.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyStorageIdentifiers.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyStorageIdentifiers.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyStorageIdentifiers.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyStorageIdentifiers.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/WalletConnectSwiftV2/Sources/WalletConnectVerify/VerifyContextFactory.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyContextFactory.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyContextFactory.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyContextFactory.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyContextFactory.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyContextFactory.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/WalletConnectSwiftV2/Sources/WalletConnectVerify/VerifyImports.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyImports.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyImports.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyImports.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyImports.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyImports.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/WalletConnectSwiftV2/Sources/WalletConnectVerify/VerifyServerPubKeyManager.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyServerPubKeyManager.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyServerPubKeyManager.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyServerPubKeyManager.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyServerPubKeyManager.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyServerPubKeyManager.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/WalletConnectSwiftV2/Sources/WalletConnectVerify/VerifyStorageIdentifier.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyStorageIdentifier.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyStorageIdentifier.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyStorageIdentifier.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyStorageIdentifier.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/VerifyStorageIdentifier.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/WalletConnectSwiftV2/Sources/Web3Wallet/Web3Wallet.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3Wallet.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3Wallet.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3Wallet.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3Wallet.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3Wallet.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/WalletConnectSwiftV2/Sources/Web3Wallet/Web3WalletClient.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3WalletClient.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3WalletClient.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3WalletClient.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3WalletClient.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3WalletClient.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/WalletConnectSwiftV2/Sources/Web3Wallet/Web3WalletClientFactory.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3WalletClientFactory.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3WalletClientFactory.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3WalletClientFactory.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3WalletClientFactory.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3WalletClientFactory.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/WalletConnectSwiftV2/Sources/Web3Wallet/Web3WalletConfig.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3WalletConfig.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3WalletConfig.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3WalletConfig.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3WalletConfig.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3WalletConfig.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/WalletConnectSwiftV2/Sources/Web3Wallet/Web3WalletDecryptionService.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3WalletDecryptionService.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3WalletDecryptionService.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3WalletDecryptionService.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3WalletDecryptionService.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3WalletDecryptionService.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/WalletConnectSwiftV2/Sources/Web3Wallet/Web3WalletImports.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3WalletImports.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3WalletImports.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3WalletImports.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3WalletImports.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/WalletConnectSwiftV2.build/Objects-normal/arm64/Web3WalletImports.swiftdeps"
+  }
+}

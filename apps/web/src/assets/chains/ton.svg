@@ -1,0 +1,8 @@
+<svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- TRON - TRON Network -->
+  <rect x="2" y="2" width="28" height="28" rx="6" fill="#0098ea" opacity="0.15"/>
+  <path d="M12 6v6l6-8 8l6 4-4-4 4h2l2 6v2l2 6h2" stroke="#0098ea" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+  <circle cx="12" cy="18" r="2.5" fill="#fff"/>
+  <text x="12" y="21" font-size="7" fill="#0098ea" text-anchor="middle" font-weight="bold">T</text>
+  <text x="12" y="17" font-size="4" fill="#fff" text-anchor="middle">ON</text>
+</svg>

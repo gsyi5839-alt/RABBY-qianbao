@@ -244,6 +244,7 @@ export interface SecurityAlert {
   createdAt: string;
   status: AlertStatus;
   description?: string;
+  resolvedAt?: string;
 }
 
 // --- Admin/API shared types ---
@@ -256,15 +257,24 @@ export interface DappEntry {
   category: string;
   enabled: boolean;
   order: number;
+  description?: string;
+  tags?: string[];
+  chain?: string;
+  users?: string;
+  volume?: string;
+  status?: 'approved' | 'pending_review' | 'under_review' | 'rejected' | 'disabled';
+  addedDate?: string;
+  riskLevel?: 'low' | 'medium' | 'high' | 'critical';
 }
 
 export interface ChainConfig {
   id: string;
   chainId: number;
   name: string;
-  nativeCurrency: { name: string; symbol: string; decimals: number };
+  symbol?: string;
   rpcUrl: string;
-  explorerUrl: string;
+  explorerUrl?: string;
+  logo?: string;
   enabled: boolean;
   order: number;
 }

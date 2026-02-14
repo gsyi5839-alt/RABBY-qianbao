@@ -15,25 +15,58 @@ const MOCK_LOGS = [
   { id: '12', timestamp: '2024-01-15 08:00:00', user: 'admin', action: 'auth.login', resource: 'Admin Panel', details: 'Failed login attempt', ip: '203.0.113.42', status: 'failure' },
 ];
 
-const ACTION_COLORS: Record<string, string> = {
-  'chain': '#627EEA',
-  'security': '#ff6b6b',
-  'dapp': '#8b5cf6',
-  'user': '#2abb7f',
-  'auth': '#4c65ff',
-  'system': '#6a7587',
-  'phishing': '#ff4d4f',
-  'backup': '#28A0F0',
+const ACTION_STYLES: Record<string, { color: string; background: string }> = {
+  chain: {
+    color: 'var(--r-blue-default, #4c65ff)',
+    background: 'var(--r-blue-light-1, #edf0ff)',
+  },
+  security: {
+    color: 'var(--r-red-default, #cf1322)',
+    background: 'var(--r-red-light, #fff2f0)',
+  },
+  dapp: {
+    color: 'var(--r-blue-default, #4c65ff)',
+    background: 'var(--r-blue-light-1, #edf0ff)',
+  },
+  user: {
+    color: 'var(--r-green-default, #2abb7f)',
+    background: 'var(--r-green-light, #f6ffed)',
+  },
+  auth: {
+    color: 'var(--r-blue-default, #4c65ff)',
+    background: 'var(--r-blue-light-1, #edf0ff)',
+  },
+  system: {
+    color: 'var(--r-neutral-foot, #6a7587)',
+    background: 'var(--r-neutral-bg-3, #f0f2f5)',
+  },
+  phishing: {
+    color: 'var(--r-red-default, #cf1322)',
+    background: 'var(--r-red-light, #fff2f0)',
+  },
+  backup: {
+    color: 'var(--r-blue-default, #4c65ff)',
+    background: 'var(--r-blue-light-1, #edf0ff)',
+  },
 };
 
 const thStyle: React.CSSProperties = {
-  textAlign: 'left', padding: '12px 16px', borderBottom: '2px solid #f0f0f0',
-  color: '#6a7587', fontWeight: 600, fontSize: 12, textTransform: 'uppercase',
-  letterSpacing: '0.5px', background: '#fafafa',
+  textAlign: 'left',
+  padding: '12px 16px',
+  borderBottom: '2px solid var(--r-neutral-line, #f0f0f0)',
+  color: 'var(--r-neutral-foot, #6a7587)',
+  fontWeight: 600,
+  fontSize: 12,
+  textTransform: 'uppercase',
+  letterSpacing: '0.5px',
+  background: 'var(--r-neutral-bg-3, #fafafa)',
 };
 
 const tdStyle: React.CSSProperties = {
-  padding: '12px 16px', borderBottom: '1px solid #f0f0f0', color: '#3e495e', fontSize: 13,
+  padding: '12px 16px',
+  borderBottom: '1px solid var(--r-neutral-line, #f0f0f0)',
+  color: 'var(--r-neutral-body, #3e495e)',
+  fontSize: 13,
 };
 
 export default function AuditPage() {
@@ -54,10 +87,11 @@ export default function AuditPage() {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-        <h2 style={{ margin: 0, fontSize: 22, color: '#192945' }}>Audit Log</h2>
+        <h2 style={{ margin: 0, fontSize: 22, color: 'var(--r-neutral-title-1, #192945)' }}>Audit Log</h2>
         <button style={{
-          padding: '8px 20px', borderRadius: 8, border: '1px solid #d9d9d9',
-          background: '#fff', fontSize: 13, fontWeight: 500, cursor: 'pointer', color: '#3e495e',
+          padding: '8px 20px', borderRadius: 8, border: '1px solid var(--r-neutral-line, #d9d9d9)',
+          background: 'var(--r-neutral-card-1, #fff)', fontSize: 13, fontWeight: 500, cursor: 'pointer',
+          color: 'var(--r-neutral-body, #3e495e)',
         }}>
           Export Logs
         </button>
@@ -66,16 +100,17 @@ export default function AuditPage() {
       {/* Summary */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 20 }}>
         {[
-          { label: 'Total Events', value: MOCK_LOGS.length.toString(), color: '#4c65ff' },
-          { label: 'Success', value: MOCK_LOGS.filter((l) => l.status === 'success').length.toString(), color: '#2abb7f' },
-          { label: 'Failures', value: MOCK_LOGS.filter((l) => l.status === 'failure').length.toString(), color: '#ff4d4f' },
-          { label: 'Active Users', value: [...new Set(MOCK_LOGS.map((l) => l.user))].length.toString(), color: '#8b5cf6' },
+          { label: 'Total Events', value: MOCK_LOGS.length.toString(), color: 'var(--r-blue-default, #4c65ff)' },
+          { label: 'Success', value: MOCK_LOGS.filter((l) => l.status === 'success').length.toString(), color: 'var(--r-green-default, #2abb7f)' },
+          { label: 'Failures', value: MOCK_LOGS.filter((l) => l.status === 'failure').length.toString(), color: 'var(--r-red-default, #ff4d4f)' },
+          { label: 'Active Users', value: [...new Set(MOCK_LOGS.map((l) => l.user))].length.toString(), color: 'var(--r-blue-default, #4c65ff)' },
         ].map((s) => (
           <div key={s.label} style={{
-            background: '#fff', borderRadius: 10, padding: '16px 20px',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+            background: 'var(--r-neutral-card-1, #fff)', borderRadius: 10, padding: '16px 20px',
+            boxShadow: 'var(--rabby-shadow-sm, 0 1px 3px rgba(0,0,0,0.06))',
+            border: '1px solid var(--r-neutral-line, #f0f0f0)',
           }}>
-            <div style={{ fontSize: 12, color: '#6a7587', marginBottom: 4 }}>{s.label}</div>
+            <div style={{ fontSize: 12, color: 'var(--r-neutral-foot, #6a7587)', marginBottom: 4 }}>{s.label}</div>
             <div style={{ fontSize: 24, fontWeight: 700, color: s.color }}>{s.value}</div>
           </div>
         ))}
@@ -84,16 +119,34 @@ export default function AuditPage() {
       {/* Filters */}
       <div style={{
         display: 'flex', gap: 12, marginBottom: 20, padding: 16,
-        background: '#fff', borderRadius: 12, boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+        background: 'var(--r-neutral-card-1, #fff)', borderRadius: 12,
+        boxShadow: 'var(--rabby-shadow-sm, 0 1px 3px rgba(0,0,0,0.06))',
+        border: '1px solid var(--r-neutral-line, #f0f0f0)',
       }}>
         <input
           value={search} onChange={(e) => setSearch(e.target.value)}
           placeholder="Search logs by user, resource, or details..."
-          style={{ flex: 1, padding: '8px 14px', borderRadius: 8, border: '1px solid #d9d9d9', fontSize: 13 }}
+          style={{
+            flex: 1,
+            padding: '8px 14px',
+            borderRadius: 8,
+            border: '1px solid var(--r-neutral-line, #d9d9d9)',
+            fontSize: 13,
+            background: 'var(--r-neutral-bg-3, #f2f4f7)',
+            color: 'var(--r-neutral-title-1, #192945)',
+          }}
         />
         <select
           value={actionFilter} onChange={(e) => setActionFilter(e.target.value)}
-          style={{ padding: '8px 14px', borderRadius: 8, border: '1px solid #d9d9d9', fontSize: 13, background: '#fff', minWidth: 140 }}
+          style={{
+            padding: '8px 14px',
+            borderRadius: 8,
+            border: '1px solid var(--r-neutral-line, #d9d9d9)',
+            fontSize: 13,
+            background: 'var(--r-neutral-bg-3, #fff)',
+            color: 'var(--r-neutral-body, #3e495e)',
+            minWidth: 140,
+          }}
         >
           <option value="all">All Actions</option>
           <option value="chain">Chain</option>
@@ -105,7 +158,15 @@ export default function AuditPage() {
         </select>
         <select
           value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}
-          style={{ padding: '8px 14px', borderRadius: 8, border: '1px solid #d9d9d9', fontSize: 13, background: '#fff', minWidth: 120 }}
+          style={{
+            padding: '8px 14px',
+            borderRadius: 8,
+            border: '1px solid var(--r-neutral-line, #d9d9d9)',
+            fontSize: 13,
+            background: 'var(--r-neutral-bg-3, #fff)',
+            color: 'var(--r-neutral-body, #3e495e)',
+            minWidth: 120,
+          }}
         >
           <option value="all">All Status</option>
           <option value="success">Success</option>
@@ -114,7 +175,13 @@ export default function AuditPage() {
       </div>
 
       {/* Table */}
-      <div style={{ background: '#fff', borderRadius: 12, overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+      <div style={{
+        background: 'var(--r-neutral-card-1, #fff)',
+        borderRadius: 12,
+        overflow: 'hidden',
+        boxShadow: 'var(--rabby-shadow-sm, 0 1px 3px rgba(0,0,0,0.06))',
+        border: '1px solid var(--r-neutral-line, #f0f0f0)',
+      }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
           <thead>
             <tr>
@@ -129,40 +196,47 @@ export default function AuditPage() {
           </thead>
           <tbody>
             {filtered.map((log) => {
-              const actionCategory = log.action.split('.')[0];
               return (
                 <tr key={log.id}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = '#fafbfc')}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--r-neutral-bg-3, #fafbfc)')}
                   onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                 >
-                  <td style={{ ...tdStyle, fontSize: 12, color: '#6a7587', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>
+                  <td style={{ ...tdStyle, fontSize: 12, color: 'var(--r-neutral-foot, #6a7587)', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>
                     {log.timestamp}
                   </td>
                   <td style={tdStyle}>
-                    <span style={{ fontWeight: 600, color: '#192945' }}>{log.user}</span>
+                    <span style={{ fontWeight: 600, color: 'var(--r-neutral-title-1, #192945)' }}>{log.user}</span>
                   </td>
                   <td style={tdStyle}>
+                    {(() => {
+                      const actionCategory = log.action.split('.')[0];
+                      const actionStyle = ACTION_STYLES[actionCategory] || ACTION_STYLES.system;
+                      return (
                     <span style={{
                       padding: '3px 10px', borderRadius: 12, fontSize: 11, fontWeight: 600,
-                      background: `${ACTION_COLORS[actionCategory] || '#6a7587'}15`,
-                      color: ACTION_COLORS[actionCategory] || '#6a7587',
+                      background: actionStyle.background,
+                      color: actionStyle.color,
                     }}>
                       {log.action}
                     </span>
+                      );
+                    })()}
                   </td>
                   <td style={{ ...tdStyle, fontWeight: 500 }}>{log.resource}</td>
-                  <td style={{ ...tdStyle, color: '#6a7587', maxWidth: 250, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <td style={{ ...tdStyle, color: 'var(--r-neutral-foot, #6a7587)', maxWidth: 250, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {log.details}
                   </td>
-                  <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: 12, color: '#6a7587' }}>
+                  <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: 12, color: 'var(--r-neutral-foot, #6a7587)' }}>
                     {log.ip}
                   </td>
                   <td style={tdStyle}>
                     <span style={{
                       padding: '3px 10px', borderRadius: 12, fontSize: 11, fontWeight: 600,
-                      background: log.status === 'success' ? '#f6ffed' : '#fff2f0',
-                      color: log.status === 'success' ? '#389e0d' : '#cf1322',
-                      border: log.status === 'success' ? '1px solid #b7eb8f' : '1px solid #ffccc7',
+                      background: log.status === 'success' ? 'var(--r-green-light, #f6ffed)' : 'var(--r-red-light, #fff2f0)',
+                      color: log.status === 'success' ? 'var(--r-green-default, #389e0d)' : 'var(--r-red-default, #cf1322)',
+                      border: log.status === 'success'
+                        ? '1px solid rgba(22, 199, 132, 0.4)'
+                        : '1px solid rgba(234, 57, 67, 0.35)',
                     }}>
                       {log.status}
                     </span>
@@ -174,14 +248,15 @@ export default function AuditPage() {
         </table>
         <div style={{
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          padding: '12px 16px', borderTop: '1px solid #f0f0f0', fontSize: 13, color: '#6a7587',
+          padding: '12px 16px', borderTop: '1px solid var(--r-neutral-line, #f0f0f0)', fontSize: 13, color: 'var(--r-neutral-foot, #6a7587)',
         }}>
           <span>Showing {filtered.length} of {MOCK_LOGS.length} events</span>
           <div style={{ display: 'flex', gap: 4 }}>
             {[1, 2, 3, 4, 5].map((p) => (
               <button key={p} style={{
-                width: 32, height: 32, borderRadius: 6, border: p === 1 ? 'none' : '1px solid #d9d9d9',
-                background: p === 1 ? '#4c65ff' : '#fff', color: p === 1 ? '#fff' : '#3e495e',
+                width: 32, height: 32, borderRadius: 6, border: p === 1 ? 'none' : '1px solid var(--r-neutral-line, #d9d9d9)',
+                background: p === 1 ? 'var(--r-blue-default, #4c65ff)' : 'var(--r-neutral-card-1, #fff)',
+                color: p === 1 ? '#fff' : 'var(--r-neutral-body, #3e495e)',
                 cursor: 'pointer', fontSize: 13,
               }}>
                 {p}

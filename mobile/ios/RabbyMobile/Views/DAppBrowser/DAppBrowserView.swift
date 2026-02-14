@@ -13,6 +13,7 @@ struct DAppBrowserView: View {
     @State private var showBookmarks = false
     @State private var showApproval = false
     @State private var pendingApproval: ApprovalRequest?
+    @State private var pendingApprovalReply: ((Any?, String?, Int?) -> Void)?
     @State private var bookmarks: [DAppBookmark] = []
     
     struct DAppBookmark: Identifiable, Codable {
@@ -50,28 +51,29 @@ struct DAppBrowserView: View {
                         url: url,
                         isLoading: $isLoading,
                         pageTitle: $pageTitle,
-                        onApprovalRequest: { request in
+                        onApprovalRequest: { request, reply in
                             pendingApproval = request
+                            pendingApprovalReply = reply
                             showApproval = true
                         }
                     )
                 }
                 }
             }
-            .navigationTitle(pageTitle.isEmpty ? "DApp Browser" : pageTitle)
+            .navigationTitle(pageTitle.isEmpty ? LocalizationManager.shared.t("DApp Browser") : pageTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
                         Button(action: { showBookmarks = true }) {
-                            Label("Bookmarks", systemImage: "book")
+                            Label(L("Bookmarks"), systemImage: "book")
                         }
                         if currentURL != nil {
                             Button(action: addBookmark) {
-                                Label("Add Bookmark", systemImage: "star")
+                                Label(L("Add Bookmark"), systemImage: "star")
                             }
                             Button(action: { currentURL = nil; urlString = "" }) {
-                                Label("Home", systemImage: "house")
+                                Label(L("Home"), systemImage: "house")
                             }
                         }
                     } label: {
@@ -81,8 +83,128 @@ struct DAppBrowserView: View {
             }
             .sheet(isPresented: $showApproval) {
                 if let approval = pendingApproval {
-                    TransactionApprovalView(approval: approval)
+                    switch approval.type {
+                    case .signTx:
+                        TransactionApprovalView(
+                            approval: approval,
+                            onApprove: { txHash in pendingApprovalReply?(txHash, nil, nil) },
+                            onReject: { pendingApprovalReply?(nil, "User rejected the request.", 4001) }
+                        )
+                    case .signText:
+                        SignTextApprovalView(
+                            text: approval.message ?? "",
+                            origin: approval.origin,
+                            signerAddress: approval.from,
+                            siteName: approval.siteName,
+                            onApprove: { approveSignText(approval) },
+                            onReject: { pendingApprovalReply?(nil, "User rejected the request.", 4001) }
+                        )
+                    case .signTypedData:
+                        SignTypedDataApprovalView(
+                            typedDataJSON: approval.typedDataJSON ?? "",
+                            origin: approval.origin,
+                            signerAddress: approval.from,
+                            siteName: approval.siteName,
+                            onApprove: { approveSignTypedData(approval) },
+                            onReject: { pendingApprovalReply?(nil, "User rejected the request.", 4001) }
+                        )
+                    case .connect:
+                        DAppConnectSheet(
+                            dappUrl: approval.origin ?? "unknown",
+                            dappName: approval.siteName,
+                            dappIcon: approval.iconUrl,
+                            requestedPermissions: [],
+                            onConnect: { selectedAddress in
+                                pendingApprovalReply?([selectedAddress], nil, nil)
+                            },
+                            onReject: {
+                                pendingApprovalReply?(nil, "User rejected the request.", 4001)
+                            }
+                        )
+                    }
                 }
+            }
+        }
+    }
+
+    private func approveSignText(_ approval: ApprovalRequest) {
+        guard let from = approval.from as String?,
+              let message = approval.message else {
+            pendingApprovalReply?(nil, LocalizationManager.shared.t("Invalid params"), nil)
+            return
+        }
+
+        let messageData: Data
+        if message.hasPrefix("0x"), let hexData = Data(hexString: message) {
+            messageData = hexData
+        } else {
+            messageData = message.data(using: .utf8) ?? Data()
+        }
+
+        Task {
+            do {
+                let sig = try await keyringManager.signMessage(address: from, message: messageData)
+                let sigHex = "0x" + sig.toHexString()
+
+                // Record to sign history
+                let chainIdStr = "0x\(String(approval.chainId, radix: 16))"
+                SignHistoryManager.shared.addSignHistory(
+                    type: .personalSign,
+                    address: from,
+                    chainId: chainIdStr,
+                    message: message,
+                    signature: sigHex,
+                    status: .signed,
+                    dappName: approval.siteName ?? approval.origin,
+                    dappOrigin: approval.origin
+                )
+
+                pendingApprovalReply?(sigHex, nil, nil)
+            } catch {
+                pendingApprovalReply?(nil, error.localizedDescription, nil)
+            }
+        }
+    }
+    
+    private func approveSignTypedData(_ approval: ApprovalRequest) {
+        guard let from = approval.from as String?,
+              let typedData = approval.typedDataJSON else {
+            pendingApprovalReply?(nil, LocalizationManager.shared.t("Invalid params"), nil)
+            return
+        }
+
+        // Determine the sign history type from the original RPC method
+        let historyType: SignHistoryManager.SignType
+        switch approval.signMethod {
+        case "eth_signTypedData_v3":
+            historyType = .signTypedDataV3
+        case "eth_signTypedData_v4":
+            historyType = .signTypedDataV4
+        default:
+            historyType = .signTypedData
+        }
+
+        Task {
+            do {
+                let sig = try await keyringManager.signTypedData(address: from, typedData: typedData)
+                let sigHex = "0x" + sig.toHexString()
+
+                // Record to sign history
+                let chainIdStr = "0x\(String(approval.chainId, radix: 16))"
+                SignHistoryManager.shared.addSignHistory(
+                    type: historyType,
+                    address: from,
+                    chainId: chainIdStr,
+                    message: typedData,
+                    signature: sigHex,
+                    status: .signed,
+                    dappName: approval.siteName ?? approval.origin,
+                    dappOrigin: approval.origin
+                )
+
+                pendingApprovalReply?(sigHex, nil, nil)
+            } catch {
+                pendingApprovalReply?(nil, error.localizedDescription, nil)
             }
         }
     }
@@ -91,7 +213,7 @@ struct DAppBrowserView: View {
         HStack(spacing: 8) {
             if isLoading { ProgressView().scaleEffect(0.7) }
             
-            TextField("Enter DApp URL or search", text: $urlString)
+            TextField(L("Enter DApp URL or search"), text: $urlString)
                 .textFieldStyle(.roundedBorder)
                 .autocapitalization(.none)
                 .disableAutocorrection(true)
@@ -116,16 +238,16 @@ struct DAppBrowserView: View {
                     Image(systemName: "globe")
                         .font(.system(size: 48))
                         .foregroundColor(.blue)
-                    Text("Explore DApps")
+                    Text(L("Explore DApps"))
                         .font(.title2).fontWeight(.bold)
-                    Text("Browse decentralized applications safely")
+                    Text(L("Browse decentralized applications safely"))
                         .font(.subheadline).foregroundColor(.secondary)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 30)
                 
                 // Popular DApps grid
-                Text("Popular DApps").font(.headline).padding(.horizontal)
+                Text(L("Popular DApps")).font(.headline).padding(.horizontal)
                 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                     ForEach(popularDApps) { dapp in
@@ -151,7 +273,7 @@ struct DAppBrowserView: View {
                 
                 // Recent connections
                 if !permManager.connectedSites.isEmpty {
-                    Text("Recent Connections").font(.headline).padding(.horizontal)
+                    Text(L("Recent Connections")).font(.headline).padding(.horizontal)
                     
                     ForEach(permManager.connectedSites.prefix(5)) { site in
                         Button(action: { navigateTo(site.origin) }) {
@@ -203,7 +325,7 @@ struct DAppWebView: UIViewRepresentable {
     let url: URL
     @Binding var isLoading: Bool
     @Binding var pageTitle: String
-    var onApprovalRequest: ((ApprovalRequest) -> Void)?
+    var onApprovalRequest: ((ApprovalRequest, @escaping (Any?, String?, Int?) -> Void) -> Void)?
     
     func makeUIView(context: Context) -> WKWebView {
         let config = WKWebViewConfiguration()
@@ -251,63 +373,163 @@ struct DAppWebView: UIViewRepresentable {
                   let body = message.body as? [String: Any],
                   let method = body["method"] as? String else { return }
             
+            // Provider JS uses per-request callback ids. We must reply with the same id.
+            let callbackId = body["id"] as? String
+            
             switch method {
             case "eth_requestAccounts", "eth_accounts":
                 // Return current account
                 if let account = KeyringManager.shared.currentAccount {
-                    respondToJS(message.webView, id: body["id"], result: [account.address])
+                    respondToJS(message.webView, id: callbackId, result: [account.address])
                 }
             case "eth_sendTransaction":
-                handleSendTransaction(body, webView: message.webView)
-            case "personal_sign", "eth_signTypedData_v4":
-                handleSignMessage(body, method: method, webView: message.webView)
+                handleSendTransaction(body, callbackId: callbackId, webView: message.webView)
+            case "personal_sign", "eth_signTypedData", "eth_signTypedData_v3", "eth_signTypedData_v4":
+                handleSignMessage(body, method: method, callbackId: callbackId, webView: message.webView)
             case "eth_chainId":
                 if let chain = ChainManager.shared.selectedChain {
-                    respondToJS(message.webView, id: body["id"], result: "0x\(String(chain.id, radix: 16))")
+                    respondToJS(message.webView, id: callbackId, result: "0x\(String(chain.id, radix: 16))")
                 }
             case "wallet_switchEthereumChain":
-                handleSwitchChain(body, webView: message.webView)
+                handleSwitchChain(body, callbackId: callbackId, webView: message.webView)
             default:
                 break
             }
         }
         
-        private func handleSendTransaction(_ body: [String: Any], webView: WKWebView?) {
+        private func handleSendTransaction(_ body: [String: Any], callbackId: String?, webView: WKWebView?) {
             guard let params = body["params"] as? [[String: Any]], let tx = params.first else { return }
             let request = ApprovalRequest(
-                id: UUID().uuidString,
+                id: callbackId ?? UUID().uuidString,
                 from: tx["from"] as? String ?? "",
                 to: tx["to"] as? String,
                 value: tx["value"] as? String,
                 data: tx["data"] as? String,
+                message: nil,
+                typedDataJSON: nil,
+                signMethod: "eth_sendTransaction",
                 chainId: ChainManager.shared.selectedChain?.id ?? 1,
                 origin: webView?.url?.host,
                 siteName: nil, iconUrl: nil,
                 isEIP1559: ChainManager.shared.selectedChain?.isEIP1559 ?? false,
                 type: .signTx
             )
-            Task { @MainActor in parent.onApprovalRequest?(request) }
+
+            let reply: (Any?, String?, Int?) -> Void = { [weak webView] result, error, errorCode in
+                Task { @MainActor in
+                    if let error = error {
+                        self.respondToJS(webView, id: callbackId, result: NSNull(), error: error, errorCode: errorCode)
+                    } else {
+                        self.respondToJS(webView, id: callbackId, result: result ?? NSNull())
+                    }
+                }
+            }
+            
+            Task { @MainActor in parent.onApprovalRequest?(request, reply) }
         }
         
-        private func handleSignMessage(_ body: [String: Any], method: String, webView: WKWebView?) {
-            // Sign message request handling
+        private func handleSignMessage(_ body: [String: Any], method: String, callbackId: String?, webView: WKWebView?) {
+            guard let params = body["params"] as? [Any], params.count >= 2 else { return }
+            
+            func isAddress(_ value: Any) -> Bool {
+                guard let s = value as? String else { return false }
+                return EthereumUtil.isValidAddress(s)
+            }
+            
+            let request: ApprovalRequest
+            switch method {
+            case "personal_sign":
+                // Metamask: personal_sign(message, address) but some dapps swap order.
+                var messageParam = params[0]
+                var addressParam = params[1]
+                if isAddress(messageParam) && !isAddress(addressParam) {
+                    swap(&messageParam, &addressParam)
+                }
+                guard let address = addressParam as? String else { return }
+                let message = messageParam as? String ?? ""
+                
+                request = ApprovalRequest(
+                    id: callbackId ?? UUID().uuidString,
+                    from: address,
+                    to: nil,
+                    value: nil,
+                    data: nil,
+                    message: message,
+                    typedDataJSON: nil,
+                    signMethod: method,
+                    chainId: ChainManager.shared.selectedChain?.id ?? 1,
+                    origin: webView?.url?.host,
+                    siteName: nil,
+                    iconUrl: nil,
+                    isEIP1559: ChainManager.shared.selectedChain?.isEIP1559 ?? false,
+                    type: .signText
+                )
+                
+            case "eth_signTypedData", "eth_signTypedData_v3", "eth_signTypedData_v4":
+                // Metamask: eth_signTypedData[_v3|_v4](address, typedDataJSON)
+                guard let address = params[0] as? String else { return }
+
+                let typedDataJSON: String
+                if let jsonString = params[1] as? String {
+                    typedDataJSON = jsonString
+                } else {
+                    let obj = params[1]
+                    guard JSONSerialization.isValidJSONObject(obj),
+                          let data = try? JSONSerialization.data(withJSONObject: obj),
+                          let jsonString = String(data: data, encoding: .utf8) else { return }
+                    typedDataJSON = jsonString
+                }
+
+                request = ApprovalRequest(
+                    id: callbackId ?? UUID().uuidString,
+                    from: address,
+                    to: nil,
+                    value: nil,
+                    data: nil,
+                    message: nil,
+                    typedDataJSON: typedDataJSON,
+                    signMethod: method,
+                    chainId: ChainManager.shared.selectedChain?.id ?? 1,
+                    origin: webView?.url?.host,
+                    siteName: nil,
+                    iconUrl: nil,
+                    isEIP1559: ChainManager.shared.selectedChain?.isEIP1559 ?? false,
+                    type: .signTypedData
+                )
+                
+            default:
+                return
+            }
+            
+            let reply: (Any?, String?, Int?) -> Void = { [weak webView] result, error, errorCode in
+                Task { @MainActor in
+                    if let error = error {
+                        self.respondToJS(webView, id: callbackId, result: NSNull(), error: error, errorCode: errorCode)
+                    } else {
+                        self.respondToJS(webView, id: callbackId, result: result ?? NSNull())
+                    }
+                }
+            }
+
+            Task { @MainActor in parent.onApprovalRequest?(request, reply) }
         }
         
-        private func handleSwitchChain(_ body: [String: Any], webView: WKWebView?) {
+        private func handleSwitchChain(_ body: [String: Any], callbackId: String?, webView: WKWebView?) {
             guard let params = body["params"] as? [[String: Any]],
                   let chainIdHex = params.first?["chainId"] as? String,
                   let chainId = UInt64(chainIdHex.dropFirst(2), radix: 16),
                   let chain = ChainManager.shared.getChain(id: Int(chainId)) else { return }
             Task { @MainActor in ChainManager.shared.selectChain(chain) }
-            respondToJS(webView, id: body["id"], result: NSNull())
+            respondToJS(webView, id: callbackId, result: NSNull())
         }
         
-        private func respondToJS(_ webView: WKWebView?, id: Any?, result: Any, error: String? = nil) {
-            guard let webView = webView, let callbackId = id as? String else { return }
+        private func respondToJS(_ webView: WKWebView?, id: String?, result: Any, error: String? = nil, errorCode: Int? = nil) {
+            guard let webView = webView, let callbackId = id else { return }
             let resultJSON: String
             if let error = error {
                 let escapedError = error.replacingOccurrences(of: "'", with: "\\'")
-                let js = "window.ethereum._resolveCallback('\(callbackId)', null, '\(escapedError)')"
+                let code = errorCode ?? -1
+                let js = "window.ethereum._resolveCallback('\(callbackId)', null, '\(escapedError)', \(code))"
                 webView.evaluateJavaScript(js, completionHandler: nil)
                 return
             }
@@ -318,7 +540,7 @@ struct DAppWebView: UIViewRepresentable {
             } else {
                 resultJSON = "\"\(result)\""
             }
-            let js = "window.ethereum._resolveCallback('\(callbackId)', \(resultJSON), null)"
+            let js = "window.ethereum._resolveCallback('\(callbackId)', \(resultJSON), null, null)"
             webView.evaluateJavaScript(js, completionHandler: nil)
         }
     }
@@ -329,6 +551,7 @@ struct DAppWebView: UIViewRepresentable {
         (function() {
             var _callbacks = {};
             var _nextId = 1;
+            var _eventListeners = {};
             window.ethereum = {
                 isRabby: true,
                 isMetaMask: true,
@@ -345,17 +568,53 @@ struct DAppWebView: UIViewRepresentable {
                         });
                     });
                 },
-                _resolveCallback: function(callbackId, result, error) {
+                _resolveCallback: function(callbackId, result, error, code) {
                     var cb = _callbacks[callbackId];
                     if (cb) {
-                        if (error) { cb.reject(new Error(error)); }
+                        if (error) {
+                            var err = new Error(error);
+                            err.code = code || -1;
+                            cb.reject(err);
+                        }
                         else { cb.resolve(result); }
                         delete _callbacks[callbackId];
                     }
                 },
-                on: function(event, handler) { },
-                removeListener: function(event, handler) { },
+                on: function(event, handler) {
+                    if (!_eventListeners[event]) { _eventListeners[event] = []; }
+                    _eventListeners[event].push(handler);
+                    return this;
+                },
+                removeListener: function(event, handler) {
+                    var listeners = _eventListeners[event];
+                    if (listeners) {
+                        _eventListeners[event] = listeners.filter(function(h) { return h !== handler; });
+                    }
+                    return this;
+                },
+                emit: function(event) {
+                    var args = Array.prototype.slice.call(arguments, 1);
+                    var listeners = _eventListeners[event] || [];
+                    listeners.forEach(function(h) { try { h.apply(null, args); } catch(e) {} });
+                },
                 enable: function() { return this.request({ method: 'eth_requestAccounts' }); },
+                sendAsync: function(payload, callback) {
+                    var method = payload.method;
+                    var params = payload.params || [];
+                    this.request({ method: method, params: params }).then(
+                        function(result) { callback(null, { id: payload.id, jsonrpc: '2.0', result: result }); },
+                        function(error) { callback(error, null); }
+                    );
+                },
+                send: function(methodOrPayload, paramsOrCallback) {
+                    if (typeof methodOrPayload === 'string') {
+                        return this.request({ method: methodOrPayload, params: paramsOrCallback || [] });
+                    }
+                    if (typeof paramsOrCallback === 'function') {
+                        return this.sendAsync(methodOrPayload, paramsOrCallback);
+                    }
+                    return this.request({ method: methodOrPayload.method, params: methodOrPayload.params || [] });
+                },
             };
             window.dispatchEvent(new Event('ethereum#initialized'));
         })();

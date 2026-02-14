@@ -1,88 +1,255 @@
-import { v4 as uuidv4 } from 'uuid';
+import { db } from './database';
 import type { DappEntry, ChainConfig } from '@rabby/shared';
 
 export type { DappEntry, ChainConfig };
 
+/**
+ * Admin Store - Manages DApp directory and chain configurations
+ * Migrated from in-memory Map to PostgreSQL
+ */
 class AdminStore {
-  private dapps = new Map<string, DappEntry>();
-  private chains = new Map<string, ChainConfig>();
+  // --- DApps ---
 
-  constructor() {
-    // Seed with default dapps
-    const defaults: Omit<DappEntry, 'id' | 'enabled' | 'order'>[] = [
-      { name: 'Uniswap', url: 'https://app.uniswap.org', icon: 'https://app.uniswap.org/favicon.ico', category: 'DEX' },
-      { name: 'OpenSea', url: 'https://opensea.io', icon: 'https://opensea.io/favicon.ico', category: 'NFT' },
-      { name: 'Aave', url: 'https://app.aave.com', icon: 'https://app.aave.com/favicon.ico', category: 'Lending' },
-      { name: 'Compound', url: 'https://app.compound.finance', icon: 'https://app.compound.finance/favicon.ico', category: 'Lending' },
-      { name: '1inch', url: 'https://app.1inch.io', icon: 'https://app.1inch.io/favicon.ico', category: 'DEX' },
-      { name: 'Lido', url: 'https://lido.fi', icon: 'https://lido.fi/favicon.ico', category: 'Staking' },
-      { name: 'Curve', url: 'https://curve.fi', icon: 'https://curve.fi/favicon.ico', category: 'DEX' },
-      { name: 'GMX', url: 'https://app.gmx.io', icon: 'https://app.gmx.io/favicon.ico', category: 'Perps' },
-      { name: 'dYdX', url: 'https://trade.dydx.exchange', icon: 'https://trade.dydx.exchange/favicon.ico', category: 'Perps' },
-      { name: 'Raydium', url: 'https://raydium.io', icon: 'https://raydium.io/favicon.ico', category: 'DEX' },
-    ];
-    defaults.forEach((d, i) => {
-      const id = uuidv4();
-      this.dapps.set(id, { ...d, id, enabled: true, order: i });
-    });
+  /**
+   * List all DApps (with optional inclusion of disabled entries)
+   */
+  async listDapps(includeDisabled = false): Promise<DappEntry[]> {
+    const sql = includeDisabled
+      ? 'SELECT * FROM dapp_entries ORDER BY "order" ASC'
+      : 'SELECT * FROM dapp_entries WHERE enabled = true ORDER BY "order" ASC';
+
+    const result = await db.query<DappEntry>(sql);
+    return result.rows;
   }
 
-  // --- Dapps ---
-  listDapps(includeDisabled = false): DappEntry[] {
-    const list = Array.from(this.dapps.values());
-    return (includeDisabled ? list : list.filter((d) => d.enabled)).sort((a, b) => a.order - b.order);
+  /**
+   * Get a single DApp by ID
+   */
+  async getDapp(id: string): Promise<DappEntry | undefined> {
+    const result = await db.query<DappEntry>(
+      'SELECT * FROM dapp_entries WHERE id = $1',
+      [id]
+    );
+    return result.rows[0];
   }
 
-  getDapp(id: string): DappEntry | undefined {
-    return this.dapps.get(id);
+  /**
+   * Create a new DApp entry
+   */
+  async createDapp(data: Omit<DappEntry, 'id'>): Promise<DappEntry> {
+    const result = await db.query<DappEntry>(
+      `INSERT INTO dapp_entries
+       (name, url, icon, category, description, chain, users, volume, status, added_date, risk_level, enabled, "order")
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+       RETURNING *`,
+      [
+        data.name,
+        data.url,
+        data.icon || null,
+        data.category,
+        data.description || null,
+        data.chain || null,
+        data.users || null,
+        data.volume || null,
+        data.status,
+        data.addedDate || new Date().toISOString().slice(0, 10),
+        data.riskLevel || 'medium',
+        data.enabled ?? true,
+        data.order ?? 0,
+      ]
+    );
+    return result.rows[0];
   }
 
-  createDapp(data: Omit<DappEntry, 'id'>): DappEntry {
-    const id = uuidv4();
-    const entry: DappEntry = { ...data, id };
-    this.dapps.set(id, entry);
-    return entry;
-  }
-
-  updateDapp(id: string, data: Partial<Omit<DappEntry, 'id'>>): DappEntry | undefined {
-    const existing = this.dapps.get(id);
+  /**
+   * Update an existing DApp
+   */
+  async updateDapp(id: string, data: Partial<Omit<DappEntry, 'id'>>): Promise<DappEntry | undefined> {
+    const existing = await this.getDapp(id);
     if (!existing) return undefined;
-    const updated = { ...existing, ...data };
-    this.dapps.set(id, updated);
-    return updated;
+
+    const fields = [];
+    const values = [];
+    let paramIndex = 1;
+
+    // Build dynamic UPDATE query
+    if (data.name !== undefined) {
+      fields.push(`name = $${paramIndex++}`);
+      values.push(data.name);
+    }
+    if (data.url !== undefined) {
+      fields.push(`url = $${paramIndex++}`);
+      values.push(data.url);
+    }
+    if (data.icon !== undefined) {
+      fields.push(`icon = $${paramIndex++}`);
+      values.push(data.icon);
+    }
+    if (data.category !== undefined) {
+      fields.push(`category = $${paramIndex++}`);
+      values.push(data.category);
+    }
+    if (data.description !== undefined) {
+      fields.push(`description = $${paramIndex++}`);
+      values.push(data.description);
+    }
+    if (data.chain !== undefined) {
+      fields.push(`chain = $${paramIndex++}`);
+      values.push(data.chain);
+    }
+    if (data.users !== undefined) {
+      fields.push(`users = $${paramIndex++}`);
+      values.push(data.users);
+    }
+    if (data.volume !== undefined) {
+      fields.push(`volume = $${paramIndex++}`);
+      values.push(data.volume);
+    }
+    if (data.status !== undefined) {
+      fields.push(`status = $${paramIndex++}`);
+      values.push(data.status);
+    }
+    if (data.addedDate !== undefined) {
+      fields.push(`added_date = $${paramIndex++}`);
+      values.push(data.addedDate);
+    }
+    if (data.riskLevel !== undefined) {
+      fields.push(`risk_level = $${paramIndex++}`);
+      values.push(data.riskLevel);
+    }
+    if (data.enabled !== undefined) {
+      fields.push(`enabled = $${paramIndex++}`);
+      values.push(data.enabled);
+    }
+    if (data.order !== undefined) {
+      fields.push(`"order" = $${paramIndex++}`);
+      values.push(data.order);
+    }
+
+    if (fields.length === 0) return existing;
+
+    values.push(id);
+    const sql = `UPDATE dapp_entries SET ${fields.join(', ')} WHERE id = $${paramIndex} RETURNING *`;
+
+    const result = await db.query<DappEntry>(sql, values);
+    return result.rows[0];
   }
 
-  deleteDapp(id: string): boolean {
-    return this.dapps.delete(id);
+  /**
+   * Delete a DApp
+   */
+  async deleteDapp(id: string): Promise<boolean> {
+    const result = await db.query('DELETE FROM dapp_entries WHERE id = $1', [id]);
+    return (result.rowCount ?? 0) > 0;
   }
 
   // --- Chains ---
-  listChains(includeDisabled = false): ChainConfig[] {
-    const list = Array.from(this.chains.values());
-    return (includeDisabled ? list : list.filter((c) => c.enabled)).sort((a, b) => a.order - b.order);
+
+  /**
+   * List all chain configurations
+   */
+  async listChains(includeDisabled = false): Promise<ChainConfig[]> {
+    const sql = includeDisabled
+      ? 'SELECT * FROM chain_configs ORDER BY "order" ASC'
+      : 'SELECT * FROM chain_configs WHERE enabled = true ORDER BY "order" ASC';
+
+    const result = await db.query<ChainConfig>(sql);
+    return result.rows;
   }
 
-  getChain(id: string): ChainConfig | undefined {
-    return this.chains.get(id);
+  /**
+   * Get a single chain by ID
+   */
+  async getChain(id: string): Promise<ChainConfig | undefined> {
+    const result = await db.query<ChainConfig>(
+      'SELECT * FROM chain_configs WHERE id = $1',
+      [id]
+    );
+    return result.rows[0];
   }
 
-  createChain(data: Omit<ChainConfig, 'id'>): ChainConfig {
-    const id = uuidv4();
-    const entry: ChainConfig = { ...data, id };
-    this.chains.set(id, entry);
-    return entry;
+  /**
+   * Create a new chain configuration
+   */
+  async createChain(data: Omit<ChainConfig, 'id'>): Promise<ChainConfig> {
+    const result = await db.query<ChainConfig>(
+      `INSERT INTO chain_configs
+       (name, chain_id, symbol, rpc_url, explorer_url, logo, enabled, "order")
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+       RETURNING *`,
+      [
+        data.name,
+        data.chainId,
+        data.symbol || null,
+        data.rpcUrl,
+        data.explorerUrl || null,
+        data.logo || null,
+        data.enabled ?? true,
+        data.order ?? 0,
+      ]
+    );
+    return result.rows[0];
   }
 
-  updateChain(id: string, data: Partial<Omit<ChainConfig, 'id'>>): ChainConfig | undefined {
-    const existing = this.chains.get(id);
+  /**
+   * Update an existing chain
+   */
+  async updateChain(id: string, data: Partial<Omit<ChainConfig, 'id'>>): Promise<ChainConfig | undefined> {
+    const existing = await this.getChain(id);
     if (!existing) return undefined;
-    const updated = { ...existing, ...data };
-    this.chains.set(id, updated);
-    return updated;
+
+    const fields = [];
+    const values = [];
+    let paramIndex = 1;
+
+    if (data.name !== undefined) {
+      fields.push(`name = $${paramIndex++}`);
+      values.push(data.name);
+    }
+    if (data.chainId !== undefined) {
+      fields.push(`chain_id = $${paramIndex++}`);
+      values.push(data.chainId);
+    }
+    if (data.symbol !== undefined) {
+      fields.push(`symbol = $${paramIndex++}`);
+      values.push(data.symbol);
+    }
+    if (data.rpcUrl !== undefined) {
+      fields.push(`rpc_url = $${paramIndex++}`);
+      values.push(data.rpcUrl);
+    }
+    if (data.explorerUrl !== undefined) {
+      fields.push(`explorer_url = $${paramIndex++}`);
+      values.push(data.explorerUrl);
+    }
+    if (data.logo !== undefined) {
+      fields.push(`logo = $${paramIndex++}`);
+      values.push(data.logo);
+    }
+    if (data.enabled !== undefined) {
+      fields.push(`enabled = $${paramIndex++}`);
+      values.push(data.enabled);
+    }
+    if (data.order !== undefined) {
+      fields.push(`"order" = $${paramIndex++}`);
+      values.push(data.order);
+    }
+
+    if (fields.length === 0) return existing;
+
+    values.push(id);
+    const sql = `UPDATE chain_configs SET ${fields.join(', ')} WHERE id = $${paramIndex} RETURNING *`;
+
+    const result = await db.query<ChainConfig>(sql, values);
+    return result.rows[0];
   }
 
-  deleteChain(id: string): boolean {
-    return this.chains.delete(id);
+  /**
+   * Delete a chain configuration
+   */
+  async deleteChain(id: string): Promise<boolean> {
+    const result = await db.query('DELETE FROM chain_configs WHERE id = $1', [id]);
+    return (result.rowCount ?? 0) > 0;
   }
 }
 

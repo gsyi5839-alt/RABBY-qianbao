@@ -11,14 +11,14 @@ struct NFTView: View {
         NavigationView {
             Group {
                 if nftManager.isLoading {
-                    ProgressView("Loading NFTs...")
+                    ProgressView(L("Loading NFTs..."))
                 } else if nftManager.collections.isEmpty {
                     emptyState
                 } else {
                     collectionsList
                 }
             }
-            .navigationTitle("NFTs")
+            .navigationTitle(L("NFTs"))
             .navigationBarTitleDisplayMode(.inline)
         }
         .sheet(item: $selectedNFT) { nft in NFTDetailView(nft: nft) }
@@ -27,8 +27,8 @@ struct NFTView: View {
     private var emptyState: some View {
         VStack(spacing: 16) {
             Image(systemName: "photo.on.rectangle.angled").font(.system(size: 48)).foregroundColor(.gray)
-            Text("No NFTs found").font(.headline).foregroundColor(.secondary)
-            Text("Your NFTs will appear here").font(.subheadline).foregroundColor(.gray)
+            Text(L("No NFTs found")).font(.headline).foregroundColor(.secondary)
+            Text(L("Your NFTs will appear here")).font(.subheadline).foregroundColor(.gray)
         }
     }
     
@@ -128,7 +128,7 @@ struct NFTDetailView: View {
                     
                     // Send button
                     Button(action: { showSendSheet = true }) {
-                        Text("Send NFT")
+                        Text(L("Send NFT"))
                             .fontWeight(.semibold)
                             .frame(maxWidth: .infinity).padding()
                             .background(Color.blue).foregroundColor(.white).cornerRadius(12)
@@ -136,9 +136,9 @@ struct NFTDetailView: View {
                 }
                 .padding(.vertical)
             }
-            .navigationTitle("NFT Detail")
+            .navigationTitle(L("NFT Detail"))
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .navigationBarLeading) { Button("Close") { dismiss() } } }
+            .toolbar { ToolbarItem(placement: .navigationBarLeading) { Button(L("Close")) { dismiss() } } }
         }
         .sheet(isPresented: $showSendSheet) {
             SendNFTView(nft: nft)
@@ -178,16 +178,16 @@ struct SendNFTView: View {
                 
                 // Recipient
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("To Address").font(.caption).foregroundColor(.secondary)
-                    TextField("0x...", text: $recipient).padding()
+                    Text(L("To Address")).font(.caption).foregroundColor(.secondary)
+                    TextField(L("0x..."), text: $recipient).padding()
                         .background(Color(.systemGray6)).cornerRadius(8)
                 }.padding(.horizontal)
                 
                 // Amount for ERC1155
                 if nft.type == .erc1155 {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Amount").font(.caption).foregroundColor(.secondary)
-                        TextField("1", text: $amount).keyboardType(.numberPad).padding()
+                        Text(L("Amount")).font(.caption).foregroundColor(.secondary)
+                        TextField(L("1"), text: $amount).keyboardType(.numberPad).padding()
                             .background(Color(.systemGray6)).cornerRadius(8)
                     }.padding(.horizontal)
                 }
@@ -212,9 +212,9 @@ struct SendNFTView: View {
                 .padding(.horizontal)
             }
             .padding(.vertical)
-            .navigationTitle("Send NFT")
+            .navigationTitle(L("Send NFT"))
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .navigationBarLeading) { Button("Cancel") { dismiss() } } }
+            .toolbar { ToolbarItem(placement: .navigationBarLeading) { Button(L("Cancel")) { dismiss() } } }
         }
     }
     

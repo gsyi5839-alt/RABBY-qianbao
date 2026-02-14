@@ -1,0 +1,8 @@
+<svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- OP - Optimism -->
+  <rect x="4" y="4" width="16" height="16" rx="4" fill="#ff0420" opacity="0.2"/>
+  <path d="M12 4v-3l3 6 2l6-4 6m1-6 4h3v6" stroke="#ff0420" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  <circle cx="12" cy="14" r="2" fill="#fff"/>
+  <text x="12" y="20" font-size="8" fill="#ff0420" text-anchor="middle" font-weight="bold">O</text>
+  <text x="12" y="16" font-size="4" fill="#fff" text-anchor="middle">P</text>
+</svg>

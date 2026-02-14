@@ -1,0 +1,93 @@
+{
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/web3.swift/web3swift/src/Account/EthereumAccount+SignTransaction.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumAccount+SignTransaction.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumAccount+SignTransaction.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumAccount+SignTransaction.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumAccount+SignTransaction.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumAccount+SignTransaction.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/web3.swift/web3swift/src/Account/EthereumKeyStorage+Password.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumKeyStorage+Password.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumKeyStorage+Password.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumKeyStorage+Password.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumKeyStorage+Password.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumKeyStorage+Password.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/web3.swift/web3swift/src/Account/EthereumKeyStorage.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumKeyStorage.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumKeyStorage.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumKeyStorage.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumKeyStorage.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumKeyStorage.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/web3.swift/web3swift/src/Client/HTTP/EthereumHttpClient.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumHttpClient.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumHttpClient.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumHttpClient.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumHttpClient.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumHttpClient.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/web3.swift/web3swift/src/Client/Models/EthereumAddress.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumAddress.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumAddress.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumAddress.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumAddress.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumAddress.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/web3.swift/web3swift/src/Client/Models/EthereumBlock.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumBlock.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumBlock.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumBlock.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumBlock.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumBlock.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/web3.swift/web3swift/src/Client/Models/EthereumBlockInfo.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumBlockInfo.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumBlockInfo.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumBlockInfo.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumBlockInfo.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumBlockInfo.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/web3.swift/web3swift/src/Client/Models/EthereumHeader.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumHeader.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumHeader.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumHeader.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumHeader.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumHeader.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/web3.swift/web3swift/src/Client/Models/EthereumLog.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumLog.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumLog.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumLog.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumLog.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumLog.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/web3.swift/web3swift/src/Client/Protocols/EthereumClientProtocol.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumClientProtocol.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumClientProtocol.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumClientProtocol.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumClientProtocol.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumClientProtocol.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/web3.swift/web3swift/src/Contract/Statically Typed/EthereumClient+Static.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumClient+Static.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumClient+Static.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumClient+Static.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumClient+Static.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumClient+Static.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/web3.swift/web3swift/src/ENS/EthereumNameService.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumNameService.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumNameService.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumNameService.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumNameService.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumNameService.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/web3.swift/web3swift/src/ZKSync/EthereumAccount+ZKSync.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumAccount+ZKSync.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumAccount+ZKSync.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumAccount+ZKSync.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumAccount+ZKSync.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/web3.swift.build/Objects-normal/arm64/EthereumAccount+ZKSync.swiftdeps"
+  }
+}

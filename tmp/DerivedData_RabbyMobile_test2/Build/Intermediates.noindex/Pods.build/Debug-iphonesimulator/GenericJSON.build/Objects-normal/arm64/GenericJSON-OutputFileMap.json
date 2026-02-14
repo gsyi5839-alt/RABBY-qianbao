@@ -1,0 +1,49 @@
+{
+  "" : {
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/GenericJSON-primary.dia",
+    "emit-module-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/GenericJSON-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/GenericJSON-primary-emit-module.dia",
+    "pch" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/GenericJSON-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/GenericJSON-primary.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/GenericJSON/GenericJSON/Initialization.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/Initialization.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/Initialization.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/Initialization.dia",
+    "index-unit-output-path" : "/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/Initialization.o",
+    "llvm-bc" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/Initialization.bc",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/Initialization.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/Initialization.swiftdeps",
+    "swiftmodule" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/Initialization~partial.swiftmodule"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/GenericJSON/GenericJSON/JSON.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/JSON.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/JSON.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/JSON.dia",
+    "index-unit-output-path" : "/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/JSON.o",
+    "llvm-bc" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/JSON.bc",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/JSON.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/JSON.swiftdeps",
+    "swiftmodule" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/JSON~partial.swiftmodule"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/GenericJSON/GenericJSON/Merging.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/Merging.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/Merging.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/Merging.dia",
+    "index-unit-output-path" : "/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/Merging.o",
+    "llvm-bc" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/Merging.bc",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/Merging.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/Merging.swiftdeps",
+    "swiftmodule" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/Merging~partial.swiftmodule"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/GenericJSON/GenericJSON/Querying.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/Querying.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/Querying.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/Querying.dia",
+    "index-unit-output-path" : "/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/Querying.o",
+    "llvm-bc" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/Querying.bc",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/Querying.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/Querying.swiftdeps",
+    "swiftmodule" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/GenericJSON.build/Objects-normal/arm64/Querying~partial.swiftmodule"
+  }
+}

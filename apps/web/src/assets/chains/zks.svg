@@ -1,0 +1,8 @@
+<svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- ZK - zkSync -->
+  <rect x="4" y="4" width="16" height="16" rx="4" fill="#4e529a" opacity="0.2"/>
+  <path d="M12 4v4l4 4h2l6-2h6m0-6 4 6h2l-4-4m6" stroke="#4e529a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  <circle cx="12" cy="14" r="2" fill="#fff"/>
+  <text x="12" y="20" font-size="6" fill="#4e529a" text-anchor="middle" font-weight="bold">Z</text>
+  <text x="12" y="16" font-size="4" fill="#fff" text-anchor="middle">K</text>
+</svg>

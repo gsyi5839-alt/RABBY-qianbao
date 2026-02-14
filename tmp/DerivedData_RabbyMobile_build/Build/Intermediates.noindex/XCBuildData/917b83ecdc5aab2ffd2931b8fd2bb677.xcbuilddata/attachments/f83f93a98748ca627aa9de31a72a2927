@@ -1,0 +1,5 @@
+
+module WalletConnectSwiftV2.Swift {
+  header "WalletConnectSwiftV2-Swift.h"
+  requires objc
+}

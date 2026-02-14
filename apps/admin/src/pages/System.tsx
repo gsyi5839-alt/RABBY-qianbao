@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const MOCK_ADMINS = [
   { id: '1', username: 'admin', email: 'admin@rabby.io', role: 'Super Admin', status: 'active', lastLogin: '2024-01-15 15:01', createdAt: '2023-01-01' },
@@ -41,8 +42,28 @@ const tdStyle: React.CSSProperties = {
   padding: '12px 16px', borderBottom: '1px solid #f0f0f0', color: '#3e495e', fontSize: 13,
 };
 
+type SystemTab = 'settings' | 'admins' | 'roles';
+
 export default function SystemPage() {
-  const [activeTab, setActiveTab] = useState<'settings' | 'admins' | 'roles'>('settings');
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState<SystemTab>('settings');
+
+  useEffect(() => {
+    if (location.pathname.includes('/system/admins')) {
+      setActiveTab('admins');
+    } else if (location.pathname.includes('/system/roles')) {
+      setActiveTab('roles');
+    } else {
+      setActiveTab('settings');
+    }
+  }, [location.pathname]);
+
+  const tabRoutes: Record<SystemTab, string> = {
+    settings: '/system/config',
+    admins: '/system/admins',
+    roles: '/system/roles',
+  };
 
   return (
     <div>
@@ -75,7 +96,7 @@ export default function SystemPage() {
         ]).map((tab) => (
           <button
             key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
+            onClick={() => navigate(tabRoutes[tab.key])}
             style={{
               padding: '10px 24px', border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 500,
               background: activeTab === tab.key ? '#fff' : 'transparent',

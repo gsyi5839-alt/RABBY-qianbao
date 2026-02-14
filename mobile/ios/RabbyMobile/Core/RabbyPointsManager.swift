@@ -5,29 +5,49 @@ import Foundation
 @MainActor
 class RabbyPointsManager: ObservableObject {
     static let shared = RabbyPointsManager()
-    
+
     @Published var totalPoints: Int = 0
     @Published var rank: Int?
     @Published var referralCode: String?
     @Published var isLoading = false
     @Published var claimHistory: [ClaimRecord] = []
-    
+
+    // Leaderboard
+    @Published var leaderboard: [OpenAPIService.LeaderboardEntry] = []
+    @Published var leaderboardTotal: Int = 0
+    @Published var isLoadingLeaderboard = false
+
+    // Check-in / streak
+    @Published var consecutiveDays: Int = 0
+    @Published var streakMultiplier: Double = 1.0
+    @Published var checkedInDates: Set<String> = [] // "yyyy-MM-dd"
+    @Published var alreadyCheckedInToday: Bool = false
+
+    // Points history (paginated)
+    @Published var pointsHistory: [OpenAPIService.PointsHistoryItem] = []
+    @Published var pointsHistoryHasMore: Bool = false
+    @Published var isLoadingHistory = false
+    private var historyPage: Int = 1
+
+    // Address verification
+    @Published var isAddressVerified: Bool = false
+
     private let storage = StorageManager.shared
     private let storageKey = "rabby_points"
-    
+
     struct ClaimRecord: Identifiable, Codable {
         let id: String
         let points: Int
         let claimedAt: Date
         let type: String // "daily", "referral", "transaction", "swap"
     }
-    
+
     private init() {
         loadFromStorage()
     }
-    
+
     // MARK: - Public API
-    
+
     func loadPoints(address: String) async {
         isLoading = true
         do {
@@ -41,31 +61,145 @@ class RabbyPointsManager: ObservableObject {
         }
         isLoading = false
     }
-    
+
     func claimDailyPoints(address: String) async throws -> Int {
         isLoading = true
         defer { isLoading = false }
-        
+
         let info = try await OpenAPIService.shared.claimRabbyPoints(address: address)
         let claimedPoints = info.total_points - totalPoints
-        
+
         totalPoints = info.total_points
         rank = info.rank
-        
+
         let record = ClaimRecord(id: UUID().uuidString, points: claimedPoints, claimedAt: Date(), type: "daily")
         claimHistory.insert(record, at: 0)
-        
+
+        // Update check-in state after claiming
+        alreadyCheckedInToday = true
+        consecutiveDays += 1
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        checkedInDates.insert(dateFormatter.string(from: Date()))
+
         saveToStorage()
         return claimedPoints
     }
-    
+
     func getReferralLink() -> String? {
         guard let code = referralCode else { return nil }
         return "https://rabby.io/points?ref=\(code)"
     }
-    
+
+    // MARK: - Leaderboard
+
+    func getLeaderboard(page: Int = 1, limit: Int = 10) async throws -> [OpenAPIService.LeaderboardEntry] {
+        isLoadingLeaderboard = true
+        defer { isLoadingLeaderboard = false }
+
+        let response = try await OpenAPIService.shared.getPointsLeaderboard(page: page, limit: limit)
+        if page == 1 {
+            leaderboard = response.list
+        } else {
+            leaderboard.append(contentsOf: response.list)
+        }
+        leaderboardTotal = response.total
+        return response.list
+    }
+
+    func loadTopLeaderboard() async {
+        _ = try? await getLeaderboard(page: 1, limit: 10)
+    }
+
+    func loadFullLeaderboard(page: Int = 1) async {
+        _ = try? await getLeaderboard(page: page, limit: 100)
+    }
+
+    // MARK: - Address Verification
+
+    func verifyAddress(address: String, signature: String) async throws -> Bool {
+        let response = try await OpenAPIService.shared.verifyPointsAddress(
+            address: address,
+            signature: signature
+        )
+        if response.success {
+            isAddressVerified = true
+            if let awarded = response.points_awarded {
+                totalPoints += awarded
+                let record = ClaimRecord(
+                    id: UUID().uuidString,
+                    points: awarded,
+                    claimedAt: Date(),
+                    type: "verification"
+                )
+                claimHistory.insert(record, at: 0)
+            }
+            saveToStorage()
+        }
+        return response.success
+    }
+
+    /// Build the message to sign for address verification
+    func buildVerificationMessage(address: String) -> String {
+        let timestamp = Int(Date().timeIntervalSince1970)
+        return "Rabby Points: Verify ownership of \(address) at \(timestamp)"
+    }
+
+    // MARK: - Points History (paginated)
+
+    func getPointsHistory(address: String, page: Int = 1, limit: Int = 20) async throws -> [OpenAPIService.PointsHistoryItem] {
+        isLoadingHistory = true
+        defer { isLoadingHistory = false }
+
+        let response = try await OpenAPIService.shared.getPointsHistory(
+            address: address,
+            page: page,
+            limit: limit
+        )
+        if page == 1 {
+            pointsHistory = response.list
+        } else {
+            pointsHistory.append(contentsOf: response.list)
+        }
+        pointsHistoryHasMore = response.has_more
+        historyPage = page
+        return response.list
+    }
+
+    func loadNextHistoryPage(address: String) async {
+        guard pointsHistoryHasMore, !isLoadingHistory else { return }
+        _ = try? await getPointsHistory(address: address, page: historyPage + 1)
+    }
+
+    // MARK: - Check-in Info
+
+    func loadCheckInInfo(address: String) async {
+        do {
+            let info = try await OpenAPIService.shared.getCheckInInfo(address: address)
+            consecutiveDays = info.consecutive_days
+            streakMultiplier = info.multiplier
+            checkedInDates = Set(info.checked_in_dates)
+            alreadyCheckedInToday = info.already_checked_in_today
+        } catch {
+            print("RabbyPointsManager: load check-in info failed - \(error)")
+        }
+    }
+
+    /// Compute the streak multiplier label (e.g. "2x" for 7+ days)
+    var streakMultiplierLabel: String {
+        if streakMultiplier >= 3.0 {
+            return "3x"
+        } else if streakMultiplier >= 2.0 {
+            return "2x"
+        } else if streakMultiplier >= 1.5 {
+            return "1.5x"
+        } else {
+            return "1x"
+        }
+    }
+
     // MARK: - Storage
-    
+
     private func loadFromStorage() {
         totalPoints = storage.getInt(forKey: "\(storageKey)_total")
         let rankValue = storage.getInt(forKey: "\(storageKey)_rank")
@@ -77,8 +211,10 @@ class RabbyPointsManager: ObservableObject {
            let history = try? JSONDecoder().decode([ClaimRecord].self, from: data) {
             claimHistory = history
         }
+        consecutiveDays = storage.getInt(forKey: "\(storageKey)_streak")
+        isAddressVerified = storage.getBool(forKey: "\(storageKey)_verified")
     }
-    
+
     private func saveToStorage() {
         storage.setInt(totalPoints, forKey: "\(storageKey)_total")
         if let rank = rank { storage.setInt(rank, forKey: "\(storageKey)_rank") }
@@ -86,6 +222,8 @@ class RabbyPointsManager: ObservableObject {
         if let data = try? JSONEncoder().encode(claimHistory) {
             storage.setData(data, forKey: "\(storageKey)_history")
         }
+        storage.setInt(consecutiveDays, forKey: "\(storageKey)_streak")
+        storage.setBool(isAddressVerified, forKey: "\(storageKey)_verified")
     }
 }
 

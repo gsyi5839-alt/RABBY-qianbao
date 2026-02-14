@@ -155,6 +155,17 @@ class NetworkManager {
             responseType: Block.self
         )
     }
+
+    /// Fetch the network-recommended max priority fee per gas (EIP-1559).
+    /// Returns a hex-encoded wei value, e.g. "0x59682f00".
+    func getMaxPriorityFeePerGas(chain: Chain) async throws -> String {
+        return try await sendRPCRequest(
+            method: "eth_maxPriorityFeePerGas",
+            params: [],
+            rpcURL: chain.rpcURL,
+            responseType: String.self
+        )
+    }
     
     // MARK: - ERC20 Token Methods
     
@@ -557,6 +568,7 @@ struct Block: Codable {
     let transactions: [String]
     let gasLimit: String
     let gasUsed: String
+    let baseFeePerGas: String?
 }
 
 // MARK: - Errors

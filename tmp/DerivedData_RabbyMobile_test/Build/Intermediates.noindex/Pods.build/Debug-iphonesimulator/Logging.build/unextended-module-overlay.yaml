@@ -1,0 +1,23 @@
+{
+  "version": 0,
+  "use-external-names": false,
+  "case-sensitive": false,
+  "roots": [{
+    "type": "directory",
+    "name": "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Products/Debug-iphonesimulator/Logging/Logging.framework/Modules",
+    "contents": [{
+      "type": "file",
+      "name": "module.modulemap",
+      "external-contents": "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Logging.build/unextended-module.modulemap",
+    }]
+    },
+    {
+    "type": "directory",
+    "name": "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Products/Debug-iphonesimulator/Logging/Logging.framework/Headers",
+    "contents": [{
+      "type": "file",
+      "name": "Logging-Swift.h",
+      "external-contents": "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Logging.build/unextended-interface-header.h",
+    }]
+  }]
+}

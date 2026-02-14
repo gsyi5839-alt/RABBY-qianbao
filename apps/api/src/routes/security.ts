@@ -3,6 +3,7 @@ import { rabbyApi } from '../services/rabbyApi';
 import { validateAddress } from '../middleware/validate';
 import { adminRequired } from '../middleware/auth';
 import { securityStore } from '../services/securityStore';
+import type { SecuritySeverity, SecurityStatus, ContractStatus, AlertStatus } from '@rabby/shared';
 
 const router = Router();
 
@@ -56,176 +57,277 @@ router.get('/api/security/contract', async (req: Request, res: Response, next: N
 
 // ===== Admin-managed security datasets =====
 
-router.get('/api/security/rules', adminRequired, (_req: Request, res: Response) => {
-  res.json({ list: securityStore.listRules() });
-});
-
-router.post('/api/security/rules', adminRequired, (req: Request, res: Response) => {
-  const { name, description, type, severity, enabled, triggers, lastTriggered } = req.body || {};
-  if (!name || !description || !type) {
-    res.status(400).json({ error: { message: 'name, description, and type are required', status: 400 } });
-    return;
+// Helper functions to normalize values
+const normalizeSeverity = (val: any): SecuritySeverity => {
+  const normalized = String(val || 'medium').toLowerCase();
+  if (['low', 'medium', 'high', 'critical'].includes(normalized)) {
+    return normalized as SecuritySeverity;
   }
-  const rule = securityStore.createRule({
-    name,
-    description,
-    type,
-    severity: securityStore.normalizeSeverity(severity),
-    enabled: enabled !== false,
-    triggers: typeof triggers === 'number' ? triggers : 0,
-    lastTriggered: lastTriggered || undefined,
-  });
-  res.status(201).json(rule);
-});
+  return 'medium';
+};
 
-router.put('/api/security/rules/:id', adminRequired, (req: Request, res: Response) => {
-  const { severity } = req.body || {};
-  const updated = securityStore.updateRule(String(req.params.id), {
-    ...req.body,
-    ...(severity ? { severity: securityStore.normalizeSeverity(severity) } : {}),
-  });
-  if (!updated) {
-    res.status(404).json({ error: { message: 'Rule not found', status: 404 } });
-    return;
+const normalizeStatus = (val: any): SecurityStatus => {
+  const normalized = String(val || 'pending').toLowerCase();
+  if (['confirmed', 'pending'].includes(normalized)) {
+    return normalized as SecurityStatus;
   }
-  res.json(updated);
-});
+  return 'pending';
+};
 
-router.delete('/api/security/rules/:id', adminRequired, (req: Request, res: Response) => {
-  const ok = securityStore.deleteRule(String(req.params.id));
-  if (!ok) {
-    res.status(404).json({ error: { message: 'Rule not found', status: 404 } });
-    return;
+const normalizeContractStatus = (val: any): ContractStatus => {
+  const normalized = String(val || 'active').toLowerCase();
+  if (['active', 'disabled'].includes(normalized)) {
+    return normalized as ContractStatus;
   }
-  res.json({ success: true });
-});
+  return 'active';
+};
 
-router.get('/api/security/phishing', adminRequired, (_req: Request, res: Response) => {
-  res.json({ list: securityStore.listPhishing() });
-});
-
-router.post('/api/security/phishing', adminRequired, (req: Request, res: Response) => {
-  const { address, domain, type, reportedBy, status, addedDate } = req.body || {};
-  if (!address || !domain || !type) {
-    res.status(400).json({ error: { message: 'address, domain, and type are required', status: 400 } });
-    return;
+const normalizeAlertStatus = (val: any): AlertStatus => {
+  const normalized = String(val || 'open').toLowerCase();
+  if (['open', 'resolved'].includes(normalized)) {
+    return normalized as AlertStatus;
   }
-  const entry = securityStore.createPhishing({
-    address,
-    domain,
-    type,
-    reportedBy: reportedBy || 'manual',
-    status: securityStore.normalizeStatus(status),
-    addedDate: addedDate || securityStore.nowDate(),
-  });
-  res.status(201).json(entry);
-});
+  return 'open';
+};
 
-router.put('/api/security/phishing/:id', adminRequired, (req: Request, res: Response) => {
-  const { status } = req.body || {};
-  const updated = securityStore.updatePhishing(String(req.params.id), {
-    ...req.body,
-    ...(status ? { status: securityStore.normalizeStatus(status) } : {}),
-  });
-  if (!updated) {
-    res.status(404).json({ error: { message: 'Phishing entry not found', status: 404 } });
-    return;
+router.get('/api/security/rules', adminRequired, async (_req: Request, res: Response, next: NextFunction) => {
+  try {
+    const list = await securityStore.listRules();
+    res.json({ list });
+  } catch (err) {
+    next(err);
   }
-  res.json(updated);
 });
 
-router.delete('/api/security/phishing/:id', adminRequired, (req: Request, res: Response) => {
-  const ok = securityStore.deletePhishing(String(req.params.id));
-  if (!ok) {
-    res.status(404).json({ error: { message: 'Phishing entry not found', status: 404 } });
-    return;
+router.post('/api/security/rules', adminRequired, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { name, description, type, severity, enabled, triggers, lastTriggered } = req.body || {};
+    if (!name || !type) {
+      res.status(400).json({ error: { message: 'name and type are required', status: 400 } });
+      return;
+    }
+    const rule = await securityStore.createRule({
+      name,
+      description,
+      type,
+      severity: normalizeSeverity(severity),
+      enabled: enabled !== false,
+      triggers: typeof triggers === 'number' ? triggers : 0,
+      lastTriggered: lastTriggered || undefined,
+    });
+    res.status(201).json(rule);
+  } catch (err) {
+    next(err);
   }
-  res.json({ success: true });
 });
 
-router.get('/api/security/contracts', adminRequired, (_req: Request, res: Response) => {
-  res.json({ list: securityStore.listContracts() });
-});
-
-router.post('/api/security/contracts', adminRequired, (req: Request, res: Response) => {
-  const { address, name, chainId, status, addedDate } = req.body || {};
-  if (!address) {
-    res.status(400).json({ error: { message: 'address is required', status: 400 } });
-    return;
+router.put('/api/security/rules/:id', adminRequired, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { severity, ...rest } = req.body || {};
+    const updated = await securityStore.updateRule(String(req.params.id), {
+      ...rest,
+      ...(severity ? { severity: normalizeSeverity(severity) } : {}),
+    });
+    if (!updated) {
+      res.status(404).json({ error: { message: 'Rule not found', status: 404 } });
+      return;
+    }
+    res.json(updated);
+  } catch (err) {
+    next(err);
   }
-  const entry = securityStore.createContract({
-    address,
-    name,
-    chainId,
-    status: securityStore.normalizeContractStatus(status),
-    addedDate: addedDate || securityStore.nowDate(),
-  });
-  res.status(201).json(entry);
 });
 
-router.put('/api/security/contracts/:id', adminRequired, (req: Request, res: Response) => {
-  const { status } = req.body || {};
-  const updated = securityStore.updateContract(String(req.params.id), {
-    ...req.body,
-    ...(status ? { status: securityStore.normalizeContractStatus(status) } : {}),
-  });
-  if (!updated) {
-    res.status(404).json({ error: { message: 'Contract not found', status: 404 } });
-    return;
+router.delete('/api/security/rules/:id', adminRequired, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const ok = await securityStore.deleteRule(String(req.params.id));
+    if (!ok) {
+      res.status(404).json({ error: { message: 'Rule not found', status: 404 } });
+      return;
+    }
+    res.json({ success: true });
+  } catch (err) {
+    next(err);
   }
-  res.json(updated);
 });
 
-router.delete('/api/security/contracts/:id', adminRequired, (req: Request, res: Response) => {
-  const ok = securityStore.deleteContract(String(req.params.id));
-  if (!ok) {
-    res.status(404).json({ error: { message: 'Contract not found', status: 404 } });
-    return;
+router.get('/api/security/phishing', adminRequired, async (_req: Request, res: Response, next: NextFunction) => {
+  try {
+    const list = await securityStore.listPhishing();
+    res.json({ list });
+  } catch (err) {
+    next(err);
   }
-  res.json({ success: true });
 });
 
-router.get('/api/security/alerts', adminRequired, (_req: Request, res: Response) => {
-  res.json({ list: securityStore.listAlerts() });
-});
-
-router.post('/api/security/alerts', adminRequired, (req: Request, res: Response) => {
-  const { title, level, status, createdAt, description } = req.body || {};
-  if (!title) {
-    res.status(400).json({ error: { message: 'title is required', status: 400 } });
-    return;
+router.post('/api/security/phishing', adminRequired, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { address, domain, type, reportedBy, status, addedDate } = req.body || {};
+    if (!address || !domain || !type) {
+      res.status(400).json({ error: { message: 'address, domain, and type are required', status: 400 } });
+      return;
+    }
+    const entry = await securityStore.createPhishing({
+      address,
+      domain,
+      type,
+      reportedBy: reportedBy || 'manual',
+      status: normalizeStatus(status),
+      addedDate: addedDate || new Date().toISOString().slice(0, 10),
+    });
+    res.status(201).json(entry);
+  } catch (err) {
+    next(err);
   }
-  const alert = securityStore.createAlert({
-    title,
-    level: securityStore.normalizeSeverity(level),
-    status: securityStore.normalizeAlertStatus(status),
-    createdAt: createdAt || securityStore.nowDateTime(),
-    description,
-  });
-  res.status(201).json(alert);
 });
 
-router.put('/api/security/alerts/:id', adminRequired, (req: Request, res: Response) => {
-  const { level, status } = req.body || {};
-  const updated = securityStore.updateAlert(String(req.params.id), {
-    ...req.body,
-    ...(level ? { level: securityStore.normalizeSeverity(level) } : {}),
-    ...(status ? { status: securityStore.normalizeAlertStatus(status) } : {}),
-  });
-  if (!updated) {
-    res.status(404).json({ error: { message: 'Alert not found', status: 404 } });
-    return;
+router.put('/api/security/phishing/:id', adminRequired, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { status, ...rest } = req.body || {};
+    const updated = await securityStore.updatePhishing(String(req.params.id), {
+      ...rest,
+      ...(status ? { status: normalizeStatus(status) } : {}),
+    });
+    if (!updated) {
+      res.status(404).json({ error: { message: 'Phishing entry not found', status: 404 } });
+      return;
+    }
+    res.json(updated);
+  } catch (err) {
+    next(err);
   }
-  res.json(updated);
 });
 
-router.delete('/api/security/alerts/:id', adminRequired, (req: Request, res: Response) => {
-  const ok = securityStore.deleteAlert(String(req.params.id));
-  if (!ok) {
-    res.status(404).json({ error: { message: 'Alert not found', status: 404 } });
-    return;
+router.delete('/api/security/phishing/:id', adminRequired, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const ok = await securityStore.deletePhishing(String(req.params.id));
+    if (!ok) {
+      res.status(404).json({ error: { message: 'Phishing entry not found', status: 404 } });
+      return;
+    }
+    res.json({ success: true });
+  } catch (err) {
+    next(err);
   }
-  res.json({ success: true });
+});
+
+router.get('/api/security/contracts', adminRequired, async (_req: Request, res: Response, next: NextFunction) => {
+  try {
+    const list = await securityStore.listContracts();
+    res.json({ list });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/api/security/contracts', adminRequired, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { address, name, chainId, status, addedDate } = req.body || {};
+    if (!address) {
+      res.status(400).json({ error: { message: 'address is required', status: 400 } });
+      return;
+    }
+    const entry = await securityStore.createContract({
+      address,
+      name,
+      chainId,
+      status: normalizeContractStatus(status),
+      addedDate: addedDate || new Date().toISOString().slice(0, 10),
+    });
+    res.status(201).json(entry);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.put('/api/security/contracts/:id', adminRequired, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { status, ...rest } = req.body || {};
+    const updated = await securityStore.updateContract(String(req.params.id), {
+      ...rest,
+      ...(status ? { status: normalizeContractStatus(status) } : {}),
+    });
+    if (!updated) {
+      res.status(404).json({ error: { message: 'Contract not found', status: 404 } });
+      return;
+    }
+    res.json(updated);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.delete('/api/security/contracts/:id', adminRequired, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const ok = await securityStore.deleteContract(String(req.params.id));
+    if (!ok) {
+      res.status(404).json({ error: { message: 'Contract not found', status: 404 } });
+      return;
+    }
+    res.json({ success: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get('/api/security/alerts', adminRequired, async (_req: Request, res: Response, next: NextFunction) => {
+  try {
+    const list = await securityStore.listAlerts();
+    res.json({ list });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/api/security/alerts', adminRequired, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { title, level, status, createdAt, description } = req.body || {};
+    if (!title) {
+      res.status(400).json({ error: { message: 'title is required', status: 400 } });
+      return;
+    }
+    const alert = await securityStore.createAlert({
+      title,
+      level: normalizeSeverity(level),
+      status: normalizeAlertStatus(status),
+      createdAt: createdAt || new Date().toISOString().replace('T', ' ').slice(0, 16),
+      description,
+    });
+    res.status(201).json(alert);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.put('/api/security/alerts/:id', adminRequired, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { level, status, ...rest } = req.body || {};
+    const updated = await securityStore.updateAlert(String(req.params.id), {
+      ...rest,
+      ...(level ? { level: normalizeSeverity(level) } : {}),
+      ...(status ? { status: normalizeAlertStatus(status) } : {}),
+    });
+    if (!updated) {
+      res.status(404).json({ error: { message: 'Alert not found', status: 404 } });
+      return;
+    }
+    res.json(updated);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.delete('/api/security/alerts/:id', adminRequired, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const ok = await securityStore.deleteAlert(String(req.params.id));
+    if (!ok) {
+      res.status(404).json({ error: { message: 'Alert not found', status: 404 } });
+      return;
+    }
+    res.json({ success: true });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // Whitelist management (in-memory)

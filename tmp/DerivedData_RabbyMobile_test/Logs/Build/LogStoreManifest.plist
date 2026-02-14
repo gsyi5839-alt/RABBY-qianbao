@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>logFormatVersion</key>
+	<integer>12</integer>
+	<key>logs</key>
+	<dict>
+		<key>90DC7907-B282-46A6-AF39-1952F4989559</key>
+		<dict>
+			<key>className</key>
+			<string>IDECommandLineBuildLog</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>90DC7907-B282-46A6-AF39-1952F4989559.xcactivitylog</string>
+			<key>hasPrimaryLog</key>
+			<true/>
+			<key>primaryObservable</key>
+			<dict>
+				<key>highLevelStatus</key>
+				<string>E</string>
+				<key>totalNumberOfAnalyzerIssues</key>
+				<integer>0</integer>
+				<key>totalNumberOfErrors</key>
+				<integer>1</integer>
+				<key>totalNumberOfTestFailures</key>
+				<integer>0</integer>
+				<key>totalNumberOfWarnings</key>
+				<integer>2</integer>
+			</dict>
+			<key>schemeIdentifier-containerName</key>
+			<string>RabbyMobile project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>RabbyMobileTests</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Testing workspace RabbyMobile with scheme RabbyMobileTests</string>
+			<key>timeStartedRecording</key>
+			<real>792703079.20763195</real>
+			<key>timeStoppedRecording</key>
+			<real>792703138.14694405</real>
+			<key>title</key>
+			<string>Testing workspace RabbyMobile with scheme RabbyMobileTests</string>
+			<key>uniqueIdentifier</key>
+			<string>90DC7907-B282-46A6-AF39-1952F4989559</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

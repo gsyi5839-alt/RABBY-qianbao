@@ -1,0 +1,382 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.2.4 effective-5.10 (swiftlang-6.2.4.1.4 clang-1700.6.4.2)
+// swift-module-flags: -target arm64-apple-ios15.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -Onone -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name BigInt
+// swift-module-flags-ignorable: -no-verify-emitted-module-interface -formal-cxx-interoperability-mode=off -interface-compiler-version 6.2.4
+@_exported import BigInt
+import Foundation
+import Swift
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+extension BigInt.BigUInt {
+  public static func + (a: BigInt.BigUInt, b: BigInt.BigUInt) -> BigInt.BigUInt
+  public static func += (a: inout BigInt.BigUInt, b: BigInt.BigUInt)
+}
+extension BigInt.BigInt {
+  public static func + (a: BigInt.BigInt, b: BigInt.BigInt) -> BigInt.BigInt
+  public static func += (a: inout BigInt.BigInt, b: BigInt.BigInt)
+}
+public struct BigInt : Swift.SignedInteger {
+  public enum Sign {
+    case plus
+    case minus
+    public static func == (a: BigInt.BigInt.Sign, b: BigInt.BigInt.Sign) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public typealias Magnitude = BigInt.BigUInt
+  public typealias Word = BigInt.BigUInt.Word
+  public static var isSigned: Swift.Bool {
+    get
+  }
+  public var magnitude: BigInt.BigUInt
+  public var sign: BigInt.BigInt.Sign
+  public init(sign: BigInt.BigInt.Sign, magnitude: BigInt.BigUInt)
+  public var isZero: Swift.Bool {
+    get
+  }
+  public func signum() -> BigInt.BigInt
+}
+public struct BigUInt : Swift.UnsignedInteger {
+  public typealias Word = Swift.UInt
+  public init()
+  public init(words: [BigInt.BigUInt.Word])
+  public typealias Magnitude = BigInt.BigUInt
+}
+extension BigInt.BigUInt {
+  public static var isSigned: Swift.Bool {
+    get
+  }
+  public func signum() -> BigInt.BigUInt
+}
+extension BigInt.BigUInt {
+  prefix public static func ~ (a: BigInt.BigUInt) -> BigInt.BigUInt
+  public static func |= (a: inout BigInt.BigUInt, b: BigInt.BigUInt)
+  public static func &= (a: inout BigInt.BigUInt, b: BigInt.BigUInt)
+  public static func ^= (a: inout BigInt.BigUInt, b: BigInt.BigUInt)
+}
+extension BigInt.BigInt {
+  prefix public static func ~ (x: BigInt.BigInt) -> BigInt.BigInt
+  public static func & (lhs: inout BigInt.BigInt, rhs: BigInt.BigInt) -> BigInt.BigInt
+  public static func | (lhs: inout BigInt.BigInt, rhs: BigInt.BigInt) -> BigInt.BigInt
+  public static func ^ (lhs: inout BigInt.BigInt, rhs: BigInt.BigInt) -> BigInt.BigInt
+  public static func &= (lhs: inout BigInt.BigInt, rhs: BigInt.BigInt)
+  public static func |= (lhs: inout BigInt.BigInt, rhs: BigInt.BigInt)
+  public static func ^= (lhs: inout BigInt.BigInt, rhs: BigInt.BigInt)
+}
+extension BigInt.BigInt : Swift.Codable {
+  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+extension BigInt.BigUInt : Swift.Codable {
+  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+extension BigInt.BigUInt : Swift.Comparable {
+  public static func compare(_ a: BigInt.BigUInt, _ b: BigInt.BigUInt) -> Foundation.ComparisonResult
+  public static func == (a: BigInt.BigUInt, b: BigInt.BigUInt) -> Swift.Bool
+  public static func < (a: BigInt.BigUInt, b: BigInt.BigUInt) -> Swift.Bool
+}
+extension BigInt.BigInt {
+  public static func == (a: BigInt.BigInt, b: BigInt.BigInt) -> Swift.Bool
+  public static func < (a: BigInt.BigInt, b: BigInt.BigInt) -> Swift.Bool
+}
+extension BigInt.BigUInt {
+  public init(_ buffer: Swift.UnsafeRawBufferPointer)
+  public init(_ data: Foundation.Data)
+  public func serialize() -> Foundation.Data
+}
+extension BigInt.BigUInt {
+  public func quotientAndRemainder(dividingBy y: BigInt.BigUInt) -> (quotient: BigInt.BigUInt, remainder: BigInt.BigUInt)
+  public static func / (x: BigInt.BigUInt, y: BigInt.BigUInt) -> BigInt.BigUInt
+  public static func % (x: BigInt.BigUInt, y: BigInt.BigUInt) -> BigInt.BigUInt
+  public static func /= (x: inout BigInt.BigUInt, y: BigInt.BigUInt)
+  public static func %= (x: inout BigInt.BigUInt, y: BigInt.BigUInt)
+}
+extension BigInt.BigInt {
+  public func quotientAndRemainder(dividingBy y: BigInt.BigInt) -> (quotient: BigInt.BigInt, remainder: BigInt.BigInt)
+  public static func / (a: BigInt.BigInt, b: BigInt.BigInt) -> BigInt.BigInt
+  public static func % (a: BigInt.BigInt, b: BigInt.BigInt) -> BigInt.BigInt
+  public func modulus(_ mod: BigInt.BigInt) -> BigInt.BigInt
+}
+extension BigInt.BigInt {
+  public static func /= (a: inout BigInt.BigInt, b: BigInt.BigInt)
+  public static func %= (a: inout BigInt.BigInt, b: BigInt.BigInt)
+}
+extension BigInt.BigUInt {
+  public func power(_ exponent: Swift.Int) -> BigInt.BigUInt
+  public func power(_ exponent: BigInt.BigUInt, modulus: BigInt.BigUInt) -> BigInt.BigUInt
+}
+extension BigInt.BigInt {
+  public func power(_ exponent: Swift.Int) -> BigInt.BigInt
+  public func power(_ exponent: BigInt.BigInt, modulus: BigInt.BigInt) -> BigInt.BigInt
+}
+extension BigInt.BigUInt {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?<T>(exactly source: T) where T : Swift.BinaryFloatingPoint
+  #endif
+  public init<T>(_ source: T) where T : Swift.BinaryFloatingPoint
+}
+extension BigInt.BigInt {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?<T>(exactly source: T) where T : Swift.BinaryFloatingPoint
+  #endif
+  public init<T>(_ source: T) where T : Swift.BinaryFloatingPoint
+}
+extension Swift.BinaryFloatingPoint where Self.RawExponent : Swift.FixedWidthInteger, Self.RawSignificand : Swift.FixedWidthInteger {
+  public init(_ value: BigInt.BigInt)
+  public init(_ value: BigInt.BigUInt)
+}
+extension BigInt.BigUInt {
+  public func greatestCommonDivisor(with b: BigInt.BigUInt) -> BigInt.BigUInt
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func inverse(_ modulus: BigInt.BigUInt) -> BigInt.BigUInt?
+  #endif
+}
+extension BigInt.BigInt {
+  public func greatestCommonDivisor(with b: BigInt.BigInt) -> BigInt.BigInt
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func inverse(_ modulus: BigInt.BigInt) -> BigInt.BigInt?
+  #endif
+}
+extension BigInt.BigUInt : Swift.Hashable {
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension BigInt.BigInt : Swift.Hashable {
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension BigInt.BigUInt {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?<T>(exactly source: T) where T : Swift.BinaryInteger
+  #endif
+  public init<T>(_ source: T) where T : Swift.BinaryInteger
+  public init<T>(truncatingIfNeeded source: T) where T : Swift.BinaryInteger
+  public init<T>(clamping source: T) where T : Swift.BinaryInteger
+}
+extension BigInt.BigInt {
+  public init()
+  public init(_ integer: BigInt.BigUInt)
+  public init<T>(_ source: T) where T : Swift.BinaryInteger
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?<T>(exactly source: T) where T : Swift.BinaryInteger
+  #endif
+  public init<T>(clamping source: T) where T : Swift.BinaryInteger
+  public init<T>(truncatingIfNeeded source: T) where T : Swift.BinaryInteger
+}
+extension BigInt.BigUInt : Swift.ExpressibleByIntegerLiteral {
+  public init(integerLiteral value: Swift.UInt64)
+  public typealias IntegerLiteralType = Swift.UInt64
+}
+extension BigInt.BigInt : Swift.ExpressibleByIntegerLiteral {
+  public init(integerLiteral value: Swift.Int64)
+  public typealias IntegerLiteralType = Swift.Int64
+}
+extension BigInt.BigUInt {
+  public mutating func multiply(byWord y: BigInt.BigUInt.Word)
+  public func multiplied(byWord y: BigInt.BigUInt.Word) -> BigInt.BigUInt
+  public mutating func multiplyAndAdd(_ x: BigInt.BigUInt, _ y: BigInt.BigUInt.Word, shiftedBy shift: Swift.Int = 0)
+  public func multiplied(by y: BigInt.BigUInt) -> BigInt.BigUInt
+  public static var directMultiplicationLimit: Swift.Int
+  public static func * (x: BigInt.BigUInt, y: BigInt.BigUInt) -> BigInt.BigUInt
+  public static func *= (a: inout BigInt.BigUInt, b: BigInt.BigUInt)
+}
+extension BigInt.BigInt {
+  public static func * (a: BigInt.BigInt, b: BigInt.BigInt) -> BigInt.BigInt
+  public static func *= (a: inout BigInt.BigInt, b: BigInt.BigInt)
+}
+extension BigInt.BigUInt {
+  public func isStrongProbablePrime(_ base: BigInt.BigUInt) -> Swift.Bool
+  public func isPrime(rounds: Swift.Int = 10) -> Swift.Bool
+}
+extension BigInt.BigInt {
+  public func isStrongProbablePrime(_ base: BigInt.BigInt) -> Swift.Bool
+  public func isPrime(rounds: Swift.Int = 10) -> Swift.Bool
+}
+extension BigInt.BigUInt {
+  public static func randomInteger(withMaximumWidth width: Swift.Int) -> BigInt.BigUInt
+  public static func randomInteger(withExactWidth width: Swift.Int) -> BigInt.BigUInt
+  public static func randomInteger(lessThan limit: BigInt.BigUInt) -> BigInt.BigUInt
+}
+extension BigInt.BigUInt {
+  public static func >>= <Other>(lhs: inout BigInt.BigUInt, rhs: Other) where Other : Swift.BinaryInteger
+  public static func <<= <Other>(lhs: inout BigInt.BigUInt, rhs: Other) where Other : Swift.BinaryInteger
+  public static func >> <Other>(lhs: BigInt.BigUInt, rhs: Other) -> BigInt.BigUInt where Other : Swift.BinaryInteger
+  public static func << <Other>(lhs: BigInt.BigUInt, rhs: Other) -> BigInt.BigUInt where Other : Swift.BinaryInteger
+}
+extension BigInt.BigInt {
+  public static func &<< (left: BigInt.BigInt, right: BigInt.BigInt) -> BigInt.BigInt
+  public static func &<<= (left: inout BigInt.BigInt, right: BigInt.BigInt)
+  public static func &>> (left: BigInt.BigInt, right: BigInt.BigInt) -> BigInt.BigInt
+  public static func &>>= (left: inout BigInt.BigInt, right: BigInt.BigInt)
+  public static func << <Other>(lhs: BigInt.BigInt, rhs: Other) -> BigInt.BigInt where Other : Swift.BinaryInteger
+  public static func <<= <Other>(lhs: inout BigInt.BigInt, rhs: Other) where Other : Swift.BinaryInteger
+  public static func >> <Other>(lhs: BigInt.BigInt, rhs: Other) -> BigInt.BigInt where Other : Swift.BinaryInteger
+  public static func >>= <Other>(lhs: inout BigInt.BigInt, rhs: Other) where Other : Swift.BinaryInteger
+}
+extension BigInt.BigUInt {
+  public func squareRoot() -> BigInt.BigUInt
+}
+extension BigInt.BigInt {
+  public func squareRoot() -> BigInt.BigInt
+}
+extension BigInt.BigUInt : Swift.Strideable {
+  public typealias Stride = BigInt.BigInt
+  public func advanced(by n: BigInt.BigInt) -> BigInt.BigUInt
+  public func distance(to other: BigInt.BigUInt) -> BigInt.BigInt
+}
+extension BigInt.BigInt : Swift.Strideable {
+  public typealias Stride = BigInt.BigInt
+  public func advanced(by n: BigInt.BigInt.Stride) -> BigInt.BigInt
+  public func distance(to other: BigInt.BigInt) -> BigInt.BigInt.Stride
+}
+extension BigInt.BigUInt {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?<S>(_ text: S, radix: Swift.Int = 10) where S : Swift.StringProtocol
+  #endif
+}
+extension BigInt.BigInt {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?<S>(_ text: S, radix: Swift.Int = 10) where S : Swift.StringProtocol
+  #endif
+}
+extension Swift.String {
+  public init(_ v: BigInt.BigUInt)
+  public init(_ v: BigInt.BigUInt, radix: Swift.Int, uppercase: Swift.Bool = false)
+  public init(_ value: BigInt.BigInt, radix: Swift.Int = 10, uppercase: Swift.Bool = false)
+}
+extension BigInt.BigUInt : Swift.ExpressibleByStringLiteral {
+  public init(unicodeScalarLiteral value: Swift.UnicodeScalar)
+  public init(extendedGraphemeClusterLiteral value: Swift.String)
+  public init(stringLiteral value: Swift.StringLiteralType)
+  public typealias ExtendedGraphemeClusterLiteralType = Swift.String
+  public typealias StringLiteralType = Swift.StringLiteralType
+  public typealias UnicodeScalarLiteralType = Swift.UnicodeScalar
+}
+extension BigInt.BigInt : Swift.ExpressibleByStringLiteral {
+  public init(unicodeScalarLiteral value: Swift.UnicodeScalar)
+  public init(extendedGraphemeClusterLiteral value: Swift.String)
+  public init(stringLiteral value: Swift.StringLiteralType)
+  public typealias ExtendedGraphemeClusterLiteralType = Swift.String
+  public typealias StringLiteralType = Swift.StringLiteralType
+  public typealias UnicodeScalarLiteralType = Swift.UnicodeScalar
+}
+extension BigInt.BigUInt : Swift.CustomStringConvertible {
+  public var description: Swift.String {
+    get
+  }
+}
+extension BigInt.BigInt : Swift.CustomStringConvertible {
+  public var description: Swift.String {
+    get
+  }
+}
+extension BigInt.BigUInt : Swift.CustomPlaygroundDisplayConvertible {
+  public var playgroundDescription: Any {
+    get
+  }
+}
+extension BigInt.BigInt : Swift.CustomPlaygroundDisplayConvertible {
+  public var playgroundDescription: Any {
+    get
+  }
+}
+extension BigInt.BigUInt {
+  public mutating func subtractReportingOverflow(_ b: BigInt.BigUInt, shiftedBy shift: Swift.Int = 0) -> Swift.Bool
+  public func subtractingReportingOverflow(_ other: BigInt.BigUInt, shiftedBy shift: Swift.Int) -> (partialValue: BigInt.BigUInt, overflow: Swift.Bool)
+  public func subtractingReportingOverflow(_ other: BigInt.BigUInt) -> (partialValue: BigInt.BigUInt, overflow: Swift.Bool)
+  public mutating func subtract(_ other: BigInt.BigUInt, shiftedBy shift: Swift.Int = 0)
+  public func subtracting(_ other: BigInt.BigUInt, shiftedBy shift: Swift.Int = 0) -> BigInt.BigUInt
+  public mutating func decrement(shiftedBy shift: Swift.Int = 0)
+  public static func - (a: BigInt.BigUInt, b: BigInt.BigUInt) -> BigInt.BigUInt
+  public static func -= (a: inout BigInt.BigUInt, b: BigInt.BigUInt)
+}
+extension BigInt.BigInt {
+  public mutating func negate()
+  public static func - (a: BigInt.BigInt, b: BigInt.BigInt) -> BigInt.BigInt
+  public static func -= (a: inout BigInt.BigInt, b: BigInt.BigInt)
+}
+extension BigInt.BigUInt {
+  public subscript(bitAt index: Swift.Int) -> Swift.Bool {
+    get
+    set
+  }
+}
+extension BigInt.BigUInt {
+  public var bitWidth: Swift.Int {
+    get
+  }
+  public var leadingZeroBitCount: Swift.Int {
+    get
+  }
+  public var trailingZeroBitCount: Swift.Int {
+    get
+  }
+}
+extension BigInt.BigInt {
+  public var bitWidth: Swift.Int {
+    get
+  }
+  public var trailingZeroBitCount: Swift.Int {
+    get
+  }
+}
+extension BigInt.BigUInt {
+  public struct Words : Swift.RandomAccessCollection {
+    public var startIndex: Swift.Int {
+      get
+    }
+    public var endIndex: Swift.Int {
+      get
+    }
+    public subscript(index: Swift.Int) -> BigInt.BigUInt.Word {
+      get
+    }
+    public typealias Element = BigInt.BigUInt.Word
+    public typealias Index = Swift.Int
+    public typealias Indices = Swift.Range<Swift.Int>
+    public typealias Iterator = Swift.IndexingIterator<BigInt.BigUInt.Words>
+    public typealias SubSequence = Swift.Slice<BigInt.BigUInt.Words>
+  }
+  public var words: BigInt.BigUInt.Words {
+    get
+  }
+  public init<Words>(words: Words) where Words : Swift.Sequence, Words.Element == Swift.UInt
+}
+extension BigInt.BigInt {
+  public struct Words : Swift.RandomAccessCollection {
+    public typealias Indices = Swift.CountableRange<Swift.Int>
+    public var count: Swift.Int {
+      get
+    }
+    public var indices: BigInt.BigInt.Words.Indices {
+      get
+    }
+    public var startIndex: Swift.Int {
+      get
+    }
+    public var endIndex: Swift.Int {
+      get
+    }
+    public subscript(index: Swift.Int) -> Swift.UInt {
+      get
+    }
+    public typealias Element = Swift.UInt
+    public typealias Index = Swift.Int
+    public typealias Iterator = Swift.IndexingIterator<BigInt.BigInt.Words>
+    public typealias SubSequence = Swift.Slice<BigInt.BigInt.Words>
+  }
+  public var words: BigInt.BigInt.Words {
+    get
+  }
+  public init<S>(words: S) where S : Swift.Sequence, S.Element == Swift.UInt
+}
+extension BigInt.BigInt.Sign : Swift.Equatable {}
+extension BigInt.BigInt.Sign : Swift.Hashable {}

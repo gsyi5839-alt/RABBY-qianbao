@@ -24,7 +24,7 @@ struct ChainBalanceView: View {
         VStack(spacing: 12) {
             // Header
             HStack {
-                Text("Chain Distribution")
+                Text(L("Chain Distribution"))
                     .font(.subheadline).fontWeight(.semibold)
                 Spacer()
                 if totalValue > 0 {
@@ -38,7 +38,7 @@ struct ChainBalanceView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
             } else if chainBalances.isEmpty {
-                Text("No chain data")
+                Text(L("No chain data"))
                     .font(.caption).foregroundColor(.secondary)
                     .padding(.vertical, 12)
             } else {

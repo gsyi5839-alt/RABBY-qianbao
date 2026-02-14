@@ -1,0 +1,10 @@
+export { default as CreatePasswordPage } from './CreatePasswordPage';
+export { default as UnlockPage } from './UnlockPage';
+export { default as NoAddressPage } from './NoAddressPage';
+export { default as GuidePage } from './GuidePage';
+export { default as ImportListPage } from './ImportListPage';
+export { default as CreateSeedPhrasePage } from './CreateSeedPhrasePage';
+export { default as ImportSeedPhrasePage } from './ImportSeedPhrasePage';
+export { default as ImportPrivateKeyPage } from './ImportPrivateKeyPage';
+export { default as SetPasswordPage } from './SetPasswordPage';
+export { default as SuccessPage } from './SuccessPage';

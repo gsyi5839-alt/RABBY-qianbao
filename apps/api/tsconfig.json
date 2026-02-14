@@ -11,6 +11,9 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
+    "paths": {
+      "@rabby/shared": ["../../packages/shared/src"]
+    },
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,

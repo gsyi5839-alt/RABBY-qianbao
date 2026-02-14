@@ -25,6 +25,15 @@ struct TokenDetailView: View {
                 VStack(spacing: 0) {
                     tokenInfoSection
                     priceSection
+
+                    // Price chart
+                    TokenChartView(
+                        tokenId: token.address,
+                        chainId: token.id.components(separatedBy: ":").first ?? "",
+                        tokenSymbol: token.symbol
+                    )
+                    .background(Color(.systemBackground))
+
                     balanceSection
                     actionButtonsSection
                     
@@ -39,7 +48,7 @@ struct TokenDetailView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") { dismiss() }
+                    Button(L("Done")) { dismiss() }
                 }
             }
             .task { await loadDetail() }
@@ -72,12 +81,12 @@ struct TokenDetailView: View {
             if let detail = tokenDetail {
                 HStack(spacing: 4) {
                     if detail.is_verified == true {
-                        Label("Verified", systemImage: "checkmark.seal.fill")
+                        Label(L("Verified"), systemImage: "checkmark.seal.fill")
                             .font(.caption2)
                             .foregroundColor(.green)
                     }
                     if detail.is_scam == true {
-                        Label("Scam Risk", systemImage: "exclamationmark.triangle.fill")
+                        Label(L("Scam Risk"), systemImage: "exclamationmark.triangle.fill")
                             .font(.caption2)
                             .foregroundColor(.red)
                     }
@@ -98,12 +107,12 @@ struct TokenDetailView: View {
     
     private var priceSection: some View {
         VStack(spacing: 12) {
-            sectionHeader("Price")
+            sectionHeader(LocalizationManager.shared.t("Price"))
             
             HStack {
                 // Current price
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Current Price")
+                    Text(L("Current Price"))
                         .font(.caption).foregroundColor(.secondary)
                     let price = tokenDetail?.price ?? token.price
                     Text(formatUSD(price))
@@ -114,7 +123,7 @@ struct TokenDetailView: View {
                 
                 // 24h change
                 VStack(alignment: .trailing, spacing: 4) {
-                    Text("24h Change")
+                    Text(L("24h Change"))
                         .font(.caption).foregroundColor(.secondary)
                     let change = tokenDetail?.price_24h_change ?? token.priceChange24h ?? 0
                     priceChangeLabel(change)
@@ -125,15 +134,15 @@ struct TokenDetailView: View {
             if let detail = tokenDetail {
                 HStack {
                     if let marketCap = detail.market_cap, marketCap > 0 {
-                        statItem(title: "Market Cap", value: formatCompactUSD(marketCap))
+                        statItem(title: LocalizationManager.shared.t("Market Cap"), value: formatCompactUSD(marketCap))
                     }
                     Spacer()
                     if let supply = detail.total_supply, supply > 0 {
-                        statItem(title: "Total Supply", value: formatCompactNumber(supply))
+                        statItem(title: LocalizationManager.shared.t("Total Supply"), value: formatCompactNumber(supply))
                     }
                     Spacer()
                     if let holders = detail.holders, holders > 0 {
-                        statItem(title: "Holders", value: formatCompactNumber(Double(holders)))
+                        statItem(title: LocalizationManager.shared.t("Holders"), value: formatCompactNumber(Double(holders)))
                     }
                 }
             }
@@ -146,7 +155,7 @@ struct TokenDetailView: View {
     
     private var balanceSection: some View {
         VStack(spacing: 12) {
-            sectionHeader("Your Balance")
+            sectionHeader(LocalizationManager.shared.t("Your Balance"))
             
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
@@ -160,7 +169,7 @@ struct TokenDetailView: View {
                     } else {
                         Text("0 \(token.symbol)")
                             .font(.title3).fontWeight(.semibold)
-                        Text("$0.00")
+                        Text(L("$0.00"))
                             .font(.subheadline).foregroundColor(.secondary)
                     }
                 }
@@ -175,13 +184,13 @@ struct TokenDetailView: View {
     
     private var actionButtonsSection: some View {
         HStack(spacing: 12) {
-            actionButton(icon: "arrow.up.circle.fill", title: "Send", color: .blue) {
+            actionButton(icon: "arrow.up.circle.fill", title: LocalizationManager.shared.t("Send"), color: .blue) {
                 showSendSheet = true
             }
-            actionButton(icon: "arrow.down.circle.fill", title: "Receive", color: .green) {
+            actionButton(icon: "arrow.down.circle.fill", title: LocalizationManager.shared.t("Receive"), color: .green) {
                 showReceiveSheet = true
             }
-            actionButton(icon: "arrow.2.squarepath", title: "Swap", color: .orange) {
+            actionButton(icon: "arrow.2.squarepath", title: LocalizationManager.shared.t("Swap"), color: .orange) {
                 // Swap action
             }
         }
@@ -192,7 +201,7 @@ struct TokenDetailView: View {
     
     private var contractSection: some View {
         VStack(spacing: 8) {
-            sectionHeader("Contract")
+            sectionHeader(LocalizationManager.shared.t("Contract"))
             
             Button(action: copyContractAddress) {
                 HStack {
@@ -218,7 +227,7 @@ struct TokenDetailView: View {
                 Link(destination: URL(string: "\(chain.explorerURL)/token/\(token.address)") ?? URL(string: "https://etherscan.io")!) {
                     HStack {
                         Image(systemName: "safari")
-                        Text("View on Explorer")
+                        Text(L("View on Explorer"))
                     }
                     .font(.subheadline)
                     .foregroundColor(.blue)
@@ -233,7 +242,7 @@ struct TokenDetailView: View {
     
     private var transactionHistorySection: some View {
         VStack(spacing: 8) {
-            sectionHeader("Recent Transactions")
+            sectionHeader(LocalizationManager.shared.t("Recent Transactions"))
             
             if isLoading {
                 ProgressView()
@@ -244,7 +253,7 @@ struct TokenDetailView: View {
                     Image(systemName: "clock")
                         .font(.system(size: 28))
                         .foregroundColor(.gray)
-                    Text("No transactions yet")
+                    Text(L("No transactions yet"))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
@@ -298,7 +307,7 @@ struct TokenDetailView: View {
                         .foregroundColor(.green)
                 }
                 
-                let status = tx.tx?.status == 1 ? "Completed" : "Failed"
+                let status = tx.tx?.status == 1 ? LocalizationManager.shared.t("Completed") : LocalizationManager.shared.t("Failed")
                 Text(status)
                     .font(.caption2)
                     .foregroundColor(tx.tx?.status == 1 ? .green : .red)
@@ -408,11 +417,11 @@ struct TokenDetailView: View {
     }
     
     private func txTypeLabel(_ tx: OpenAPIService.HistoryItem) -> String {
-        if tx.token_approve != nil { return "Approval" }
-        if tx.sends != nil && !(tx.sends!.isEmpty) && tx.receives != nil && !(tx.receives!.isEmpty) { return "Swap" }
-        if tx.sends != nil && !(tx.sends!.isEmpty) { return "Send" }
-        if tx.receives != nil && !(tx.receives!.isEmpty) { return "Receive" }
-        return "Contract Call"
+        if tx.token_approve != nil { return LocalizationManager.shared.t("Approval") }
+        if tx.sends != nil && !(tx.sends!.isEmpty) && tx.receives != nil && !(tx.receives!.isEmpty) { return LocalizationManager.shared.t("Swap") }
+        if tx.sends != nil && !(tx.sends!.isEmpty) { return LocalizationManager.shared.t("Send") }
+        if tx.receives != nil && !(tx.receives!.isEmpty) { return LocalizationManager.shared.t("Receive") }
+        return LocalizationManager.shared.t("Contract Call")
     }
     
     private func formatUSD(_ value: Double) -> String {

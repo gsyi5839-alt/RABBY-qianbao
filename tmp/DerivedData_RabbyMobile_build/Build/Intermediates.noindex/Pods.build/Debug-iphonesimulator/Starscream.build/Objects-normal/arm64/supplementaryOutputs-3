@@ -1,0 +1,23 @@
+{
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/Starscream/Sources/Framer/FrameCollector.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Starscream.build/Objects-normal/arm64/FrameCollector.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Starscream.build/Objects-normal/arm64/FrameCollector.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Starscream.build/Objects-normal/arm64/FrameCollector.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Starscream.build/Objects-normal/arm64/FrameCollector.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Starscream.build/Objects-normal/arm64/FrameCollector.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/Starscream/Sources/Framer/Framer.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Starscream.build/Objects-normal/arm64/Framer.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Starscream.build/Objects-normal/arm64/Framer.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Starscream.build/Objects-normal/arm64/Framer.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Starscream.build/Objects-normal/arm64/Framer.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Starscream.build/Objects-normal/arm64/Framer.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/Starscream/Sources/Transport/FoundationTransport.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Starscream.build/Objects-normal/arm64/FoundationTransport.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Starscream.build/Objects-normal/arm64/FoundationTransport.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Starscream.build/Objects-normal/arm64/FoundationTransport.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Starscream.build/Objects-normal/arm64/FoundationTransport.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Starscream.build/Objects-normal/arm64/FoundationTransport.swiftdeps"
+  }
+}

@@ -1,0 +1,4 @@
+
+module web3.__Swift {
+  exclude header "web3-Swift.h"
+}

@@ -1,0 +1,41 @@
+dependencies: \
+  /Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/secp256k1.swift.build/module.modulemap \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/secp256k1.c \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/Target\ Support\ Files/secp256k1.swift/secp256k1.swift-prefix.pch \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/include/secp256k1.h \
+  /Applications/Xcode-26.3.0-Release.Candidate.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/module.modulemap \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/util.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/../../secp256k1-config.h \
+  /Applications/Xcode-26.3.0-Release.Candidate.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/usr/include/DarwinFoundation3.modulemap \
+  /Applications/Xcode-26.3.0-Release.Candidate.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/usr/include/DarwinFoundation2.modulemap \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/num_impl.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/num.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/field_impl.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/field_5x52_impl.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/field.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/field_5x52.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/field_5x52_int128_impl.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/scalar_impl.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/group.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/scalar.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/scalar_4x64.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/scalar_4x64_impl.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/group_impl.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/ecmult_impl.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/ecmult.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/scratch.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/ecmult_const_impl.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/ecmult_const.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/ecmult_gen_impl.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/ecmult_gen.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/hash_impl.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/hash.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/../../secp256k1_ec_mult_static_context.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/../../secp256k1/src/group.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/ecdsa_impl.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/ecdsa.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/eckey_impl.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/eckey.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/scratch_impl.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/src/modules/recovery/main_impl.h \
+  /Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/Pods/secp256k1.swift/secp256k1/Classes/secp256k1/include/secp256k1_recovery.h

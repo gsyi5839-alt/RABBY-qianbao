@@ -1,0 +1,5 @@
+
+module web3.Swift {
+  header "web3-Swift.h"
+  requires objc
+}

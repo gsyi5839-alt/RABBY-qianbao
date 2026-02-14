@@ -108,7 +108,7 @@ class WhitelistManager: ObservableObject {
         }
         
         // Load enabled state
-        isEnabled = storage.getBool(forKey: enabledKey) ?? true
+        isEnabled = storage.getBool(forKey: enabledKey)
     }
     
     private func saveWhitelist() {

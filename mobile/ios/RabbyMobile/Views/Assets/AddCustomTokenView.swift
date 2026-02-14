@@ -18,7 +18,7 @@ struct AddCustomTokenView: View {
             VStack(spacing: 20) {
                 // Chain selector
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Network")
+                    Text(L("Network"))
                         .font(.headline)
                     
                     Menu {
@@ -45,11 +45,11 @@ struct AddCustomTokenView: View {
                 
                 // Contract address input
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Contract Address")
+                    Text(L("Contract Address"))
                         .font(.headline)
                     
                     HStack {
-                        TextField("0x...", text: $contractAddress)
+                        TextField(L("0x..."), text: $contractAddress)
                             .font(.system(.body, design: .monospaced))
                             .textFieldStyle(.plain)
                             .autocapitalization(.none)
@@ -81,7 +81,7 @@ struct AddCustomTokenView: View {
                         } else {
                             Image(systemName: "magnifyingglass")
                         }
-                        Text("Search Token")
+                        Text(L("Search Token"))
                     }
                     .font(.headline)
                     .frame(maxWidth: .infinity)
@@ -114,11 +114,11 @@ struct AddCustomTokenView: View {
                 Spacer()
             }
             .padding()
-            .navigationTitle("Add Custom Token")
+            .navigationTitle(L("Add Custom Token"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Cancel") { dismiss() }
+                    Button(L("Cancel")) { dismiss() }
                 }
             }
             .overlay {
@@ -173,7 +173,7 @@ struct AddCustomTokenView: View {
             Button(action: addToken) {
                 HStack {
                     Image(systemName: "plus.circle.fill")
-                    Text("Add Token")
+                    Text(L("Add Token"))
                 }
                 .font(.headline)
                 .frame(maxWidth: .infinity)
@@ -195,9 +195,9 @@ struct AddCustomTokenView: View {
             Image(systemName: "checkmark.circle.fill")
                 .font(.system(size: 60))
                 .foregroundColor(.green)
-            Text("Token Added!")
+            Text(L("Token Added!"))
                 .font(.title2).fontWeight(.bold)
-            Text("The token has been added to your list")
+            Text(L("The token has been added to your list"))
                 .font(.subheadline).foregroundColor(.secondary)
         }
         .padding(40)

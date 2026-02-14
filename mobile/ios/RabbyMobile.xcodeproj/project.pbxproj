@@ -7,9 +7,44 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00AFD2DDD6DD000639A65C0F /* Pods_RabbyMobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D4832CC7F8287C10903E01C /* Pods_RabbyMobile.framework */; };
+		0211E50265F2C5B046357731 /* AddressManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19702BA53F2034E546192291 /* AddressManagementView.swift */; };
+		02C10D5505165C5B67A4128F /* DatabaseMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA638F259176F2983DF97C5 /* DatabaseMigration.swift */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		283C430B5F05663C823BE1E6 /* ScamFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2978E58F6EC378FD4ED20708 /* ScamFilterView.swift */; };
+		2D537A6099D14291E6C8F1DA /* PerpsPopups.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A7E26404CFD4AEB86313F6 /* PerpsPopups.swift */; };
+		2D6E91772AB9E71AED9AF437 /* BridgeHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03B6B010690DDDB82DC6E933 /* BridgeHistoryView.swift */; };
+		33E9245247D2A1F84CEE9B61 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE989102DA7F1C3BB2A06469 /* DatabaseManager.swift */; };
+		36BC35FF15DE2AF53684AFE0 /* MessageApprovalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F63B8065B6623C55A30892E /* MessageApprovalView.swift */; };
+		3BDF2D7039542D32F45893B5 /* PlaceholderImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD915B806609482FFB6F99B8 /* PlaceholderImages.swift */; };
+		449559CC7C28F65665C2C215 /* SlippageSettingsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596CA16C2715FF6097B72FB8 /* SlippageSettingsSheet.swift */; };
+		494881E4E62C2A9CFA5CB469 /* ConnectedSitesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1970C4C0067B9D7CA46374D9 /* ConnectedSitesView.swift */; };
+		4AB6461DD4018949E4F006C6 /* LendingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0296DA0FCFC32C21FE631DE /* LendingView.swift */; };
+		50BC59999D82DE613E791002 /* Pods_RabbyMobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F24FA29FB8D480C38DBB004 /* Pods_RabbyMobile.framework */; };
+		5568CD494DAB4C4E1DE6C33C /* NFTApprovalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D91EF9A389E9CF9406C9BD7 /* NFTApprovalView.swift */; };
+		59806CA9EF17DEA83FAF09D9 /* TokenChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 396FE71FB73F7C8E545B6AA2 /* TokenChartView.swift */; };
+		5F50998734BA705940505816 /* SecurityRuleDrawer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CD69EB0CA5383F38087FDD /* SecurityRuleDrawer.swift */; };
+		60E3DDBF5E4F5B707CDFB362 /* BridgeAggregatorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3DE8947F41334ADD07623D /* BridgeAggregatorSheet.swift */; };
+		63D4E70A5B7A53A728F7D6A3 /* DAppBookmarkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3588F27EF77F1DAA6EFCBCE2 /* DAppBookmarkManager.swift */; };
+		643E2FFF1C6F35533099D66E /* TokenSelectorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235B95D1F3BD2D5A7BF163B4 /* TokenSelectorSheet.swift */; };
+		69A277A481DF89785827A4F5 /* ChainSelectorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07ED30D31450668F4E561A6 /* ChainSelectorSheet.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		8B519D466ED4B94785CE3AE8 /* EcologyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EDF6652BBD97E2C5097D8CC /* EcologyView.swift */; };
+		8B8313DCC81EAD64F83AD7F5 /* DAppConnectSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3648353DF31717EE0A3F2260 /* DAppConnectSheet.swift */; };
+		90CC3F199B9408A5EE0B056F /* TransactionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61297F01A3279C8E0377D6A6 /* TransactionDetailView.swift */; };
+		97096D40E6FDDFC4644DFDFB /* HardwareSigningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB3F3CBB2655370D60FDA0B /* HardwareSigningView.swift */; };
+		976A797B9D01C4208E43EBA2 /* SheetPresentationModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = A426BD41290BC02F4B6B2FF1 /* SheetPresentationModifier.swift */; };
+		9A37BF14687AC8F8BBB3E3BA /* TypedDataApprovalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D61890A118299E9593B837 /* TypedDataApprovalView.swift */; };
+		9C301312DAF0D708694F2428 /* TransactionActionParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B66D3835B38A181C51E5EC /* TransactionActionParser.swift */; };
+		A10CA5667888B57B752D7E61 /* ENSResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385BA4DE46A2DC1BAFAF701C /* ENSResolver.swift */; };
+		A8104E88B98A75EABF365E2E /* DAppSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529F8316B88F47FCBF1C4946 /* DAppSearchView.swift */; };
+		B02A17ECD6E3CABA70005A9C /* ConnectedSitesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A1E1D7DEA6D544191B27E9B /* ConnectedSitesManager.swift */; };
+		C0DBFD902184D937CA64ECC2 /* BalanceChangeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946D694B34BCF0A408B77BC5 /* BalanceChangeView.swift */; };
+		C61FAC55D5DE451B98F8548F /* ReserveGasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50CFF74A1CA8EA527F25490E /* ReserveGasView.swift */; };
+		CF689556EBAEAC8CD4B27F45 /* QRCodeScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B19FA43E34BEB7276E71A3A3 /* QRCodeScannerView.swift */; };
+		D54067BF982E7088244865A5 /* SpeedUpCancelSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34382A7CDB04D4E2D358432 /* SpeedUpCancelSheet.swift */; };
+		DC2AA7A24B0A5A84B4F4264A /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7671A1C072816B87197C7E6 /* HapticManager.swift */; };
+		E69DFAC26BD9862369E4E6C9 /* ClearPendingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B191E558824385EB90F9E0D7 /* ClearPendingView.swift */; };
+		EFA715026093F779780D24B3 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4FAB8D81E6E734CB900BA4 /* LocalizationManager.swift */; };
 		F20000000000000000000001 /* RabbyMobileApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000001 /* RabbyMobileApp.swift */; };
 		F20000000000000000000002 /* AutoLockManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000002 /* AutoLockManager.swift */; };
 		F20000000000000000000003 /* BIP39.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000003 /* BIP39.swift */; };
@@ -48,8 +83,6 @@
 		F20000000000000000000024 /* Keccak256.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000024 /* Keccak256.swift */; };
 		F20000000000000000000025 /* RLPEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000025 /* RLPEncoder.swift */; };
 		F20000000000000000000026 /* Secp256k1Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000026 /* Secp256k1Helper.swift */; };
-				F20000000000000000000060 /* CryptoIconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000060 /* CryptoIconProvider.swift */; };
-				F20000000000000000000061 /* ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000061 /* ImageCacheManager.swift */; };
 		F20000000000000000000027 /* ActivitiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000027 /* ActivitiesView.swift */; };
 		F20000000000000000000028 /* AddressDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000028 /* AddressDetailView.swift */; };
 		F20000000000000000000029 /* TransactionApprovalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000029 /* TransactionApprovalView.swift */; };
@@ -82,16 +115,67 @@
 		F20000000000000000000044 /* ProtocolPositionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000044 /* ProtocolPositionView.swift */; };
 		F20000000000000000000045 /* AddCustomTokenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000045 /* AddCustomTokenView.swift */; };
 		F20000000000000000000046 /* GasPriceBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000046 /* GasPriceBarView.swift */; };
+		F20000000000000000000060 /* CryptoIconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000060 /* CryptoIconProvider.swift */; };
+		F20000000000000000000061 /* ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000061 /* ImageCacheManager.swift */; };
+		F20000000000000000000062 /* CorrectnessVectorsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000062 /* CorrectnessVectorsTests.swift */; };
+		F20000000000000000000065 /* FontManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000065 /* FontManager.swift */; };
+		F20000000000000000000070 /* DeepLinkRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000070 /* DeepLinkRouter.swift */; };
+		F20000000000000000000072 /* locales in Resources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000072 /* locales */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		F70000000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
+			remoteInfo = RabbyMobile;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		03B6B010690DDDB82DC6E933 /* BridgeHistoryView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BridgeHistoryView.swift; sourceTree = "<group>"; };
+		0EDF6652BBD97E2C5097D8CC /* EcologyView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EcologyView.swift; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* RabbyMobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RabbyMobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		1D4832CC7F8287C10903E01C /* Pods_RabbyMobile.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RabbyMobile.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		800FE6E28ABECB5FCB1077FC /* Pods-RabbyMobile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RabbyMobile.release.xcconfig"; path = "Target Support Files/Pods-RabbyMobile/Pods-RabbyMobile.release.xcconfig"; sourceTree = "<group>"; };
+		17710BF6B338055C02F61396 /* Pods-RabbyMobile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RabbyMobile.release.xcconfig"; path = "Target Support Files/Pods-RabbyMobile/Pods-RabbyMobile.release.xcconfig"; sourceTree = "<group>"; };
+		19702BA53F2034E546192291 /* AddressManagementView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AddressManagementView.swift; sourceTree = "<group>"; };
+		1970C4C0067B9D7CA46374D9 /* ConnectedSitesView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConnectedSitesView.swift; sourceTree = "<group>"; };
+		235B95D1F3BD2D5A7BF163B4 /* TokenSelectorSheet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TokenSelectorSheet.swift; sourceTree = "<group>"; };
+		2978E58F6EC378FD4ED20708 /* ScamFilterView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ScamFilterView.swift; sourceTree = "<group>"; };
+		32D61890A118299E9593B837 /* TypedDataApprovalView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TypedDataApprovalView.swift; sourceTree = "<group>"; };
+		3588F27EF77F1DAA6EFCBCE2 /* DAppBookmarkManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DAppBookmarkManager.swift; sourceTree = "<group>"; };
+		3648353DF31717EE0A3F2260 /* DAppConnectSheet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DAppConnectSheet.swift; sourceTree = "<group>"; };
+		385BA4DE46A2DC1BAFAF701C /* ENSResolver.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ENSResolver.swift; sourceTree = "<group>"; };
+		396FE71FB73F7C8E545B6AA2 /* TokenChartView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TokenChartView.swift; sourceTree = "<group>"; };
+		4D91EF9A389E9CF9406C9BD7 /* NFTApprovalView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NFTApprovalView.swift; sourceTree = "<group>"; };
+		50CFF74A1CA8EA527F25490E /* ReserveGasView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ReserveGasView.swift; sourceTree = "<group>"; };
+		529F8316B88F47FCBF1C4946 /* DAppSearchView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DAppSearchView.swift; sourceTree = "<group>"; };
+		596CA16C2715FF6097B72FB8 /* SlippageSettingsSheet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SlippageSettingsSheet.swift; sourceTree = "<group>"; };
+		61297F01A3279C8E0377D6A6 /* TransactionDetailView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TransactionDetailView.swift; sourceTree = "<group>"; };
+		68CD69EB0CA5383F38087FDD /* SecurityRuleDrawer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SecurityRuleDrawer.swift; sourceTree = "<group>"; };
+		6A1E1D7DEA6D544191B27E9B /* ConnectedSitesManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConnectedSitesManager.swift; sourceTree = "<group>"; };
+		6F24FA29FB8D480C38DBB004 /* Pods_RabbyMobile.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RabbyMobile.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6F63B8065B6623C55A30892E /* MessageApprovalView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MessageApprovalView.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
-		D8D344B63F528CD395A24998 /* Pods-RabbyMobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RabbyMobile.debug.xcconfig"; path = "Target Support Files/Pods-RabbyMobile/Pods-RabbyMobile.debug.xcconfig"; sourceTree = "<group>"; };
+		946D694B34BCF0A408B77BC5 /* BalanceChangeView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BalanceChangeView.swift; sourceTree = "<group>"; };
+		9645533DAC086C85F4C5BC5C /* Pods-RabbyMobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RabbyMobile.debug.xcconfig"; path = "Target Support Files/Pods-RabbyMobile/Pods-RabbyMobile.debug.xcconfig"; sourceTree = "<group>"; };
+		9C4FAB8D81E6E734CB900BA4 /* LocalizationManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
+		A0296DA0FCFC32C21FE631DE /* LendingView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LendingView.swift; sourceTree = "<group>"; };
+		A34382A7CDB04D4E2D358432 /* SpeedUpCancelSheet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SpeedUpCancelSheet.swift; sourceTree = "<group>"; };
+		A426BD41290BC02F4B6B2FF1 /* SheetPresentationModifier.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SheetPresentationModifier.swift; sourceTree = "<group>"; };
+		AA3DE8947F41334ADD07623D /* BridgeAggregatorSheet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BridgeAggregatorSheet.swift; sourceTree = "<group>"; };
+		ADB3F3CBB2655370D60FDA0B /* HardwareSigningView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HardwareSigningView.swift; sourceTree = "<group>"; };
+		B191E558824385EB90F9E0D7 /* ClearPendingView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClearPendingView.swift; sourceTree = "<group>"; };
+		B19FA43E34BEB7276E71A3A3 /* QRCodeScannerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = QRCodeScannerView.swift; sourceTree = "<group>"; };
+		BD915B806609482FFB6F99B8 /* PlaceholderImages.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PlaceholderImages.swift; sourceTree = "<group>"; };
+		BDA638F259176F2983DF97C5 /* DatabaseMigration.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DatabaseMigration.swift; sourceTree = "<group>"; };
+		BE989102DA7F1C3BB2A06469 /* DatabaseManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
+		C07ED30D31450668F4E561A6 /* ChainSelectorSheet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ChainSelectorSheet.swift; sourceTree = "<group>"; };
+		C2A7E26404CFD4AEB86313F6 /* PerpsPopups.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PerpsPopups.swift; sourceTree = "<group>"; };
+		C7671A1C072816B87197C7E6 /* HapticManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
+		D6B66D3835B38A181C51E5EC /* TransactionActionParser.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TransactionActionParser.swift; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F10000000000000000000001 /* RabbyMobileApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RabbyMobileApp.swift; sourceTree = "<group>"; };
 		F10000000000000000000002 /* AutoLockManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoLockManager.swift; sourceTree = "<group>"; };
@@ -131,8 +215,6 @@
 		F10000000000000000000024 /* Keccak256.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keccak256.swift; sourceTree = "<group>"; };
 		F10000000000000000000025 /* RLPEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RLPEncoder.swift; sourceTree = "<group>"; };
 		F10000000000000000000026 /* Secp256k1Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Secp256k1Helper.swift; sourceTree = "<group>"; };
-				F10000000000000000000060 /* CryptoIconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoIconProvider.swift; sourceTree = "<group>"; };
-				F10000000000000000000061 /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
 		F10000000000000000000027 /* ActivitiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivitiesView.swift; sourceTree = "<group>"; };
 		F10000000000000000000028 /* AddressDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressDetailView.swift; sourceTree = "<group>"; };
 		F10000000000000000000029 /* TransactionApprovalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionApprovalView.swift; sourceTree = "<group>"; };
@@ -165,6 +247,15 @@
 		F10000000000000000000044 /* ProtocolPositionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtocolPositionView.swift; sourceTree = "<group>"; };
 		F10000000000000000000045 /* AddCustomTokenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCustomTokenView.swift; sourceTree = "<group>"; };
 		F10000000000000000000046 /* GasPriceBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GasPriceBarView.swift; sourceTree = "<group>"; };
+		F10000000000000000000060 /* CryptoIconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoIconProvider.swift; sourceTree = "<group>"; };
+		F10000000000000000000061 /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
+		F10000000000000000000062 /* CorrectnessVectorsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorrectnessVectorsTests.swift; sourceTree = "<group>"; };
+		F10000000000000000000063 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F10000000000000000000064 /* RabbyMobileTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RabbyMobileTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F10000000000000000000065 /* FontManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontManager.swift; sourceTree = "<group>"; };
+		F10000000000000000000070 /* DeepLinkRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkRouter.swift; sourceTree = "<group>"; };
+		F10000000000000000000071 /* RabbyMobile.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RabbyMobile.entitlements; sourceTree = "<group>"; };
+		F10000000000000000000072 /* locales */ = {isa = PBXFileReference; lastKnownFileType = folder; path = locales; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -172,7 +263,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00AFD2DDD6DD000639A65C0F /* Pods_RabbyMobile.framework in Frameworks */,
+				50BC59999D82DE613E791002 /* Pods_RabbyMobile.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F50000000000000000000003 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -186,11 +284,102 @@
 				F30000000000000000000001 /* Core */,
 				F30000000000000000000003 /* Utils */,
 				F30000000000000000000004 /* Views */,
+				F10000000000000000000072 /* locales */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
+				F10000000000000000000071 /* RabbyMobile.entitlements */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 			);
 			path = RabbyMobile;
+			sourceTree = "<group>";
+		};
+		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
+				6F24FA29FB8D480C38DBB004 /* Pods_RabbyMobile.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3EB0E2FE20F1B18F8381082D /* Scanner */ = {
+			isa = PBXGroup;
+			children = (
+				B19FA43E34BEB7276E71A3A3 /* QRCodeScannerView.swift */,
+			);
+			path = Scanner;
+			sourceTree = "<group>";
+		};
+		58EC2CF0DC0D590DF3350B11 /* Perps */ = {
+			isa = PBXGroup;
+			children = (
+				C2A7E26404CFD4AEB86313F6 /* PerpsPopups.swift */,
+			);
+			path = Perps;
+			sourceTree = "<group>";
+		};
+		68F8BF1A5014A497F345DCFC /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				9645533DAC086C85F4C5BC5C /* Pods-RabbyMobile.debug.xcconfig */,
+				17710BF6B338055C02F61396 /* Pods-RabbyMobile.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Libraries;
+			sourceTree = "<group>";
+		};
+		83CBB9F61A601CBA00E9B192 = {
+			isa = PBXGroup;
+			children = (
+				13B07FAE1A68108700A75B9A /* RabbyMobile */,
+				F30000000000000000000014 /* RabbyMobileTests */,
+				832341AE1AAA6A7D00B99B32 /* Libraries */,
+				83CBBA001A601CBA00E9B192 /* Products */,
+				2D16E6871FA4F8E400B85C8A /* Frameworks */,
+				68F8BF1A5014A497F345DCFC /* Pods */,
+			);
+			indentWidth = 2;
+			sourceTree = "<group>";
+			tabWidth = 2;
+			usesTabs = 0;
+		};
+		83CBBA001A601CBA00E9B192 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				13B07F961A680F5B00A75B9A /* RabbyMobile.app */,
+				F10000000000000000000064 /* RabbyMobileTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A4CD47DF8243F91C20C37E49 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				C07ED30D31450668F4E561A6 /* ChainSelectorSheet.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		AC5F74A96A81241FFF3F0467 /* Lending */ = {
+			isa = PBXGroup;
+			children = (
+				A0296DA0FCFC32C21FE631DE /* LendingView.swift */,
+			);
+			path = Lending;
+			sourceTree = "<group>";
+		};
+		DE9E08E2E221C44B4B02E1DB /* Ecology */ = {
+			isa = PBXGroup;
+			children = (
+				0EDF6652BBD97E2C5097D8CC /* EcologyView.swift */,
+			);
+			path = Ecology;
 			sourceTree = "<group>";
 		};
 		F30000000000000000000001 /* Core */ = {
@@ -204,6 +393,7 @@
 				F10000000000000000000007 /* ContactBookManager.swift */,
 				F10000000000000000000008 /* CustomRPCManager.swift */,
 				F10000000000000000000009 /* CustomTestnetManager.swift */,
+				F10000000000000000000070 /* DeepLinkRouter.swift */,
 				F1000000000000000000000A /* EthereumUtils.swift */,
 				F1000000000000000000000B /* GasAccountManager.swift */,
 				F30000000000000000000002 /* HardwareWallet */,
@@ -229,6 +419,13 @@
 				F10000000000000000000021 /* WalletConnectManager.swift */,
 				F10000000000000000000022 /* WatchGnosisSessionKeyrings.swift */,
 				F10000000000000000000023 /* WhitelistManager.swift */,
+				6A1E1D7DEA6D544191B27E9B /* ConnectedSitesManager.swift */,
+				3588F27EF77F1DAA6EFCBCE2 /* DAppBookmarkManager.swift */,
+				385BA4DE46A2DC1BAFAF701C /* ENSResolver.swift */,
+				D6B66D3835B38A181C51E5EC /* TransactionActionParser.swift */,
+				9C4FAB8D81E6E734CB900BA4 /* LocalizationManager.swift */,
+				BE989102DA7F1C3BB2A06469 /* DatabaseManager.swift */,
+				BDA638F259176F2983DF97C5 /* DatabaseMigration.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -249,7 +446,11 @@
 				F10000000000000000000025 /* RLPEncoder.swift */,
 				F10000000000000000000026 /* Secp256k1Helper.swift */,
 				F10000000000000000000060 /* CryptoIconProvider.swift */,
+				F10000000000000000000065 /* FontManager.swift */,
 				F10000000000000000000061 /* ImageCacheManager.swift */,
+				C7671A1C072816B87197C7E6 /* HapticManager.swift */,
+				BD915B806609482FFB6F99B8 /* PlaceholderImages.swift */,
+				A426BD41290BC02F4B6B2FF1 /* SheetPresentationModifier.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -273,6 +474,11 @@
 				F30000000000000000000011 /* Settings */,
 				F30000000000000000000012 /* Swap */,
 				F30000000000000000000013 /* Wallet */,
+				A4CD47DF8243F91C20C37E49 /* Common */,
+				DE9E08E2E221C44B4B02E1DB /* Ecology */,
+				AC5F74A96A81241FFF3F0467 /* Lending */,
+				58EC2CF0DC0D590DF3350B11 /* Perps */,
+				3EB0E2FE20F1B18F8381082D /* Scanner */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -297,6 +503,12 @@
 			isa = PBXGroup;
 			children = (
 				F10000000000000000000029 /* TransactionApprovalView.swift */,
+				946D694B34BCF0A408B77BC5 /* BalanceChangeView.swift */,
+				ADB3F3CBB2655370D60FDA0B /* HardwareSigningView.swift */,
+				6F63B8065B6623C55A30892E /* MessageApprovalView.swift */,
+				4D91EF9A389E9CF9406C9BD7 /* NFTApprovalView.swift */,
+				68CD69EB0CA5383F38087FDD /* SecurityRuleDrawer.swift */,
+				32D61890A118299E9593B837 /* TypedDataApprovalView.swift */,
 			);
 			path = Approval;
 			sourceTree = "<group>";
@@ -313,6 +525,7 @@
 				F10000000000000000000044 /* ProtocolPositionView.swift */,
 				F10000000000000000000045 /* AddCustomTokenView.swift */,
 				F10000000000000000000046 /* GasPriceBarView.swift */,
+				396FE71FB73F7C8E545B6AA2 /* TokenChartView.swift */,
 			);
 			path = Assets;
 			sourceTree = "<group>";
@@ -321,6 +534,8 @@
 			isa = PBXGroup;
 			children = (
 				F1000000000000000000002B /* BridgeView.swift */,
+				AA3DE8947F41334ADD07623D /* BridgeAggregatorSheet.swift */,
+				03B6B010690DDDB82DC6E933 /* BridgeHistoryView.swift */,
 			);
 			path = Bridge;
 			sourceTree = "<group>";
@@ -329,6 +544,8 @@
 			isa = PBXGroup;
 			children = (
 				F1000000000000000000002C /* DAppBrowserView.swift */,
+				3648353DF31717EE0A3F2260 /* DAppConnectSheet.swift */,
+				529F8316B88F47FCBF1C4946 /* DAppSearchView.swift */,
 			);
 			path = DAppBrowser;
 			sourceTree = "<group>";
@@ -345,6 +562,9 @@
 			isa = PBXGroup;
 			children = (
 				F1000000000000000000002E /* TransactionHistoryView.swift */,
+				2978E58F6EC378FD4ED20708 /* ScamFilterView.swift */,
+				A34382A7CDB04D4E2D358432 /* SpeedUpCancelSheet.swift */,
+				61297F01A3279C8E0377D6A6 /* TransactionDetailView.swift */,
 			);
 			path = History;
 			sourceTree = "<group>";
@@ -382,6 +602,7 @@
 			isa = PBXGroup;
 			children = (
 				F10000000000000000000038 /* SendTokenView.swift */,
+				50CFF74A1CA8EA527F25490E /* ReserveGasView.swift */,
 			);
 			path = Send;
 			sourceTree = "<group>";
@@ -392,6 +613,9 @@
 				F10000000000000000000039 /* GnosisQueueView.swift */,
 				F1000000000000000000003A /* SettingsView.swift */,
 				F1000000000000000000003B /* WhitelistInputView.swift */,
+				19702BA53F2034E546192291 /* AddressManagementView.swift */,
+				B191E558824385EB90F9E0D7 /* ClearPendingView.swift */,
+				1970C4C0067B9D7CA46374D9 /* ConnectedSitesView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -400,6 +624,8 @@
 			isa = PBXGroup;
 			children = (
 				F1000000000000000000003C /* SwapView.swift */,
+				596CA16C2715FF6097B72FB8 /* SlippageSettingsSheet.swift */,
+				235B95D1F3BD2D5A7BF163B4 /* TokenSelectorSheet.swift */,
 			);
 			path = Swap;
 			sourceTree = "<group>";
@@ -413,52 +639,13 @@
 			path = Wallet;
 			sourceTree = "<group>";
 		};
-		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
+		F30000000000000000000014 /* RabbyMobileTests */ = {
 			isa = PBXGroup;
 			children = (
-				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				1D4832CC7F8287C10903E01C /* Pods_RabbyMobile.framework */,
+				F10000000000000000000062 /* CorrectnessVectorsTests.swift */,
+				F10000000000000000000063 /* Info.plist */,
 			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		71483067664CBA6D6425B01A /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				D8D344B63F528CD395A24998 /* Pods-RabbyMobile.debug.xcconfig */,
-				800FE6E28ABECB5FCB1077FC /* Pods-RabbyMobile.release.xcconfig */,
-			);
-			name = Pods;
-			path = Pods;
-			sourceTree = "<group>";
-		};
-		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Libraries;
-			sourceTree = "<group>";
-		};
-		83CBB9F61A601CBA00E9B192 = {
-			isa = PBXGroup;
-			children = (
-				13B07FAE1A68108700A75B9A /* RabbyMobile */,
-				832341AE1AAA6A7D00B99B32 /* Libraries */,
-				83CBBA001A601CBA00E9B192 /* Products */,
-				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				71483067664CBA6D6425B01A /* Pods */,
-			);
-			indentWidth = 2;
-			sourceTree = "<group>";
-			tabWidth = 2;
-			usesTabs = 0;
-		};
-		83CBBA001A601CBA00E9B192 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				13B07F961A680F5B00A75B9A /* RabbyMobile.app */,
-			);
-			name = Products;
+			path = RabbyMobileTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -468,11 +655,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "RabbyMobile" */;
 			buildPhases = (
-				796322D4E3F38A7883D481B7 /* [CP] Check Pods Manifest.lock */,
+				26D75898B388B7A1008389FF /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
-				0725C8017AF62C78EDD8D5E7 /* [CP] Embed Pods Frameworks */,
+				BD0EB20B34FBA7AC0E9EDC47 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -483,15 +670,37 @@
 			productReference = 13B07F961A680F5B00A75B9A /* RabbyMobile.app */;
 			productType = "com.apple.product-type.application";
 		};
+		F50000000000000000000001 /* RabbyMobileTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F60000000000000000000003 /* Build configuration list for PBXNativeTarget "RabbyMobileTests" */;
+			buildPhases = (
+				F50000000000000000000002 /* Sources */,
+				F50000000000000000000003 /* Frameworks */,
+				F50000000000000000000004 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F70000000000000000000002 /* PBXTargetDependency */,
+			);
+			name = RabbyMobileTests;
+			productName = RabbyMobileTests;
+			productReference = F10000000000000000000064 /* RabbyMobileTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1540;
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2630;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
+						LastSwiftMigration = 1120;
+					};
+					F50000000000000000000001 = {
 						LastSwiftMigration = 1120;
 					};
 				};
@@ -510,6 +719,7 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* RabbyMobile */,
+				F50000000000000000000001 /* RabbyMobileTests */,
 			);
 		};
 /* End PBXProject section */
@@ -521,30 +731,21 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				F20000000000000000000072 /* locales in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F50000000000000000000004 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0725C8017AF62C78EDD8D5E7 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-RabbyMobile/Pods-RabbyMobile-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-RabbyMobile/Pods-RabbyMobile-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RabbyMobile/Pods-RabbyMobile-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		796322D4E3F38A7883D481B7 /* [CP] Check Pods Manifest.lock */ = {
+		26D75898B388B7A1008389FF /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -564,6 +765,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		BD0EB20B34FBA7AC0E9EDC47 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-RabbyMobile/Pods-RabbyMobile-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-RabbyMobile/Pods-RabbyMobile-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RabbyMobile/Pods-RabbyMobile-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -611,8 +829,9 @@
 				F20000000000000000000024 /* Keccak256.swift in Sources */,
 				F20000000000000000000025 /* RLPEncoder.swift in Sources */,
 				F20000000000000000000026 /* Secp256k1Helper.swift in Sources */,
-								F20000000000000000000060 /* CryptoIconProvider.swift in Sources */,
-								F20000000000000000000061 /* ImageCacheManager.swift in Sources */,
+				F20000000000000000000060 /* CryptoIconProvider.swift in Sources */,
+				F20000000000000000000061 /* ImageCacheManager.swift in Sources */,
+				F20000000000000000000065 /* FontManager.swift in Sources */,
 				F20000000000000000000027 /* ActivitiesView.swift in Sources */,
 				F20000000000000000000028 /* AddressDetailView.swift in Sources */,
 				F20000000000000000000029 /* TransactionApprovalView.swift in Sources */,
@@ -645,18 +864,71 @@
 				F20000000000000000000044 /* ProtocolPositionView.swift in Sources */,
 				F20000000000000000000045 /* AddCustomTokenView.swift in Sources */,
 				F20000000000000000000046 /* GasPriceBarView.swift in Sources */,
+				F20000000000000000000070 /* DeepLinkRouter.swift in Sources */,
+				B02A17ECD6E3CABA70005A9C /* ConnectedSitesManager.swift in Sources */,
+				63D4E70A5B7A53A728F7D6A3 /* DAppBookmarkManager.swift in Sources */,
+				A10CA5667888B57B752D7E61 /* ENSResolver.swift in Sources */,
+				9C301312DAF0D708694F2428 /* TransactionActionParser.swift in Sources */,
+				DC2AA7A24B0A5A84B4F4264A /* HapticManager.swift in Sources */,
+				3BDF2D7039542D32F45893B5 /* PlaceholderImages.swift in Sources */,
+				C0DBFD902184D937CA64ECC2 /* BalanceChangeView.swift in Sources */,
+				97096D40E6FDDFC4644DFDFB /* HardwareSigningView.swift in Sources */,
+				36BC35FF15DE2AF53684AFE0 /* MessageApprovalView.swift in Sources */,
+				5568CD494DAB4C4E1DE6C33C /* NFTApprovalView.swift in Sources */,
+				5F50998734BA705940505816 /* SecurityRuleDrawer.swift in Sources */,
+				9A37BF14687AC8F8BBB3E3BA /* TypedDataApprovalView.swift in Sources */,
+				59806CA9EF17DEA83FAF09D9 /* TokenChartView.swift in Sources */,
+				60E3DDBF5E4F5B707CDFB362 /* BridgeAggregatorSheet.swift in Sources */,
+				2D6E91772AB9E71AED9AF437 /* BridgeHistoryView.swift in Sources */,
+				69A277A481DF89785827A4F5 /* ChainSelectorSheet.swift in Sources */,
+				8B8313DCC81EAD64F83AD7F5 /* DAppConnectSheet.swift in Sources */,
+				A8104E88B98A75EABF365E2E /* DAppSearchView.swift in Sources */,
+				8B519D466ED4B94785CE3AE8 /* EcologyView.swift in Sources */,
+				283C430B5F05663C823BE1E6 /* ScamFilterView.swift in Sources */,
+				D54067BF982E7088244865A5 /* SpeedUpCancelSheet.swift in Sources */,
+				90CC3F199B9408A5EE0B056F /* TransactionDetailView.swift in Sources */,
+				4AB6461DD4018949E4F006C6 /* LendingView.swift in Sources */,
+				2D537A6099D14291E6C8F1DA /* PerpsPopups.swift in Sources */,
+				CF689556EBAEAC8CD4B27F45 /* QRCodeScannerView.swift in Sources */,
+				C61FAC55D5DE451B98F8548F /* ReserveGasView.swift in Sources */,
+				0211E50265F2C5B046357731 /* AddressManagementView.swift in Sources */,
+				E69DFAC26BD9862369E4E6C9 /* ClearPendingView.swift in Sources */,
+				494881E4E62C2A9CFA5CB469 /* ConnectedSitesView.swift in Sources */,
+				449559CC7C28F65665C2C215 /* SlippageSettingsSheet.swift in Sources */,
+				643E2FFF1C6F35533099D66E /* TokenSelectorSheet.swift in Sources */,
+				976A797B9D01C4208E43EBA2 /* SheetPresentationModifier.swift in Sources */,
+				EFA715026093F779780D24B3 /* LocalizationManager.swift in Sources */,
+				33E9245247D2A1F84CEE9B61 /* DatabaseManager.swift in Sources */,
+				02C10D5505165C5B67A4128F /* DatabaseMigration.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F50000000000000000000002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F20000000000000000000062 /* CorrectnessVectorsTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		F70000000000000000000002 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 13B07F861A680F5B00A75B9A /* RabbyMobile */;
+			targetProxy = F70000000000000000000001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D8D344B63F528CD395A24998 /* Pods-RabbyMobile.debug.xcconfig */;
+			baseConfigurationReference = 9645533DAC086C85F4C5BC5C /* Pods-RabbyMobile.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = RabbyMobile/RabbyMobile.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -673,6 +945,8 @@
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
+					"-Xlinker",
+					"-w",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.bocail.pay;
 				PRODUCT_NAME = RabbyMobile;
@@ -684,10 +958,11 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 800FE6E28ABECB5FCB1077FC /* Pods-RabbyMobile.release.xcconfig */;
+			baseConfigurationReference = 17710BF6B338055C02F61396 /* Pods-RabbyMobile.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = RabbyMobile/RabbyMobile.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -704,6 +979,8 @@
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
+					"-Xlinker",
+					"-w",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.bocail.pay;
 				PRODUCT_NAME = RabbyMobile;
@@ -745,6 +1022,7 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -768,7 +1046,6 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(SDKROOT)/usr/lib/swift\"",
-					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -782,6 +1059,7 @@
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 			};
 			name = Debug;
 		};
@@ -818,6 +1096,7 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -834,7 +1113,6 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(SDKROOT)/usr/lib/swift\"",
-					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -847,7 +1125,48 @@
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		F60000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				INFOPLIST_FILE = RabbyMobileTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.bocail.payTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RabbyMobile.app/RabbyMobile";
+			};
+			name = Debug;
+		};
+		F60000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				INFOPLIST_FILE = RabbyMobileTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.bocail.payTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RabbyMobile.app/RabbyMobile";
 			};
 			name = Release;
 		};
@@ -868,6 +1187,15 @@
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
 				83CBBA211A601CBA00E9B192 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F60000000000000000000003 /* Build configuration list for PBXNativeTarget "RabbyMobileTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F60000000000000000000001 /* Debug */,
+				F60000000000000000000002 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

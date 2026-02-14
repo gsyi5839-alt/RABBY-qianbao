@@ -1,0 +1,19 @@
+{
+  "" : {
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobileTests.build/Objects-normal/arm64/RabbyMobileTests-primary.dia",
+    "emit-module-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobileTests.build/Objects-normal/arm64/RabbyMobileTests-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobileTests.build/Objects-normal/arm64/RabbyMobileTests-primary-emit-module.dia",
+    "pch" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobileTests.build/Objects-normal/arm64/RabbyMobileTests-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobileTests.build/Objects-normal/arm64/RabbyMobileTests-primary.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/RabbyMobileTests/CorrectnessVectorsTests.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobileTests.build/Objects-normal/arm64/CorrectnessVectorsTests.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobileTests.build/Objects-normal/arm64/CorrectnessVectorsTests.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobileTests.build/Objects-normal/arm64/CorrectnessVectorsTests.dia",
+    "index-unit-output-path" : "/RabbyMobile.build/Debug-iphonesimulator/RabbyMobileTests.build/Objects-normal/arm64/CorrectnessVectorsTests.o",
+    "llvm-bc" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobileTests.build/Objects-normal/arm64/CorrectnessVectorsTests.bc",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobileTests.build/Objects-normal/arm64/CorrectnessVectorsTests.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobileTests.build/Objects-normal/arm64/CorrectnessVectorsTests.swiftdeps",
+    "swiftmodule" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_test2/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobileTests.build/Objects-normal/arm64/CorrectnessVectorsTests~partial.swiftmodule"
+  }
+}

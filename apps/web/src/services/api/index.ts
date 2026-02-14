@@ -1,28 +1,114 @@
-export { getTotalBalance } from './balance';
-export type { BalanceResponse } from './balance';
+/**
+ * API Services — Unified Exports
+ *
+ * Re-exports all API modules and their default singleton instances
+ * for convenient consumption throughout the web app.
+ */
 
-export { getTokenList } from './tokens';
-export type { TokenListResponse } from './tokens';
+// ---------------------------------------------------------------------------
+// Client
+// ---------------------------------------------------------------------------
+export {
+  createApiClient,
+  apiClient,
+  ApiError,
+  ApiTimeoutError,
+  ApiNetworkError,
+} from './client';
+export type {
+  ApiClient,
+  ApiClientOptions,
+  RequestInterceptor,
+  ResponseInterceptor,
+} from './client';
 
-export { getTxHistory } from './history';
-export type { TxHistoryResponse } from './history';
+// ---------------------------------------------------------------------------
+// Balance API
+// ---------------------------------------------------------------------------
+export { createBalanceApi, balanceApi } from './balance';
+export type {
+  BalanceApi,
+  TotalBalanceResponse,
+  ChainWithBalance,
+  TokenItem,
+  AssetItem,
+} from './balance';
 
-export { getChainsList } from './chains';
+// ---------------------------------------------------------------------------
+// Token API
+// ---------------------------------------------------------------------------
+export { createTokenApi, tokenApi } from './token';
+export type {
+  TokenApi,
+  TokenEntityDetail,
+  TokenItemWithEntity,
+} from './token';
 
-export { getSwapQuote, postSwap } from './swap';
-export type { SwapQuoteParams } from './swap';
+// ---------------------------------------------------------------------------
+// Chain API
+// ---------------------------------------------------------------------------
+export { createChainApi, chainApi } from './chain';
+export type {
+  ChainApi,
+  ServerChain,
+  SupportedChain,
+  ChainListItem,
+  GasLevel,
+  UsedChain,
+} from './chain';
 
-export { getBridgeQuotes, buildBridgeTx } from './bridge';
-export type { BridgeQuoteParams } from './bridge';
+// ---------------------------------------------------------------------------
+// Swap API
+// ---------------------------------------------------------------------------
+export { createSwapApi, swapApi } from './swap';
+export type {
+  SwapApi,
+  SwapQuoteParams,
+  SwapQuoteResult,
+  DexInfo,
+  SlippageStatus,
+  SwapItem,
+  SwapTradeList,
+} from './swap';
 
-export { getNFTCollections } from './nft';
+// ---------------------------------------------------------------------------
+// Bridge API
+// ---------------------------------------------------------------------------
+export { createBridgeApi, bridgeApi } from './bridge';
+export type {
+  BridgeApi,
+  BridgeItem,
+  BridgeAggregator,
+  BridgeTokenPair,
+  BridgeQuote,
+  BridgeQuoteWithoutTx,
+  BridgeHistory,
+} from './bridge';
 
-export { getTokenApprovals } from './approval';
+// ---------------------------------------------------------------------------
+// History API
+// ---------------------------------------------------------------------------
+export { createHistoryApi, historyApi } from './history';
+export type {
+  HistoryApi,
+  TxHistoryItem,
+  TxHistoryResult,
+  TxAllHistoryResult,
+  ChainWithPendingCount,
+} from './history';
 
-export { getGasAccountInfo, getGasAccountHistory } from './gasAccount';
-export type { GasHistoryItem } from './gasAccount';
-
-export { getUserPoints, getCampaigns } from './rabbyPoints';
-
-export { getDappsList } from './dapps';
-export type { DappItem, DappListResponse } from './dapps';
+// ---------------------------------------------------------------------------
+// Security API
+// ---------------------------------------------------------------------------
+export { createSecurityApi, securityApi } from './security';
+export type {
+  SecurityApi,
+  SecurityCheckDecision,
+  SecurityCheckItem,
+  SecurityCheckResponse,
+  AddrDescResponse,
+  ContractInfo,
+  ContractCredit,
+  ApprovalStatus,
+  TokenApproval,
+} from './security';

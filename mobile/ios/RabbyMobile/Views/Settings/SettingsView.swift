@@ -5,6 +5,7 @@ struct SettingsView: View {
     @StateObject private var prefManager = PreferenceManager.shared
     @StateObject private var autoLock = AutoLockManager.shared
     @StateObject private var keyringManager = KeyringManager.shared
+    @EnvironmentObject var localization: LocalizationManager
     @State private var showBackupSheet = false
     @State private var showAddressManagement = false
     @State private var showCustomRPC = false
@@ -17,33 +18,33 @@ struct SettingsView: View {
         NavigationView {
             List {
                 // Account section
-                Section("Account") {
+                Section(localization.t("settings_account")) {
                     NavigationLink(destination: AddressManagementView()) {
-                        settingsRow(icon: "person.crop.circle", title: "Address Management", color: .blue)
+                        settingsRow(icon: "person.crop.circle", title: localization.t("address_management"), color: .blue)
                     }
                     NavigationLink(destination: AddressBackupView()) {
-                        settingsRow(icon: "key.fill", title: "Backup Seed Phrase / Private Key", color: .orange)
+                        settingsRow(icon: "key.fill", title: localization.t("backup_seed_phrase_private_key"), color: .orange)
                     }
                     NavigationLink(destination: AddFromSeedPhraseView()) {
-                        settingsRow(icon: "plus.circle", title: "Add From Seed Phrase", color: .blue)
+                        settingsRow(icon: "plus.circle", title: localization.t("add_from_seed_phrase"), color: .blue)
                     }
                 }
-                
+
                 // Security section
-                Section("Security") {
+                Section(localization.t("settings_security")) {
                     Toggle(isOn: Binding(
                         get: { prefManager.isWhitelistEnabled },
                         set: { prefManager.setWhitelistEnabled($0) }
                     )) {
-                        settingsRow(icon: "shield.checkered", title: "Whitelist", color: .green)
+                        settingsRow(icon: "shield.checkered", title: localization.t("whitelist"), color: .green)
                     }
-                    
+
                     NavigationLink(destination: WhitelistInputView()) {
-                        settingsRow(icon: "list.bullet.rectangle.portrait", title: "Manage Whitelist", color: .green)
+                        settingsRow(icon: "list.bullet.rectangle.portrait", title: localization.t("manage_whitelist"), color: .green)
                     }
-                    
+
                     NavigationLink(destination: SecuritySettingsView()) {
-                        settingsRow(icon: "lock.shield", title: "Security Rules", color: .red)
+                        settingsRow(icon: "lock.shield", title: localization.t("security_rules"), color: .red)
                     }
                     
                     // Auto lock
@@ -55,136 +56,158 @@ struct SettingsView: View {
                             Text(duration.displayName).tag(duration)
                         }
                     } label: {
-                        settingsRow(icon: "lock.fill", title: "Auto Lock", color: .purple)
+                        settingsRow(icon: "lock.fill", title: localization.t("auto_lock"), color: .purple)
                     }
-                    
+
                     Toggle(isOn: Binding(
                         get: { BiometricAuthManager.shared.isBiometricEnabled },
                         set: { newValue in toggleBiometrics(enable: newValue) }
                     )) {
-                        settingsRow(icon: BiometricAuthManager.shared.biometricType == .faceID ? "faceid" : "touchid", title: "Face ID / Touch ID", color: .blue)
+                        settingsRow(icon: BiometricAuthManager.shared.biometricType == .faceID ? "faceid" : "touchid", title: localization.t("face_id_touch_id"), color: .blue)
                     }
                     .disabled(!BiometricAuthManager.shared.canUseBiometric)
                 }
-                
+
                 // Network section
-                Section("Network") {
+                Section(localization.t("settings_network")) {
                     NavigationLink(destination: CustomRPCView()) {
-                        settingsRow(icon: "network", title: "Custom RPC", color: .teal)
+                        settingsRow(icon: "network", title: localization.t("custom_rpc"), color: .teal)
                     }
                     NavigationLink(destination: CustomTestnetView()) {
-                        settingsRow(icon: "testtube.2", title: "Custom Testnet", color: .indigo)
+                        settingsRow(icon: "testtube.2", title: localization.t("custom_testnet"), color: .indigo)
                     }
                     Toggle(isOn: $prefManager.showTestnet) {
-                        settingsRow(icon: "eye", title: "Show Testnet", color: .gray)
+                        settingsRow(icon: "eye", title: localization.t("show_testnet"), color: .gray)
                     }
                 }
-                
+
                 // DApp section
-                Section("DApp") {
+                Section(localization.t("settings_dapp")) {
                     NavigationLink(destination: ConnectedSitesView()) {
-                        settingsRow(icon: "globe", title: "Connected Sites", color: .cyan)
+                        settingsRow(icon: "globe", title: localization.t("connected_sites"), color: .cyan)
                     }
                     NavigationLink(destination: WalletConnectView()) {
-                        settingsRow(icon: "link.circle", title: "WalletConnect", color: .blue)
+                        settingsRow(icon: "link.circle", title: localization.t("walletconnect"), color: .blue)
                     }
                 }
-                
+
                 // Features section
-                Section("Features") {
+                Section(localization.t("settings_features")) {
                     NavigationLink(destination: NFTView()) {
-                        settingsRow(icon: "photo.stack.fill", title: "NFT Gallery", color: .pink)
+                        settingsRow(icon: "photo.stack.fill", title: localization.t("nft_gallery"), color: .pink)
                     }
                     NavigationLink(destination: LendingView()) {
-                        settingsRow(icon: "building.columns", title: "Lending", color: .purple)
+                        settingsRow(icon: "building.columns", title: localization.t("lending"), color: .purple)
                     }
                     NavigationLink(destination: PerpsView()) {
-                        settingsRow(icon: "chart.line.uptrend.xyaxis", title: "Perps Trading", color: .orange)
+                        settingsRow(icon: "chart.line.uptrend.xyaxis", title: localization.t("perps_trading"), color: .orange)
                     }
                     NavigationLink(destination: GasAccountView()) {
-                        settingsRow(icon: "fuelpump.fill", title: "Gas Account", color: .teal)
+                        settingsRow(icon: "fuelpump.fill", title: localization.t("gas_account"), color: .teal)
                     }
                     NavigationLink(destination: BridgeView()) {
-                        settingsRow(icon: "arrow.left.arrow.right.circle", title: "Bridge", color: .indigo)
+                        settingsRow(icon: "arrow.left.arrow.right.circle", title: localization.t("bridge"), color: .indigo)
                     }
-                    NavigationLink(destination: RabbyPointsView()) {
-                        settingsRow(icon: "star.circle.fill", title: "Rabby Points", color: .orange)
+                    NavigationLink(destination: Text(localization.t("rabby_points"))) {
+                        settingsRow(icon: "star.circle.fill", title: localization.t("rabby_points"), color: .orange)
                     }
                     NavigationLink(destination: TokenApprovalView()) {
-                        settingsRow(icon: "checkmark.shield", title: "Token Approvals", color: .green)
+                        settingsRow(icon: "checkmark.shield", title: localization.t("token_approvals"), color: .green)
                     }
                     NavigationLink(destination: NFTApprovalView()) {
-                        settingsRow(icon: "photo.badge.checkmark", title: "NFT Approvals", color: .pink)
+                        settingsRow(icon: "photo.badge.checkmark", title: localization.t("nft_approvals"), color: .pink)
                     }
                     NavigationLink(destination: SignedTextHistoryView()) {
-                        settingsRow(icon: "signature", title: "Signed Messages", color: .gray)
+                        settingsRow(icon: "signature", title: localization.t("signed_messages"), color: .gray)
                     }
                     NavigationLink(destination: ChainListView()) {
-                        settingsRow(icon: "link.circle.fill", title: "Chain List", color: .blue)
+                        settingsRow(icon: "link.circle.fill", title: localization.t("chain_list"), color: .blue)
                     }
                 }
-                
+
                 // Appearance section
-                Section("Appearance") {
+                Section(localization.t("settings_appearance")) {
                     Picker(selection: Binding(
                         get: { prefManager.themeMode },
                         set: { prefManager.setTheme($0) }
                     )) {
-                        Text("Light").tag(PreferenceManager.ThemeMode.light)
-                        Text("Dark").tag(PreferenceManager.ThemeMode.dark)
-                        Text("System").tag(PreferenceManager.ThemeMode.system)
+                        Text(localization.t("theme_light")).tag(PreferenceManager.ThemeMode.light)
+                        Text(localization.t("theme_dark")).tag(PreferenceManager.ThemeMode.dark)
+                        Text(localization.t("theme_system")).tag(PreferenceManager.ThemeMode.system)
                     } label: {
-                        settingsRow(icon: "circle.lefthalf.filled", title: "Theme", color: .gray)
+                        settingsRow(icon: "circle.lefthalf.filled", title: localization.t("theme"), color: .gray)
                     }
                     
-                    Picker(selection: $prefManager.locale) {
+                    Picker(selection: Binding(
+                        get: { prefManager.localeMode == .system ? "system" : prefManager.locale },
+                        set: { newLocale in
+                            if newLocale == "system" {
+                                prefManager.setLocaleModeSystem()
+                            } else {
+                                prefManager.setLocale(newLocale)
+                            }
+                        }
+                    )) {
+                        Text(localization.t("theme_system")).tag("system")
+                        // Language names shown in their native form (not translated)
                         Text("English").tag("en")
-                        Text("中文").tag("zh-CN")
+                        Text("中文简体").tag("zh-CN")
+                        Text("中文繁體").tag("zh-HK")
                         Text("日本語").tag("ja")
                         Text("한국어").tag("ko")
+                        Text("Deutsch").tag("de")
+                        Text("Español").tag("es")
+                        Text("Français").tag("fr-FR")
+                        Text("Português").tag("pt")
+                        Text("Português (BR)").tag("pt-BR")
+                        Text("Русский").tag("ru")
+                        Text("Türkçe").tag("tr")
+                        Text("Tiếng Việt").tag("vi")
+                        Text("Bahasa Indonesia").tag("id")
+                        Text("Українська").tag("uk-UA")
                     } label: {
-                        settingsRow(icon: "globe", title: "Language", color: .blue)
+                        settingsRow(icon: "globe", title: localization.t("language"), color: .blue)
                     }
-                    
+
                     Picker(selection: $prefManager.currency) {
-                        Text("USD").tag("USD")
-                        Text("EUR").tag("EUR")
-                        Text("CNY").tag("CNY")
-                        Text("JPY").tag("JPY")
+                        Text(L("USD")).tag("USD")
+                        Text(L("EUR")).tag("EUR")
+                        Text(L("CNY")).tag("CNY")
+                        Text(L("JPY")).tag("JPY")
                     } label: {
-                        settingsRow(icon: "dollarsign.circle", title: "Currency", color: .green)
+                        settingsRow(icon: "dollarsign.circle", title: localization.t("currency"), color: .green)
                     }
                 }
-                
+
                 // About section
-                Section("About") {
+                Section(localization.t("settings_about")) {
                     HStack {
-                        settingsRow(icon: "info.circle", title: "Version", color: .gray)
+                        settingsRow(icon: "info.circle", title: localization.t("version"), color: .gray)
                         Spacer()
-                        Text("0.93.77").foregroundColor(.secondary)
+                        Text(L("0.93.77")).foregroundColor(.secondary)
                     }
                     NavigationLink(destination: AdvancedSettingsView()) {
-                        settingsRow(icon: "wrench.and.screwdriver", title: "Advanced", color: .gray)
+                        settingsRow(icon: "wrench.and.screwdriver", title: localization.t("advanced"), color: .gray)
                     }
                 }
-                
+
                 // Lock button
                 Section {
                     Button(action: lockWallet) {
                         HStack {
                             Spacer()
-                            Text("Lock Wallet").foregroundColor(.red).fontWeight(.semibold)
+                            Text(localization.t("lock_wallet")).foregroundColor(.red).fontWeight(.semibold)
                             Spacer()
                         }
                     }
-                    .accessibilityLabel("Lock Wallet")
+                    .accessibilityLabel(localization.t("lock_wallet"))
                     .accessibilityHint("Locks the wallet and requires authentication to access")
                 }
             }
-            .navigationTitle("Settings")
+            .navigationTitle(localization.t("tab_settings"))
             .navigationBarTitleDisplayMode(.inline)
-            .alert("Biometric Error", isPresented: $showBiometricError) {
-                Button("OK", role: .cancel) {}
+            .alert(localization.t("biometric_error"), isPresented: $showBiometricError) {
+                Button(L("OK"), role: .cancel) {}
             } message: {
                 Text(biometricErrorMessage)
             }
@@ -239,54 +262,6 @@ struct SettingsView: View {
     }
 }
 
-/// Address Management View
-struct AddressManagementView: View {
-    @StateObject private var prefManager = PreferenceManager.shared
-    
-    var body: some View {
-        List {
-            Section("Active Addresses") {
-                ForEach(prefManager.accounts.filter { account in
-                    !prefManager.hiddenAddresses.contains(where: { $0.address == account.address })
-                }) { account in
-                    addressRow(account: account)
-                }
-            }
-            
-            if !prefManager.hiddenAddresses.isEmpty {
-                Section("Hidden Addresses") {
-                    ForEach(prefManager.hiddenAddresses) { account in
-                        addressRow(account: account, isHidden: true)
-                    }
-                }
-            }
-        }
-        .navigationTitle("Addresses")
-    }
-    
-    private func addressRow(account: PreferenceManager.Account, isHidden: Bool = false) -> some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(account.aliasName ?? account.brandName).fontWeight(.medium)
-                Text(String(account.address.prefix(8)) + "..." + String(account.address.suffix(6)))
-                    .font(.caption).foregroundColor(.secondary).font(.system(.caption, design: .monospaced))
-            }
-            Spacer()
-            if let balance = account.balance {
-                Text("$\(String(format: "%.2f", balance))").font(.subheadline).foregroundColor(.secondary)
-            }
-        }
-        .swipeActions {
-            if isHidden {
-                Button("Unhide") { prefManager.unhideAddress(account.address) }
-                    .tint(.blue)
-            } else {
-                Button("Hide") { prefManager.hideAddress(account.address) }
-                    .tint(.orange)
-            }
-        }
-    }
-}
 
 /// Address Backup View
 struct AddressBackupView: View {
@@ -306,7 +281,7 @@ struct AddressBackupView: View {
             // Warning
             HStack(alignment: .top, spacing: 8) {
                 Image(systemName: "exclamationmark.triangle.fill").foregroundColor(.red)
-                Text("Never share your seed phrase or private key with anyone. Store it securely offline.")
+                Text(L("Never share your seed phrase or private key with anyone. Store it securely offline."))
                     .font(.subheadline).foregroundColor(.red)
             }
             .padding()
@@ -315,7 +290,7 @@ struct AddressBackupView: View {
             .padding(.horizontal)
             
             // Password input
-            SecureField("Enter password to reveal", text: $password)
+            SecureField(L("Enter password to reveal"), text: $password)
                 .padding()
                 .background(Color(.systemGray6))
                 .cornerRadius(8)
@@ -328,13 +303,13 @@ struct AddressBackupView: View {
             // Buttons
             VStack(spacing: 12) {
                 Button(action: revealMnemonic) {
-                    Text("Show Seed Phrase")
+                    Text(L("Show Seed Phrase"))
                         .frame(maxWidth: .infinity).padding()
                         .background(Color.blue).foregroundColor(.white).cornerRadius(12)
                 }
                 
                 Button(action: revealPrivateKey) {
-                    Text("Show Private Key")
+                    Text(L("Show Private Key"))
                         .frame(maxWidth: .infinity).padding()
                         .background(Color.orange).foregroundColor(.white).cornerRadius(12)
                 }
@@ -353,12 +328,12 @@ struct AddressBackupView: View {
             }
             .padding(.vertical)
         }
-        .navigationTitle("Backup")
+        .navigationTitle(L("Backup"))
         .onDisappear { clearRevealedData() }
-        .alert("Screenshot Detected", isPresented: $showScreenshotWarning) {
-            Button("I Understand", role: .cancel) {}
+        .alert(L("Screenshot Detected"), isPresented: $showScreenshotWarning) {
+            Button(L("I Understand"), role: .cancel) {}
         } message: {
-            Text("Be careful! Screenshots of seed phrases and private keys can be a security risk.")
+            Text(L("Be careful! Screenshots of seed phrases and private keys can be a security risk."))
         }
         .onAppear {
             NotificationCenter.default.addObserver(
@@ -443,62 +418,929 @@ struct AddressBackupView: View {
     }
 }
 
-/// Token Approval View
+// MARK: - Token Approval Data Model
+
+/// Risk level for a token approval
+enum ApprovalRiskLevel: String, CaseIterable {
+    case safe
+    case warning
+    case danger
+
+    var displayName: String {
+        switch self {
+        case .safe: return "Safe"
+        case .warning: return "Warning"
+        case .danger: return "Danger"
+        }
+    }
+
+    var color: Color {
+        switch self {
+        case .safe: return .green
+        case .warning: return .orange
+        case .danger: return .red
+        }
+    }
+}
+
+/// Comprehensive token approval model used by the approval list
+struct TokenApproval: Identifiable {
+    let id: String
+    let tokenSymbol: String
+    let tokenName: String
+    let tokenAddress: String
+    let tokenLogoURL: String?
+    let tokenDecimals: Int
+    let tokenBalance: Double?
+    let spenderAddress: String
+    let spenderName: String?
+    let spenderLogoURL: String?
+    let spenderIsVerified: Bool
+    let allowance: String
+    let isUnlimited: Bool
+    let chainServerId: String
+    let chainName: String
+    let chainLogoURL: String?
+    let riskLevel: ApprovalRiskLevel
+    let approvedAt: Date?
+
+    /// Abbreviated spender address for display
+    var spenderAbbrev: String {
+        guard spenderAddress.count > 14 else { return spenderAddress }
+        return String(spenderAddress.prefix(6)) + "..." + String(spenderAddress.suffix(4))
+    }
+
+    /// Human-readable allowance text
+    var allowanceDisplay: String {
+        isUnlimited ? "Unlimited" : allowance
+    }
+}
+
+// MARK: - Token Approval View
+
+/// Token Approval View - lists all ERC-20 token approvals for the current account,
+/// with search, chain filter, risk filter, detail sheet, single revoke, and batch revoke.
 struct TokenApprovalView: View {
+    @StateObject private var prefManager = PreferenceManager.shared
+
+    // Data
     @State private var approvals: [TokenApproval] = []
     @State private var isLoading = false
-    
-    struct TokenApproval: Identifiable {
-        let id: String
-        let tokenSymbol: String
-        let tokenAddress: String
-        let spender: String
-        let spenderName: String?
-        let allowance: String
-        let chain: String
+    @State private var loadError: String?
+
+    // Search & filter
+    @State private var searchText = ""
+    @State private var selectedChainFilter: String? = nil // nil = all chains
+    @State private var showDangerOnly = false
+
+    // Detail sheet
+    @State private var selectedApproval: TokenApproval?
+    @State private var showDetailSheet = false
+
+    // Batch revoke
+    @State private var isMultiSelectMode = false
+    @State private var selectedForRevoke: Set<String> = [] // approval IDs
+    @State private var isBatchRevoking = false
+    @State private var batchRevokeProgress: Int = 0
+    @State private var batchRevokeTotal: Int = 0
+
+    // Revoke state
+    @State private var isRevoking = false
+    @State private var revokeError: String?
+    @State private var showRevokeSuccess = false
+    @State private var showRevokeConfirm = false
+    @State private var revokeTarget: TokenApproval?
+    @State private var estimatedGasCost: String?
+
+    // Derived chain list from loaded approvals
+    private var availableChains: [(serverId: String, name: String)] {
+        var seen = Set<String>()
+        var chains: [(String, String)] = []
+        for approval in approvals {
+            if !seen.contains(approval.chainServerId) {
+                seen.insert(approval.chainServerId)
+                chains.append((approval.chainServerId, approval.chainName))
+            }
+        }
+        return chains.sorted { $0.1 < $1.1 }
     }
-    
+
+    private var filteredApprovals: [TokenApproval] {
+        approvals.filter { approval in
+            // Search filter
+            let matchesSearch = searchText.isEmpty ||
+                approval.tokenSymbol.localizedCaseInsensitiveContains(searchText) ||
+                approval.tokenName.localizedCaseInsensitiveContains(searchText) ||
+                approval.spenderName?.localizedCaseInsensitiveContains(searchText) == true
+
+            // Chain filter
+            let matchesChain = selectedChainFilter == nil || approval.chainServerId == selectedChainFilter
+
+            // Risk filter
+            let matchesRisk = !showDangerOnly || approval.riskLevel == .danger
+
+            return matchesSearch && matchesChain && matchesRisk
+        }
+    }
+
     var body: some View {
-        NavigationView {
-            Group {
-                if isLoading {
-                    ProgressView("Loading approvals...")
-                } else if approvals.isEmpty {
-                    VStack(spacing: 12) {
-                        Image(systemName: "checkmark.shield").font(.system(size: 40)).foregroundColor(.green)
-                        Text("No active approvals").foregroundColor(.secondary)
+        VStack(spacing: 0) {
+            searchBar
+            filterBar
+            contentArea
+
+            // Batch revoke bar
+            if isMultiSelectMode && !selectedForRevoke.isEmpty {
+                batchRevokeBar
+            }
+        }
+        .navigationTitle(L("Token Approvals"))
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                if !approvals.isEmpty {
+                    Button(isMultiSelectMode ? LocalizationManager.shared.t("Done") : LocalizationManager.shared.t("Select")) {
+                        isMultiSelectMode.toggle()
+                        if !isMultiSelectMode { selectedForRevoke.removeAll() }
                     }
-                } else {
-                    List(approvals) { approval in
-                        approvalRow(approval: approval)
-                    }.listStyle(.plain)
                 }
             }
-            .navigationTitle("Token Approvals")
-            .navigationBarTitleDisplayMode(.inline)
+        }
+        .onAppear { loadApprovals() }
+        .sheet(isPresented: $showDetailSheet) {
+            if let approval = selectedApproval {
+                ApprovalDetailSheet(
+                    approval: approval,
+                    onRevoke: { target in
+                        showDetailSheet = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            beginRevoke(target)
+                        }
+                    },
+                    onDismiss: { showDetailSheet = false }
+                )
+            }
+        }
+        .alert(L("Confirm Revoke"), isPresented: $showRevokeConfirm) {
+            Button(L("Cancel"), role: .cancel) { revokeTarget = nil; estimatedGasCost = nil }
+            Button(L("Revoke"), role: .destructive) { executeRevoke() }
+        } message: {
+            if let target = revokeTarget {
+                VStack {
+                    Text(LocalizationManager.shared.t("ios.approval.revokeConfirmMsg", args: ["symbol": target.tokenSymbol, "spender": target.spenderName ?? target.spenderAbbrev]))
+                    if let gas = estimatedGasCost {
+                        Text(LocalizationManager.shared.t("ios.approval.estimatedGas", args: ["gas": gas]))
+                    }
+                }
+            }
+        }
+        .alert(L("Revoke Successful"), isPresented: $showRevokeSuccess) {
+            Button(L("OK")) {}
+        } message: {
+            Text(L("The approval has been revoked. The list will update once the transaction is confirmed."))
+        }
+        .alert(L("Revoke Error"), isPresented: Binding(
+            get: { revokeError != nil },
+            set: { if !$0 { revokeError = nil } }
+        )) {
+            Button(L("OK")) { revokeError = nil }
+        } message: {
+            Text(revokeError ?? LocalizationManager.shared.t("Unknown error"))
+        }
+        .overlay {
+            if isRevoking || isBatchRevoking {
+                revokeProgressOverlay
+            }
         }
     }
-    
-    private func approvalRow(approval: TokenApproval) -> some View {
+
+    // MARK: - Extracted Body Subviews
+
+    private var searchBar: some View {
         HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(approval.tokenSymbol).fontWeight(.medium)
-                Text("Spender: \(approval.spenderName ?? String(approval.spender.prefix(10)) + "...")")
-                    .font(.caption).foregroundColor(.secondary)
+            Image(systemName: "magnifyingglass").foregroundColor(.secondary)
+            TextField(L("Search by token name"), text: $searchText)
+                .autocapitalization(.none)
+                .disableAutocorrection(true)
+            if !searchText.isEmpty {
+                Button(action: { searchText = "" }) {
+                    Image(systemName: "xmark.circle.fill").foregroundColor(.secondary)
+                }
+            }
+        }
+        .padding(10)
+        .background(Color(.systemGray6))
+        .cornerRadius(10)
+        .padding(.horizontal)
+        .padding(.top, 8)
+    }
+
+    private var filterBar: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                filterChip(title: LocalizationManager.shared.t("All Chains"), isSelected: selectedChainFilter == nil) {
+                    selectedChainFilter = nil
+                }
+                ForEach(availableChains, id: \.serverId) { chain in
+                    filterChip(title: chain.name, isSelected: selectedChainFilter == chain.serverId) {
+                        selectedChainFilter = (selectedChainFilter == chain.serverId) ? nil : chain.serverId
+                    }
+                }
+
+                Divider().frame(height: 20)
+
+                filterChip(
+                    title: LocalizationManager.shared.t("Danger Only"),
+                    isSelected: showDangerOnly,
+                    activeColor: .red
+                ) {
+                    showDangerOnly.toggle()
+                }
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 8)
+        }
+    }
+
+    @ViewBuilder
+    private var contentArea: some View {
+        if isLoading {
+            Spacer()
+            VStack(spacing: 12) {
+                ProgressView()
+                    .scaleEffect(1.2)
+                Text(L("Loading approvals...")).foregroundColor(.secondary)
             }
             Spacer()
-            VStack(alignment: .trailing, spacing: 4) {
-                Text(approval.allowance == "unlimited" ? "Unlimited" : approval.allowance)
+        } else if let error = loadError {
+            Spacer()
+            VStack(spacing: 12) {
+                Image(systemName: "exclamationmark.triangle").font(.system(size: 40)).foregroundColor(.orange)
+                Text(error).foregroundColor(.secondary).multilineTextAlignment(.center).padding(.horizontal)
+                Button(L("Retry")) { loadApprovals() }
+                    .foregroundColor(.blue)
+            }
+            Spacer()
+        } else if filteredApprovals.isEmpty {
+            Spacer()
+            VStack(spacing: 12) {
+                Image(systemName: "checkmark.shield")
+                    .font(.system(size: 48))
+                    .foregroundColor(.green)
+                Text(L(approvals.isEmpty ? "No active approvals" : "No matching approvals"))
+                    .foregroundColor(.secondary)
+            }
+            Spacer()
+        } else {
+            List {
+                ForEach(filteredApprovals) { approval in
+                    approvalRow(approval: approval)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            if isMultiSelectMode {
+                                toggleSelection(approval.id)
+                            } else {
+                                selectedApproval = approval
+                                showDetailSheet = true
+                            }
+                        }
+                }
+            }
+            .listStyle(.plain)
+        }
+    }
+
+    // MARK: - Subviews
+
+    private func filterChip(title: String, isSelected: Bool, activeColor: Color = .blue, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(title)
+                .font(.caption)
+                .fontWeight(isSelected ? .semibold : .regular)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(isSelected ? activeColor.opacity(0.15) : Color(.systemGray6))
+                .foregroundColor(isSelected ? activeColor : .primary)
+                .cornerRadius(16)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(isSelected ? activeColor.opacity(0.3) : Color.clear, lineWidth: 1)
+                )
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func approvalRow(approval: TokenApproval) -> some View {
+        HStack(spacing: 12) {
+            // Multi-select checkbox
+            if isMultiSelectMode {
+                Image(systemName: selectedForRevoke.contains(approval.id) ? "checkmark.circle.fill" : "circle")
+                    .foregroundColor(selectedForRevoke.contains(approval.id) ? .blue : .gray)
+                    .font(.title3)
+            }
+
+            // Token icon
+            ZStack(alignment: .bottomTrailing) {
+                if let logoURL = approval.tokenLogoURL, let url = URL(string: logoURL) {
+                    AsyncImage(url: url) { image in
+                        image.resizable().scaledToFill()
+                    } placeholder: {
+                        tokenIconPlaceholder(symbol: approval.tokenSymbol)
+                    }
+                    .frame(width: 36, height: 36)
+                    .clipShape(Circle())
+                } else {
+                    tokenIconPlaceholder(symbol: approval.tokenSymbol)
+                }
+
+                // Chain badge
+                if let chainLogo = approval.chainLogoURL, let url = URL(string: chainLogo) {
+                    AsyncImage(url: url) { image in
+                        image.resizable().scaledToFill()
+                    } placeholder: {
+                        Circle().fill(Color.gray.opacity(0.3)).frame(width: 14, height: 14)
+                    }
+                    .frame(width: 14, height: 14)
+                    .clipShape(Circle())
+                    .overlay(Circle().stroke(Color(.systemBackground), lineWidth: 1.5))
+                    .offset(x: 2, y: 2)
+                }
+            }
+
+            // Token info
+            VStack(alignment: .leading, spacing: 3) {
+                HStack(spacing: 4) {
+                    Text(approval.tokenSymbol)
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                    riskBadge(level: approval.riskLevel)
+                }
+                Text(approval.spenderName ?? approval.spenderAbbrev)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+            }
+
+            Spacer()
+
+            // Allowance
+            VStack(alignment: .trailing, spacing: 3) {
+                Text(approval.allowanceDisplay)
                     .font(.subheadline)
-                    .foregroundColor(approval.allowance == "unlimited" ? .red : .primary)
-                Button("Revoke") { revokeApproval(approval) }
-                    .font(.caption).foregroundColor(.red)
+                    .fontWeight(.medium)
+                    .foregroundColor(approval.isUnlimited ? .red : .primary)
+                Text(approval.chainName)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding(.vertical, 2)
+    }
+
+    private func tokenIconPlaceholder(symbol: String) -> some View {
+        ZStack {
+            Circle().fill(Color.blue.opacity(0.15))
+            Text(String(symbol.prefix(2)).uppercased())
+                .font(.caption2).fontWeight(.bold).foregroundColor(.blue)
+        }
+        .frame(width: 36, height: 36)
+    }
+
+    private func riskBadge(level: ApprovalRiskLevel) -> some View {
+        Text(level.displayName)
+            .font(.system(size: 9, weight: .semibold))
+            .padding(.horizontal, 5)
+            .padding(.vertical, 1.5)
+            .background(level.color.opacity(0.15))
+            .foregroundColor(level.color)
+            .cornerRadius(4)
+    }
+
+    private var batchRevokeBar: some View {
+        VStack(spacing: 0) {
+            Divider()
+            HStack {
+                Text(LocalizationManager.shared.t("ios.approval.selectedCount", args: ["count": "\(selectedForRevoke.count)"]))
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+
+                Spacer()
+
+                Button(action: { selectAllFiltered() }) {
+                    Text(L("Select All"))
+                        .font(.subheadline)
+                }
+                .padding(.trailing, 8)
+
+                Button(action: { beginBatchRevoke() }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "xmark.shield")
+                        Text(L("Revoke Selected"))
+                    }
+                    .font(.subheadline.weight(.semibold))
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(Color.red)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+                }
+                .disabled(selectedForRevoke.isEmpty)
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 10)
+            .background(Color(.systemBackground))
+        }
+    }
+
+    private var revokeProgressOverlay: some View {
+        ZStack {
+            Color.black.opacity(0.4).ignoresSafeArea()
+            VStack(spacing: 16) {
+                ProgressView()
+                    .scaleEffect(1.3)
+                    .tint(.white)
+                if isBatchRevoking {
+                    Text(LocalizationManager.shared.t("ios.approval.revokingProgress", args: ["progress": "\(batchRevokeProgress)", "total": "\(batchRevokeTotal)"]))
+                        .foregroundColor(.white)
+                        .fontWeight(.medium)
+                } else {
+                    Text(L("Revoking approval..."))
+                        .foregroundColor(.white)
+                        .fontWeight(.medium)
+                }
+            }
+            .padding(32)
+            .background(Color(.systemGray5).opacity(0.95))
+            .cornerRadius(16)
+        }
+    }
+
+    // MARK: - Data Loading
+
+    private func loadApprovals() {
+        guard let address = prefManager.currentAccount?.address else {
+            loadError = "No active account. Please set up your wallet first."
+            return
+        }
+
+        isLoading = true
+        loadError = nil
+
+        Task {
+            do {
+                let apiApprovals = try await OpenAPIService.shared.getTokenApprovals(address: address)
+                let chainManager = ChainManager.shared
+
+                var result: [TokenApproval] = []
+                for item in apiApprovals {
+                    let chain = chainManager.getChain(byServerId: item.token.chain)
+
+                    // Determine risk level
+                    let risk: ApprovalRiskLevel = {
+                        if item.spender.is_verified == true { return .safe }
+                        // Unlimited approvals to unverified spenders are dangerous
+                        let valueNum = Double(item.value) ?? 0
+                        let isUnlimited = item.value.lowercased().contains("unlimited") ||
+                            item.value == "115792089237316195423570985008687907853269984665640564039457584007913129639935" ||
+                            valueNum > 1e30
+                        if isUnlimited { return .danger }
+                        return .warning
+                    }()
+
+                    let isUnlimited = item.value.lowercased().contains("unlimited") ||
+                        item.value == "115792089237316195423570985008687907853269984665640564039457584007913129639935" ||
+                        (Double(item.value) ?? 0) > 1e30
+
+                    let approval = TokenApproval(
+                        id: "\(item.token.id)_\(item.spender.id)",
+                        tokenSymbol: item.token.symbol,
+                        tokenName: item.token.symbol,
+                        tokenAddress: item.token.id,
+                        tokenLogoURL: item.token.logo_url,
+                        tokenDecimals: 18,
+                        tokenBalance: nil,
+                        spenderAddress: item.spender.id,
+                        spenderName: item.spender.name,
+                        spenderLogoURL: item.spender.logo_url,
+                        spenderIsVerified: item.spender.is_verified ?? false,
+                        allowance: isUnlimited ? "Unlimited" : formatAllowance(item.value),
+                        isUnlimited: isUnlimited,
+                        chainServerId: item.token.chain,
+                        chainName: chain?.name ?? item.token.chain,
+                        chainLogoURL: chain?.logo,
+                        riskLevel: risk,
+                        approvedAt: nil
+                    )
+                    result.append(approval)
+                }
+
+                approvals = result
+                isLoading = false
+            } catch {
+                loadError = "Failed to load approvals: \(error.localizedDescription)"
+                isLoading = false
             }
         }
     }
-    
-    private func revokeApproval(_ approval: TokenApproval) {
-        // Revoke by setting allowance to 0
+
+    private func formatAllowance(_ value: String) -> String {
+        guard let num = Double(value) else { return value }
+        if num > 1_000_000 {
+            return String(format: "%.2fM", num / 1_000_000)
+        } else if num > 1_000 {
+            return String(format: "%.2fK", num / 1_000)
+        } else {
+            return String(format: "%.4f", num)
+        }
+    }
+
+    // MARK: - Selection
+
+    private func toggleSelection(_ id: String) {
+        if selectedForRevoke.contains(id) {
+            selectedForRevoke.remove(id)
+        } else {
+            selectedForRevoke.insert(id)
+        }
+    }
+
+    private func selectAllFiltered() {
+        for approval in filteredApprovals {
+            selectedForRevoke.insert(approval.id)
+        }
+    }
+
+    // MARK: - Single Revoke
+
+    private func beginRevoke(_ approval: TokenApproval) {
+        revokeTarget = approval
+        estimatedGasCost = nil
+
+        Task {
+            do {
+                let gasCost = try await estimateRevokeGas(for: approval)
+                estimatedGasCost = gasCost
+            } catch {
+                estimatedGasCost = "Unable to estimate"
+            }
+            showRevokeConfirm = true
+        }
+    }
+
+    private func executeRevoke() {
+        guard let target = revokeTarget else { return }
+        isRevoking = true
+
+        Task {
+            do {
+                try await sendRevokeTransaction(for: target)
+                isRevoking = false
+                showRevokeSuccess = true
+                // Refresh after a brief delay to allow indexing
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                    loadApprovals()
+                }
+            } catch {
+                isRevoking = false
+                revokeError = "Revoke failed: \(error.localizedDescription)"
+            }
+            revokeTarget = nil
+        }
+    }
+
+    // MARK: - Batch Revoke
+
+    private func beginBatchRevoke() {
+        let targets = filteredApprovals.filter { selectedForRevoke.contains($0.id) }
+        guard !targets.isEmpty else { return }
+
+        isBatchRevoking = true
+        batchRevokeProgress = 0
+        batchRevokeTotal = targets.count
+
+        Task {
+            var failedCount = 0
+            for target in targets {
+                batchRevokeProgress += 1
+                do {
+                    try await sendRevokeTransaction(for: target)
+                } catch {
+                    failedCount += 1
+                }
+            }
+
+            isBatchRevoking = false
+            isMultiSelectMode = false
+            selectedForRevoke.removeAll()
+
+            if failedCount > 0 {
+                revokeError = "\(failedCount) of \(targets.count) revocations failed."
+            } else {
+                showRevokeSuccess = true
+            }
+
+            // Refresh
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                loadApprovals()
+            }
+        }
+    }
+
+    // MARK: - Revoke Transaction Helpers
+
+    /// Build and send an approve(spender, 0) transaction to revoke the approval
+    private func sendRevokeTransaction(for approval: TokenApproval) async throws {
+        guard let address = prefManager.currentAccount?.address else {
+            throw TransactionError.invalidTransaction
+        }
+
+        guard let chain = ChainManager.shared.getChain(byServerId: approval.chainServerId) else {
+            throw TransactionError.invalidChain
+        }
+
+        // Build approve(spender, 0) transaction using TransactionManager
+        // function selector: 0x095ea7b3
+        // parameters: spender address padded to 32 bytes + uint256(0) padded to 32 bytes
+        let tx = try await TransactionManager.shared.buildTokenApproval(
+            from: address,
+            tokenAddress: approval.tokenAddress,
+            spender: approval.spenderAddress,
+            amount: "0000000000000000000000000000000000000000000000000000000000000000", // uint256(0)
+            chain: chain
+        )
+
+        _ = try await TransactionManager.shared.sendTransaction(tx)
+    }
+
+    /// Estimate gas cost for revoking in human-readable form
+    private func estimateRevokeGas(for approval: TokenApproval) async throws -> String {
+        guard let address = prefManager.currentAccount?.address else {
+            throw TransactionError.invalidTransaction
+        }
+
+        guard let chain = ChainManager.shared.getChain(byServerId: approval.chainServerId) else {
+            throw TransactionError.invalidChain
+        }
+
+        // Build the calldata: approve(spender, 0)
+        let functionSelector = "0x095ea7b3"
+        let spenderPadded = approval.spenderAddress
+            .replacingOccurrences(of: "0x", with: "")
+            .padLeft(toLength: 64, withPad: "0")
+        let amountPadded = String(repeating: "0", count: 64)
+        let callData = functionSelector + spenderPadded + amountPadded
+
+        let gasEstimate = try await TransactionManager.shared.estimateGas(
+            from: address,
+            to: approval.tokenAddress,
+            value: "0x0",
+            data: callData,
+            chain: chain
+        )
+
+        let gasPrice = try await TransactionManager.shared.getGasPrice(chain: chain)
+        let gasCostWei = gasEstimate * gasPrice
+        let gasCostEth = EthereumUtil.weiToEther(gasCostWei)
+
+        return "\(gasCostEth) \(chain.symbol)"
+    }
+}
+
+// MARK: - Approval Detail Sheet
+
+/// Detailed sheet for a single token approval, showing full token/spender info and a revoke action
+struct ApprovalDetailSheet: View {
+    let approval: TokenApproval
+    let onRevoke: (TokenApproval) -> Void
+    let onDismiss: () -> Void
+
+    var body: some View {
+        NavigationView {
+            ScrollView {
+                VStack(spacing: 20) {
+                    // Token info card
+                    GroupBox {
+                        VStack(spacing: 12) {
+                            // Token header
+                            HStack(spacing: 12) {
+                                if let logoURL = approval.tokenLogoURL, let url = URL(string: logoURL) {
+                                    AsyncImage(url: url) { image in
+                                        image.resizable().scaledToFill()
+                                    } placeholder: {
+                                        tokenPlaceholder
+                                    }
+                                    .frame(width: 44, height: 44)
+                                    .clipShape(Circle())
+                                } else {
+                                    tokenPlaceholder
+                                }
+
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(approval.tokenSymbol)
+                                        .font(.title3)
+                                        .fontWeight(.bold)
+                                    Text(approval.tokenName)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+
+                                Spacer()
+
+                                riskBadgeLarge(level: approval.riskLevel)
+                            }
+
+                            Divider()
+
+                            detailRow(label: "Token Address", value: approval.tokenAddress, mono: true)
+
+                            if let balance = approval.tokenBalance {
+                                detailRow(label: "Balance", value: String(format: "%.6f %@", balance, approval.tokenSymbol))
+                            }
+
+                            detailRow(label: "Chain", value: approval.chainName)
+                        }
+                    } label: {
+                        Label(L("Token"), systemImage: "circle.hexagonpath")
+                            .font(.headline)
+                    }
+
+                    // Spender info card
+                    GroupBox {
+                        VStack(spacing: 12) {
+                            HStack(spacing: 12) {
+                                if let logoURL = approval.spenderLogoURL, let url = URL(string: logoURL) {
+                                    AsyncImage(url: url) { image in
+                                        image.resizable().scaledToFill()
+                                    } placeholder: {
+                                        spenderPlaceholder
+                                    }
+                                    .frame(width: 36, height: 36)
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                                } else {
+                                    spenderPlaceholder
+                                }
+
+                                VStack(alignment: .leading, spacing: 2) {
+                                    HStack(spacing: 4) {
+                                        Text(approval.spenderName ?? "Unknown Contract")
+                                            .font(.subheadline)
+                                            .fontWeight(.semibold)
+                                        if approval.spenderIsVerified {
+                                            Image(systemName: "checkmark.seal.fill")
+                                                .foregroundColor(.blue)
+                                                .font(.caption)
+                                        }
+                                    }
+                                    Text(approval.spenderAbbrev)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                        .font(.system(.caption, design: .monospaced))
+                                }
+                                Spacer()
+                            }
+
+                            Divider()
+
+                            detailRow(label: "Contract Address", value: approval.spenderAddress, mono: true)
+
+                            detailRow(
+                                label: "Security Status",
+                                value: approval.spenderIsVerified ? "Verified" : "Unverified",
+                                valueColor: approval.spenderIsVerified ? .green : .orange
+                            )
+                        }
+                    } label: {
+                        Label(L("Spender"), systemImage: "building.2")
+                            .font(.headline)
+                    }
+
+                    // Approval details card
+                    GroupBox {
+                        VStack(spacing: 12) {
+                            HStack {
+                                Text(L("Approved Amount"))
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                                Text(approval.allowanceDisplay)
+                                    .font(.subheadline)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(approval.isUnlimited ? .red : .primary)
+                            }
+
+                            if let date = approval.approvedAt {
+                                HStack {
+                                    Text(L("Approved At"))
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                    Spacer()
+                                    Text(date, style: .date)
+                                        .font(.subheadline)
+                                }
+                            }
+
+                            HStack {
+                                Text(L("Risk Level"))
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                                riskBadgeLarge(level: approval.riskLevel)
+                            }
+                        }
+                    } label: {
+                        Label(L("Approval"), systemImage: "checkmark.shield")
+                            .font(.headline)
+                    }
+
+                    // Risk warning
+                    if approval.riskLevel == .danger || approval.isUnlimited {
+                        HStack(alignment: .top, spacing: 8) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundColor(.red)
+                            Text(L("This approval grants unlimited access to your tokens. It is recommended to revoke or reduce the approval amount."))
+                                .font(.caption)
+                                .foregroundColor(.red)
+                        }
+                        .padding()
+                        .background(Color.red.opacity(0.08))
+                        .cornerRadius(10)
+                    }
+
+                    // Revoke button
+                    Button(action: { onRevoke(approval) }) {
+                        HStack {
+                            Image(systemName: "xmark.shield.fill")
+                            Text(L("Revoke Approval"))
+                        }
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.red)
+                        .foregroundColor(.white)
+                        .cornerRadius(14)
+                    }
+                    .padding(.top, 4)
+                }
+                .padding()
+            }
+            .navigationTitle(L("Approval Details"))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(L("Done")) { onDismiss() }
+                }
+            }
+        }
+    }
+
+    // MARK: - Detail Subviews
+
+    private func detailRow(label: String, value: String, mono: Bool = false, valueColor: Color = .primary) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(label)
+                .font(.caption)
+                .foregroundColor(.secondary)
+            Text(value)
+                .font(mono ? .system(.caption, design: .monospaced) : .caption)
+                .foregroundColor(valueColor)
+                .lineLimit(1)
+                .truncationMode(.middle)
+                .textSelection(.enabled)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func riskBadgeLarge(level: ApprovalRiskLevel) -> some View {
+        HStack(spacing: 3) {
+            Image(systemName: level == .safe ? "checkmark.circle.fill" : level == .warning ? "exclamationmark.circle.fill" : "xmark.circle.fill")
+                .font(.caption2)
+            Text(level.displayName)
+                .font(.caption)
+                .fontWeight(.semibold)
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 3)
+        .background(level.color.opacity(0.15))
+        .foregroundColor(level.color)
+        .cornerRadius(6)
+    }
+
+    private var tokenPlaceholder: some View {
+        ZStack {
+            Circle().fill(Color.blue.opacity(0.15))
+            Text(String(approval.tokenSymbol.prefix(2)).uppercased())
+                .font(.caption).fontWeight(.bold).foregroundColor(.blue)
+        }
+        .frame(width: 44, height: 44)
+    }
+
+    private var spenderPlaceholder: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 8).fill(Color.gray.opacity(0.15))
+            Image(systemName: "doc.text")
+                .font(.caption).foregroundColor(.gray)
+        }
+        .frame(width: 36, height: 36)
     }
 }
 
@@ -521,7 +1363,7 @@ struct SecuritySettingsView: View {
                 }
             }
         }
-        .navigationTitle("Security Rules")
+        .navigationTitle(L("Security Rules"))
     }
     
     private func riskBadge(level: SecurityEngineManager.RiskLevel) -> some View {
@@ -543,53 +1385,6 @@ struct SecuritySettingsView: View {
     }
 }
 
-/// Connected Sites View
-struct ConnectedSitesView: View {
-    @StateObject private var permManager = DAppPermissionManager.shared
-    
-    var body: some View {
-        Group {
-            if permManager.connectedSites.isEmpty {
-                VStack(spacing: 12) {
-                    Image(systemName: "globe").font(.system(size: 40)).foregroundColor(.gray)
-                    Text("No connected sites").foregroundColor(.secondary)
-                }
-            } else {
-                List(permManager.connectedSites) { site in
-                    HStack {
-                        if let icon = site.icon, let url = URL(string: icon) {
-                            AsyncImage(url: url) { image in
-                                image.resizable().frame(width: 32, height: 32).cornerRadius(8)
-                            } placeholder: { Color.gray.frame(width: 32, height: 32).cornerRadius(8) }
-                        }
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(site.name).fontWeight(.medium)
-                            Text(site.origin).font(.caption).foregroundColor(.secondary)
-                        }
-                        Spacer()
-                        if site.isConnected {
-                            Circle().fill(Color.green).frame(width: 8, height: 8)
-                        }
-                    }
-                    .swipeActions {
-                        Button("Disconnect") { permManager.disconnectSite(origin: site.origin) }
-                            .tint(.red)
-                    }
-                }.listStyle(.plain)
-            }
-        }
-        .navigationTitle("Connected Sites")
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                if !permManager.connectedSites.isEmpty {
-                    Button("Disconnect All") { permManager.disconnectAll() }
-                        .foregroundColor(.red)
-                }
-            }
-        }
-    }
-}
-
 /// Custom RPC View
 struct CustomRPCView: View {
     @StateObject private var rpcManager = CustomRPCManager.shared
@@ -598,14 +1393,14 @@ struct CustomRPCView: View {
     
     var body: some View {
         List {
-            Section("Add Custom RPC") {
-                TextField("Chain Name", text: $chainName)
-                TextField("RPC URL", text: $rpcUrl)
+            Section(L("Add Custom RPC")) {
+                TextField(L("Chain Name"), text: $chainName)
+                TextField(L("RPC URL"), text: $rpcUrl)
                     .keyboardType(.URL).autocapitalization(.none)
-                Button("Add") { addRPC() }.disabled(chainName.isEmpty || rpcUrl.isEmpty)
+                Button(L("Add")) { addRPC() }.disabled(chainName.isEmpty || rpcUrl.isEmpty)
             }
             
-            Section("Custom RPCs") {
+            Section(L("Custom RPCs")) {
                 ForEach(Array(rpcManager.customRPCs.keys.sorted()), id: \.self) { key in
                     if let config = rpcManager.customRPCs[key] {
                         HStack {
@@ -631,7 +1426,7 @@ struct CustomRPCView: View {
                 }
             }
         }
-        .navigationTitle("Custom RPC")
+        .navigationTitle(L("Custom RPC"))
     }
     
     private func addRPC() {
@@ -650,8 +1445,8 @@ struct CustomTestnetView: View {
             if testnetManager.testnets.isEmpty {
                 Section {
                     VStack(spacing: 8) {
-                        Text("No custom testnets").foregroundColor(.secondary)
-                        Button("Add Testnet") { showAddForm = true }
+                        Text(L("No custom testnets")).foregroundColor(.secondary)
+                        Button(L("Add Testnet")) { showAddForm = true }
                     }.frame(maxWidth: .infinity)
                 }
             } else {
@@ -671,7 +1466,7 @@ struct CustomTestnetView: View {
                 }
             }
         }
-        .navigationTitle("Custom Testnets")
+        .navigationTitle(L("Custom Testnets"))
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: { showAddForm = true }) {
@@ -699,11 +1494,11 @@ struct AddTestnetView: View {
     var body: some View {
         NavigationView {
             Form {
-                TextField("Chain ID", text: $chainId).keyboardType(.numberPad)
-                TextField("Chain Name", text: $name)
-                TextField("Native Token Symbol", text: $symbol)
-                TextField("RPC URL", text: $rpcUrl).keyboardType(.URL).autocapitalization(.none)
-                TextField("Block Explorer URL (optional)", text: $scanLink).keyboardType(.URL).autocapitalization(.none)
+                TextField(L("Chain ID"), text: $chainId).keyboardType(.numberPad)
+                TextField(L("Chain Name"), text: $name)
+                TextField(L("Native Token Symbol"), text: $symbol)
+                TextField(L("RPC URL"), text: $rpcUrl).keyboardType(.URL).autocapitalization(.none)
+                TextField(L("Block Explorer URL (optional)"), text: $scanLink).keyboardType(.URL).autocapitalization(.none)
                 
                 if let error = errorMessage {
                     Text(error).foregroundColor(.red).font(.caption)
@@ -716,9 +1511,9 @@ struct AddTestnetView: View {
                     }
                 }.disabled(chainId.isEmpty || name.isEmpty || rpcUrl.isEmpty || isAdding)
             }
-            .navigationTitle("Add Testnet")
+            .navigationTitle(L("Add Testnet"))
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) { Button("Cancel") { dismiss() } }
+                ToolbarItem(placement: .navigationBarLeading) { Button(L("Cancel")) { dismiss() } }
             }
         }
     }

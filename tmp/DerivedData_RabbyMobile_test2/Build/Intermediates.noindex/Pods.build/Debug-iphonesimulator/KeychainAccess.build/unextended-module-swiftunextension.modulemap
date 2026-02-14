@@ -1,0 +1,4 @@
+
+module KeychainAccess.__Swift {
+  exclude header "KeychainAccess-Swift.h"
+}

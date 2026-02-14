@@ -59,14 +59,14 @@ struct ActivitiesView: View {
                 
                 if isLoading {
                     Spacer()
-                    ProgressView("Loading activities...")
+                    ProgressView(L("Loading activities..."))
                     Spacer()
                 } else if filteredActivities.isEmpty {
                     Spacer()
                     VStack(spacing: 16) {
                         Image(systemName: "list.bullet.rectangle").font(.system(size: 48)).foregroundColor(.gray)
-                        Text("No activities found").foregroundColor(.secondary)
-                        Text("Your on-chain activities will appear here").font(.caption).foregroundColor(.gray)
+                        Text(L("No activities found")).foregroundColor(.secondary)
+                        Text(L("Your on-chain activities will appear here")).font(.caption).foregroundColor(.gray)
                     }
                     Spacer()
                 } else {
@@ -77,7 +77,7 @@ struct ActivitiesView: View {
                     .refreshable { await loadActivities() }
                 }
             }
-            .navigationTitle("Activities")
+            .navigationTitle(L("Activities"))
             .navigationBarTitleDisplayMode(.inline)
         }
         .onAppear { Task { await loadActivities() } }

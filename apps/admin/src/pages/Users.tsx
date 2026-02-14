@@ -13,9 +13,9 @@ const MOCK_USERS = [
 ];
 
 const STATUS_STYLES: Record<string, React.CSSProperties> = {
-  active: { background: '#f6ffed', color: '#389e0d', border: '1px solid #b7eb8f' },
-  inactive: { background: '#fff7e6', color: '#d46b08', border: '1px solid #ffd591' },
-  suspended: { background: '#fff2f0', color: '#cf1322', border: '1px solid #ffccc7' },
+  active: { background: 'var(--r-green-light, #f6ffed)', color: 'var(--r-green-default, #389e0d)', border: '1px solid rgba(22, 199, 132, 0.4)' },
+  inactive: { background: 'var(--r-orange-light, #fff7e6)', color: 'var(--r-orange-default, #d46b08)', border: '1px solid rgba(245, 158, 11, 0.35)' },
+  suspended: { background: 'var(--r-red-light, #fff2f0)', color: 'var(--r-red-default, #cf1322)', border: '1px solid rgba(234, 57, 67, 0.35)' },
 };
 
 const tableStyle: React.CSSProperties = {
@@ -23,13 +23,21 @@ const tableStyle: React.CSSProperties = {
 };
 
 const thStyle: React.CSSProperties = {
-  textAlign: 'left', padding: '12px 16px', borderBottom: '2px solid #f0f0f0',
-  color: '#6a7587', fontWeight: 600, fontSize: 12, textTransform: 'uppercase',
-  letterSpacing: '0.5px', background: '#fafafa',
+  textAlign: 'left',
+  padding: '12px 16px',
+  borderBottom: '2px solid var(--r-neutral-line, #f0f0f0)',
+  color: 'var(--r-neutral-foot, #6a7587)',
+  fontWeight: 600,
+  fontSize: 12,
+  textTransform: 'uppercase',
+  letterSpacing: '0.5px',
+  background: 'var(--r-neutral-bg-3, #fafafa)',
 };
 
 const tdStyle: React.CSSProperties = {
-  padding: '12px 16px', borderBottom: '1px solid #f0f0f0', color: '#3e495e',
+  padding: '12px 16px',
+  borderBottom: '1px solid var(--r-neutral-line, #f0f0f0)',
+  color: 'var(--r-neutral-body, #3e495e)',
 };
 
 export default function UsersPage() {
@@ -53,10 +61,10 @@ export default function UsersPage() {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-        <h2 style={{ margin: 0, fontSize: 22, color: '#192945' }}>User Management</h2>
+        <h2 style={{ margin: 0, fontSize: 22, color: 'var(--r-neutral-title-1, #192945)' }}>User Management</h2>
         <button style={{
           padding: '8px 20px', borderRadius: 8, border: 'none',
-          background: '#4c65ff', color: '#fff', fontSize: 13, fontWeight: 600,
+          background: 'var(--r-blue-default, #4c65ff)', color: '#fff', fontSize: 13, fontWeight: 600,
           cursor: 'pointer',
         }}>
           Export CSV
@@ -70,18 +78,20 @@ export default function UsersPage() {
           gap: 12, marginBottom: 20,
         }}>
           <div style={{
-            background: '#fff', borderRadius: 12, padding: '16px 20px',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+            background: 'var(--r-neutral-card-1, #fff)', borderRadius: 12, padding: '16px 20px',
+            boxShadow: 'var(--rabby-shadow-sm, 0 1px 3px rgba(0,0,0,0.06))',
+            border: '1px solid var(--r-neutral-line, #f0f0f0)',
           }}>
-            <div style={{ fontSize: 12, color: '#6a7587', marginBottom: 4 }}>Registered Users (API)</div>
-            <div style={{ fontSize: 24, fontWeight: 700, color: '#192945' }}>{stats.totalUsers}</div>
+            <div style={{ fontSize: 12, color: 'var(--r-neutral-foot, #6a7587)', marginBottom: 4 }}>Registered Users (API)</div>
+            <div style={{ fontSize: 24, fontWeight: 700, color: 'var(--r-neutral-title-1, #192945)' }}>{stats.totalUsers}</div>
           </div>
           <div style={{
-            background: '#fff', borderRadius: 12, padding: '16px 20px',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+            background: 'var(--r-neutral-card-1, #fff)', borderRadius: 12, padding: '16px 20px',
+            boxShadow: 'var(--rabby-shadow-sm, 0 1px 3px rgba(0,0,0,0.06))',
+            border: '1px solid var(--r-neutral-line, #f0f0f0)',
           }}>
-            <div style={{ fontSize: 12, color: '#6a7587', marginBottom: 4 }}>Total Addresses (API)</div>
-            <div style={{ fontSize: 24, fontWeight: 700, color: '#192945' }}>{stats.totalAddresses}</div>
+            <div style={{ fontSize: 12, color: 'var(--r-neutral-foot, #6a7587)', marginBottom: 4 }}>Total Addresses (API)</div>
+            <div style={{ fontSize: 24, fontWeight: 700, color: 'var(--r-neutral-title-1, #192945)' }}>{stats.totalAddresses}</div>
           </div>
         </div>
       )}
@@ -89,21 +99,26 @@ export default function UsersPage() {
       {/* Filters */}
       <div style={{
         display: 'flex', gap: 12, marginBottom: 20, padding: 16,
-        background: '#fff', borderRadius: 12, boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+        background: 'var(--r-neutral-card-1, #fff)', borderRadius: 12,
+        boxShadow: 'var(--rabby-shadow-sm, 0 1px 3px rgba(0,0,0,0.06))',
+        border: '1px solid var(--r-neutral-line, #f0f0f0)',
       }}>
         <input
           value={search} onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by address or nickname..."
           style={{
             flex: 1, padding: '8px 14px', borderRadius: 8,
-            border: '1px solid #d9d9d9', fontSize: 13,
+            border: '1px solid var(--r-neutral-line, #d9d9d9)', fontSize: 13,
+            background: 'var(--r-neutral-bg-3, #f2f4f7)',
+            color: 'var(--r-neutral-title-1, #192945)',
           }}
         />
         <select
           value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}
           style={{
-            padding: '8px 14px', borderRadius: 8, border: '1px solid #d9d9d9',
-            fontSize: 13, background: '#fff', minWidth: 140,
+            padding: '8px 14px', borderRadius: 8, border: '1px solid var(--r-neutral-line, #d9d9d9)',
+            fontSize: 13, background: 'var(--r-neutral-bg-3, #fff)', minWidth: 140,
+            color: 'var(--r-neutral-body, #3e495e)',
           }}
         >
           <option value="all">All Status</option>
@@ -115,8 +130,9 @@ export default function UsersPage() {
 
       {/* Table */}
       <div style={{
-        background: '#fff', borderRadius: 12, overflow: 'hidden',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+        background: 'var(--r-neutral-card-1, #fff)', borderRadius: 12, overflow: 'hidden',
+        boxShadow: 'var(--rabby-shadow-sm, 0 1px 3px rgba(0,0,0,0.06))',
+        border: '1px solid var(--r-neutral-line, #f0f0f0)',
       }}>
         <table style={tableStyle}>
           <thead>
@@ -133,13 +149,13 @@ export default function UsersPage() {
           <tbody>
             {filtered.map((user) => (
               <tr key={user.id} style={{ transition: 'background 150ms' }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = '#fafbfc')}
+                onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--r-neutral-bg-3, #fafbfc)')}
                 onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
               >
                 <td style={tdStyle}>
                   <div>
-                    <div style={{ fontWeight: 600, color: '#192945', marginBottom: 2 }}>{user.nickname}</div>
-                    <div style={{ fontSize: 11, color: '#8c95a6', fontFamily: 'monospace' }}>
+                    <div style={{ fontWeight: 600, color: 'var(--r-neutral-title-1, #192945)', marginBottom: 2 }}>{user.nickname}</div>
+                    <div style={{ fontSize: 11, color: 'var(--r-neutral-foot, #8c95a6)', fontFamily: 'monospace' }}>
                       {user.address.slice(0, 8)}...{user.address.slice(-6)}
                     </div>
                   </div>
@@ -159,14 +175,14 @@ export default function UsersPage() {
                 <td style={tdStyle}>
                   <div style={{ display: 'flex', gap: 6 }}>
                     <button style={{
-                      padding: '4px 10px', borderRadius: 6, border: '1px solid #d9d9d9',
-                      background: '#fff', fontSize: 11, cursor: 'pointer', color: '#4c65ff',
+                      padding: '4px 10px', borderRadius: 6, border: '1px solid var(--r-neutral-line, #d9d9d9)',
+                      background: 'var(--r-neutral-card-1, #fff)', fontSize: 11, cursor: 'pointer', color: 'var(--r-blue-default, #4c65ff)',
                     }}>
                       View
                     </button>
                     <button style={{
-                      padding: '4px 10px', borderRadius: 6, border: '1px solid #d9d9d9',
-                      background: '#fff', fontSize: 11, cursor: 'pointer', color: '#6a7587',
+                      padding: '4px 10px', borderRadius: 6, border: '1px solid var(--r-neutral-line, #d9d9d9)',
+                      background: 'var(--r-neutral-card-1, #fff)', fontSize: 11, cursor: 'pointer', color: 'var(--r-neutral-foot, #6a7587)',
                     }}>
                       Edit
                     </button>
@@ -179,14 +195,15 @@ export default function UsersPage() {
         {/* Pagination */}
         <div style={{
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          padding: '12px 16px', borderTop: '1px solid #f0f0f0', fontSize: 13, color: '#6a7587',
+          padding: '12px 16px', borderTop: '1px solid var(--r-neutral-line, #f0f0f0)', fontSize: 13, color: 'var(--r-neutral-foot, #6a7587)',
         }}>
           <span>Showing {filtered.length} of {MOCK_USERS.length} users</span>
           <div style={{ display: 'flex', gap: 4 }}>
             {[1, 2, 3].map((p) => (
               <button key={p} style={{
-                width: 32, height: 32, borderRadius: 6, border: p === 1 ? 'none' : '1px solid #d9d9d9',
-                background: p === 1 ? '#4c65ff' : '#fff', color: p === 1 ? '#fff' : '#3e495e',
+                width: 32, height: 32, borderRadius: 6, border: p === 1 ? 'none' : '1px solid var(--r-neutral-line, #d9d9d9)',
+                background: p === 1 ? 'var(--r-blue-default, #4c65ff)' : 'var(--r-neutral-card-1, #fff)',
+                color: p === 1 ? '#fff' : 'var(--r-neutral-body, #3e495e)',
                 cursor: 'pointer', fontSize: 13,
               }}>
                 {p}

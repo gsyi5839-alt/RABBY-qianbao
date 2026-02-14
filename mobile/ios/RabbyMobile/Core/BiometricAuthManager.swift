@@ -138,13 +138,16 @@ class BiometricAuthManager: ObservableObject {
     
     /// Async password getter with biometric prompt
     func getBiometricPasswordAsync() async throws -> String {
+        let context = LAContext()
+        context.localizedReason = "Authenticate to unlock wallet"
+
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: "com.rabby.wallet.biometric",
             kSecAttrAccount as String: "walletPassword",
             kSecReturnData as String: true,
             kSecMatchLimit as String: kSecMatchLimitOne,
-            kSecUseOperationPrompt as String: "Authenticate to unlock wallet"
+            kSecUseAuthenticationContext as String: context
         ]
         
         var result: AnyObject?

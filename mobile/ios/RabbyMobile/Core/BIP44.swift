@@ -1,5 +1,6 @@
 import Foundation
 import CryptoKit
+import secp256k1
 
 /// BIP44 HD Wallet key derivation implementation
 /// Reference: https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki
@@ -57,31 +58,43 @@ class BIP44 {
     // MARK: - Child Key Derivation
     
     private static func deriveChild(parent: ExtendedKey, index: UInt32, hardened: Bool) throws -> ExtendedKey {
-        var data = Data()
-        
-        if hardened {
-            // Hardened derivation: 0x00 || ser256(kpar) || ser32(i)
-            data.append(0x00)
-            data.append(parent.privateKey)
-        } else {
-            // Normal derivation: serP(point(kpar)) || ser32(i)
-            let publicKey = try derivePublicKey(privateKey: parent.privateKey)
-            data.append(publicKey)
+        // BIP32: If IL >= n or ki == 0, the resulting key is invalid; proceed with next index.
+        // In practice this should almost never happen, but we implement a bounded retry to be spec-correct.
+        var attemptIndex = index
+        for _ in 0..<1024 {
+            var data = Data()
+            
+            if hardened {
+                // Hardened derivation: 0x00 || ser256(kpar) || ser32(i)
+                data.append(0x00)
+                data.append(parent.privateKey)
+            } else {
+                // Normal derivation: serP(point(kpar)) || ser32(i)
+                // BIP32 uses COMPRESSED public key (33 bytes).
+                let compressedPubKey = try Secp256k1Helper.getCompressedPublicKey(privateKey: parent.privateKey)
+                data.append(compressedPubKey)
+            }
+            
+            var indexBytes = attemptIndex.bigEndian
+            data.append(Data(bytes: &indexBytes, count: 4))
+            
+            // HMAC-SHA512
+            let hmacResult = hmacSHA512(key: parent.chainCode, data: data)
+            
+            let il = hmacResult.prefix(32)
+            let ir = hmacResult.suffix(32)
+            
+            // Calculate child private key: parse256(IL) + kpar (mod n)
+            do {
+                let childPrivateKey = try addPrivateKeys(il, parent.privateKey)
+                return ExtendedKey(privateKey: childPrivateKey, chainCode: ir)
+            } catch BIP44Error.derivationFailed {
+                attemptIndex &+= 1
+                continue
+            }
         }
         
-        var indexBytes = index.bigEndian
-        data.append(Data(bytes: &indexBytes, count: 4))
-        
-        // HMAC-SHA512
-        let hmacResult = hmacSHA512(key: parent.chainCode, data: data)
-        
-        let il = hmacResult.prefix(32)
-        let ir = hmacResult.suffix(32)
-        
-        // Calculate child private key: parse256(IL) + kpar (mod n)
-        let childPrivateKey = try addPrivateKeys(il, parent.privateKey)
-        
-        return ExtendedKey(privateKey: childPrivateKey, chainCode: ir)
+        throw BIP44Error.derivationFailed
     }
     
     // MARK: - Path Parsing
@@ -136,20 +149,33 @@ class BIP44 {
     }
     
     private static func addPrivateKeys(_ key1: Data, _ key2: Data) throws -> Data {
-        // This is a simplified version
-        // Real implementation needs proper modular arithmetic with secp256k1's order
         guard key1.count == 32 && key2.count == 32 else {
             throw BIP44Error.invalidKeyLength
         }
         
-        // For now, simple XOR (NOT CORRECT - needs proper secp256k1 implementation)
-        // TODO: Replace with real secp256k1 scalar addition
-        var result = Data(count: 32)
-        for i in 0..<32 {
-            result[i] = key1[i] ^ key2[i]
+        guard let context = secp256k1_context_create(UInt32(SECP256K1_CONTEXT_SIGN)) else {
+            throw BIP44Error.derivationFailed
+        }
+        defer { secp256k1_context_destroy(context) }
+        
+        // secp256k1 expects big-endian 32-byte scalars.
+        var childKey = key2
+        let tweakResult = childKey.withUnsafeMutableBytes { childPtr in
+            key1.withUnsafeBytes { tweakPtr in
+                secp256k1_ec_privkey_tweak_add(
+                    context,
+                    childPtr.bindMemory(to: UInt8.self).baseAddress!,
+                    tweakPtr.bindMemory(to: UInt8.self).baseAddress!
+                )
+            }
         }
         
-        return result
+        guard tweakResult == 1 else {
+            // Either IL is out of range (>= n) or derived key is 0.
+            throw BIP44Error.derivationFailed
+        }
+        
+        return childKey
     }
     
     // MARK: - Extended Key

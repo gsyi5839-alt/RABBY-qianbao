@@ -29,7 +29,7 @@ struct WhitelistInputView: View {
                     addressList
                 }
             }
-            .navigationTitle("Whitelist")
+            .navigationTitle(L("Whitelist"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -41,15 +41,15 @@ struct WhitelistInputView: View {
             .sheet(isPresented: $showAddSheet) {
                 addAddressSheet
             }
-            .alert("Remove Address", isPresented: $showDeleteConfirm) {
-                Button("Cancel", role: .cancel) {}
-                Button("Remove", role: .destructive) {
+            .alert(L("Remove Address"), isPresented: $showDeleteConfirm) {
+                Button(L("Cancel"), role: .cancel) {}
+                Button(L("Remove"), role: .destructive) {
                     if let addr = addressToDelete {
                         whitelistManager.removeFromWhitelist(addr)
                     }
                 }
             } message: {
-                Text("This address will be removed from the whitelist. You won't be able to send to it when whitelist is enabled.")
+                Text(L("This address will be removed from the whitelist. You won't be able to send to it when whitelist is enabled."))
             }
         }
     }
@@ -88,14 +88,14 @@ struct WhitelistInputView: View {
             Spacer()
             Image(systemName: "list.bullet.rectangle")
                 .font(.system(size: 48)).foregroundColor(.gray)
-            Text("No whitelisted addresses")
+            Text(L("No whitelisted addresses"))
                 .font(.headline).foregroundColor(.secondary)
-            Text("Add addresses that you frequently send to for extra security")
+            Text(L("Add addresses that you frequently send to for extra security"))
                 .font(.caption).foregroundColor(.gray)
                 .multilineTextAlignment(.center).padding(.horizontal, 40)
             
             Button(action: { showAddSheet = true }) {
-                Label("Add Address", systemImage: "plus")
+                Label(L("Add Address"), systemImage: "plus")
                     .font(.headline).padding()
                     .background(Color.blue).foregroundColor(.white).cornerRadius(12)
             }
@@ -135,7 +135,7 @@ struct WhitelistInputView: View {
                     .buttonStyle(.plain)
                 }
                 .swipeActions(edge: .trailing) {
-                    Button("Delete", role: .destructive) {
+                    Button(L("Delete"), role: .destructive) {
                         addressToDelete = address
                         showDeleteConfirm = true
                     }
@@ -149,15 +149,15 @@ struct WhitelistInputView: View {
         NavigationView {
             VStack(spacing: 20) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Address").font(.headline)
-                    TextField("0x...", text: $newAddress)
+                    Text(L("Address")).font(.headline)
+                    TextField(L("0x..."), text: $newAddress)
                         .padding().background(Color(.systemGray6)).cornerRadius(8)
                         .autocapitalization(.none)
                 }
                 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Alias (Optional)").font(.headline)
-                    TextField("Enter a name for this address", text: $newAlias)
+                    Text(L("Alias (Optional)")).font(.headline)
+                    TextField(L("Enter a name for this address"), text: $newAlias)
                         .padding().background(Color(.systemGray6)).cornerRadius(8)
                 }
                 
@@ -168,7 +168,7 @@ struct WhitelistInputView: View {
                 // Quick add from contacts
                 if !contactBook.contacts.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("From Contacts").font(.headline)
+                        Text(L("From Contacts")).font(.headline)
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 8) {
                                 ForEach(contactBook.contacts.filter {
@@ -194,7 +194,7 @@ struct WhitelistInputView: View {
                 Spacer()
                 
                 Button(action: addAddress) {
-                    Text("Add to Whitelist")
+                    Text(L("Add to Whitelist"))
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity).padding()
                         .background(canAdd ? Color.blue : Color.gray)
@@ -203,11 +203,11 @@ struct WhitelistInputView: View {
                 .disabled(!canAdd)
             }
             .padding()
-            .navigationTitle("Add Address")
+            .navigationTitle(L("Add Address"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { showAddSheet = false }
+                    Button(L("Cancel")) { showAddSheet = false }
                 }
             }
         }

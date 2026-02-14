@@ -281,7 +281,73 @@ class OpenAPIService: ObservableObject {
     func claimRabbyPoints(address: String) async throws -> PointsInfo {
         return try await post("/v1/points/claim", body: ["id": address])
     }
-    
+
+    struct LeaderboardEntry: Codable, Identifiable {
+        let id: String
+        let address: String
+        let points: Int
+        let rank: Int
+    }
+
+    struct LeaderboardResponse: Codable {
+        let list: [LeaderboardEntry]
+        let total: Int
+        let my_rank: Int?
+        let my_points: Int?
+    }
+
+    func getPointsLeaderboard(page: Int, limit: Int) async throws -> LeaderboardResponse {
+        return try await get("/v1/points/leaderboard", params: [
+            "page": "\(page)",
+            "limit": "\(limit)"
+        ])
+    }
+
+    struct VerifyAddressResponse: Codable {
+        let success: Bool
+        let points_awarded: Int?
+    }
+
+    func verifyPointsAddress(address: String, signature: String) async throws -> VerifyAddressResponse {
+        return try await post("/v1/points/verify", body: [
+            "address": address,
+            "signature": signature
+        ])
+    }
+
+    struct PointsHistoryItem: Codable, Identifiable {
+        let id: String
+        let type: String // "daily", "referral", "transaction", "swap", "special_event"
+        let points: Int
+        let description: String?
+        let created_at: Double
+    }
+
+    struct PointsHistoryResponse: Codable {
+        let list: [PointsHistoryItem]
+        let total: Int
+        let has_more: Bool
+    }
+
+    func getPointsHistory(address: String, page: Int, limit: Int) async throws -> PointsHistoryResponse {
+        return try await get("/v1/points/history", params: [
+            "id": address,
+            "page": "\(page)",
+            "limit": "\(limit)"
+        ])
+    }
+
+    struct CheckInInfo: Codable {
+        let consecutive_days: Int
+        let multiplier: Double
+        let checked_in_dates: [String] // "yyyy-MM-dd" format
+        let already_checked_in_today: Bool
+    }
+
+    func getCheckInInfo(address: String) async throws -> CheckInInfo {
+        return try await get("/v1/points/checkin_info", params: ["id": address])
+    }
+
     // MARK: - Transaction History APIs
     
     struct HistoryItem: Codable {

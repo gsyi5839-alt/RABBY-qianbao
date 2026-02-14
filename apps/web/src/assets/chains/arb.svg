@@ -1,0 +1,9 @@
+<svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- ARB - Arbitrum -->
+  <rect x="4" y="4" width="16" height="16" rx="4" fill="#28a0f0" opacity="0.2"/>
+  <path d="M12 4v3l1.5 4.5l4 4.5 6-4 6h2l3 4.5" stroke="#28a0f0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  <path d="M7 7v2l2 2.5m-2-5 3.5" stroke="#28a0f0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  <circle cx="10" cy="13" r="1.5" fill="#fff"/>
+  <text x="12" y="20" font-size="7" fill="#28a0f0" text-anchor="middle" font-weight="bold">A</text>
+  <text x="12" y="16" font-size="4" fill="#fff" text-anchor="middle">RB</text>
+</svg>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>FormatVersion</key>
+	<integer>1</integer>
+	<key>Store</key>
+	<dict>
+		<key>RabbyMobileTests</key>
+		<dict>
+			<key>CorrectnessVectorsTests</key>
+			<dict>
+				<key>testBIP44DerivationVectors</key>
+				<dict>
+					<key>mrnet</key>
+					<real>0.054284930229187012</real>
+				</dict>
+				<key>testEIP1559SignedTransactionVector</key>
+				<dict>
+					<key>mrnet</key>
+					<real>0.016041040420532227</real>
+				</dict>
+				<key>testEIP712TypedDataVector</key>
+				<dict>
+					<key>mrnet</key>
+					<real>0.023887991905212402</real>
+				</dict>
+				<key>testKeystoreV3ScryptVector</key>
+				<dict>
+					<key>mrnet</key>
+					<real>25.690753936767578</real>
+				</dict>
+				<key>testLegacySignedTransactionVector</key>
+				<dict>
+					<key>mrnet</key>
+					<real>0.0098940134048461914</real>
+				</dict>
+				<key>testPersonalSignVector</key>
+				<dict>
+					<key>mrnet</key>
+					<real>0.0084140300750732422</real>
+				</dict>
+			</dict>
+		</dict>
+	</dict>
+</dict>
+</plist>

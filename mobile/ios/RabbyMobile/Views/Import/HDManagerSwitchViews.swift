@@ -64,7 +64,7 @@ struct HDManagerView: View {
                 // Address list
                 if isLoading && derivedAddresses.isEmpty {
                     Spacer()
-                    ProgressView("Deriving addresses...")
+                    ProgressView(L("Deriving addresses..."))
                     Spacer()
                 } else {
                     addressList
@@ -73,11 +73,11 @@ struct HDManagerView: View {
                 // Bottom action bar
                 bottomBar
             }
-            .navigationTitle("Manage HD Wallet")
+            .navigationTitle(L("Manage HD Wallet"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") { dismiss() }
+                    Button(L("Close")) { dismiss() }
                 }
             }
             .onAppear { loadAddresses() }
@@ -87,7 +87,7 @@ struct HDManagerView: View {
     // MARK: - Subviews
     
     private var addressTypeSelector: some View {
-        Picker("Address Type", selection: $addressType) {
+        Picker(L("Address Type"), selection: $addressType) {
             ForEach(AddressType.allCases, id: \.self) { type in
                 Text(type.rawValue).tag(type)
             }
@@ -108,7 +108,7 @@ struct HDManagerView: View {
                 .foregroundColor(.blue)
             
             VStack(alignment: .leading, spacing: 2) {
-                Text("Derivation Path")
+                Text(L("Derivation Path"))
                     .font(.caption).foregroundColor(.secondary)
                 Text(hdPath)
                     .font(.system(.subheadline, design: .monospaced))
@@ -161,7 +161,7 @@ struct HDManagerView: View {
                     }
                     
                     if addr.isImported {
-                        Text("Imported")
+                        Text(L("Imported"))
                             .font(.caption2)
                             .padding(.horizontal, 6).padding(.vertical, 2)
                             .background(Color.green.opacity(0.1))
@@ -334,11 +334,11 @@ struct SwitchAccountPopup: View {
                 }
             }
             .listStyle(.plain)
-            .navigationTitle("Switch Account")
+            .navigationTitle(L("Switch Account"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") { isPresented = false }
+                    Button(L("Done")) { isPresented = false }
                 }
             }
         }
@@ -362,19 +362,19 @@ struct SwitchChainPopup: View {
         NavigationView {
             VStack(spacing: 0) {
                 // Search
-                TextField("Search chains", text: $searchText)
+                TextField(L("Search chains"), text: $searchText)
                     .textFieldStyle(.roundedBorder)
                     .padding()
                 
                 List {
-                    Section("Mainnets") {
+                    Section(L("Mainnets")) {
                         ForEach(filteredMainnets) { chain in
                             chainRow(chain)
                         }
                     }
                     
                     if prefManager.showTestnet && !filteredTestnets.isEmpty {
-                        Section("Testnets") {
+                        Section(L("Testnets")) {
                             ForEach(filteredTestnets) { chain in
                                 chainRow(chain)
                             }
@@ -383,11 +383,11 @@ struct SwitchChainPopup: View {
                 }
                 .listStyle(.insetGrouped)
             }
-            .navigationTitle("Switch Chain")
+            .navigationTitle(L("Switch Chain"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") { isPresented = false }
+                    Button(L("Done")) { isPresented = false }
                 }
             }
         }

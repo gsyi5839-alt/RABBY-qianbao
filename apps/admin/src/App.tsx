@@ -18,20 +18,50 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const basename =
+    typeof window === 'undefined'
+      ? '/admin'
+      : window.location.pathname === '/admin' ||
+          window.location.pathname.startsWith('/admin/')
+        ? '/admin'
+        : '/';
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="dashboard/stats" element={<DashboardPage />} />
           <Route path="users" element={<UsersPage />} />
+          <Route path="users/:id" element={<UsersPage />} />
+          <Route path="users/analytics" element={<UsersPage />} />
           <Route path="chains" element={<ChainsPage />} />
+          <Route path="chains/add" element={<ChainsPage />} />
+          <Route path="chains/:id/edit" element={<ChainsPage />} />
+          <Route path="chains/rpc" element={<ChainsPage />} />
           <Route path="tokens" element={<TokensPage />} />
+          <Route path="tokens/list" element={<TokensPage />} />
+          <Route path="tokens/blacklist" element={<TokensPage />} />
+          <Route path="tokens/prices" element={<TokensPage />} />
           <Route path="security" element={<SecurityPage />} />
+          <Route path="security/rules" element={<SecurityPage />} />
+          <Route path="security/phishing" element={<SecurityPage />} />
+          <Route path="security/contracts" element={<SecurityPage />} />
+          <Route path="security/alerts" element={<SecurityPage />} />
+          <Route path="security/whitelist" element={<SecurityPage />} />
           <Route path="dapps" element={<DappsPage />} />
+          <Route path="dapps/list" element={<DappsPage />} />
+          <Route path="dapps/categories" element={<DappsPage />} />
+          <Route path="dapps/review" element={<DappsPage />} />
           <Route path="audit" element={<AuditPage />} />
+          <Route path="audit/operations" element={<AuditPage />} />
+          <Route path="audit/api-logs" element={<AuditPage />} />
           <Route path="system" element={<SystemPage />} />
+          <Route path="system/admins" element={<SystemPage />} />
+          <Route path="system/roles" element={<SystemPage />} />
+          <Route path="system/api-keys" element={<SystemPage />} />
+          <Route path="system/config" element={<SystemPage />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Route>
       </Routes>

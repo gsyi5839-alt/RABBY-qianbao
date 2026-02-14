@@ -25,110 +25,207 @@ struct SendTokenView: View {
     @State private var estimatedGasCost: String = ""
     @State private var isEstimatingGas = false
     @State private var showWhitelistWarning = false
-    
+    @State private var showChainSelector = false
+
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(spacing: 20) {
-                    // Recipient section
-                    recipientSection
-                    
-                    // Token selector
-                    tokenSelectorSection
-                    
-                    // Amount section
-                    amountSection
-                    
-                    // Gas estimation
-                    gasEstimationSection
-                    
-                    // Error
-                    if !errorMessage.isEmpty {
-                        HStack(spacing: 6) {
-                            Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundColor(.red)
-                            Text(errorMessage)
-                                .foregroundColor(.red)
-                                .font(.caption)
-                        }
-                        .padding(.horizontal)
-                    }
-                    
-                    // Send button
-                    Button(action: sendTransaction) {
-                        HStack {
-                            if isProcessing {
-                                ProgressView()
-                                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                                    .scaleEffect(0.8)
-                            }
-                            Text(isProcessing ? "Sending..." : "Send")
-                                .fontWeight(.semibold)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(isValid ? Color.blue : Color.gray)
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
-                    }
-                    .disabled(isProcessing || !isValid)
-                    .padding(.horizontal)
-                }
-                .padding(.vertical)
-            }
-            .navigationTitle("Send")
+            mainContent
+        }
+    }
+
+    private var mainContent: some View {
+        contentScrollView
+            .navigationTitle(L("Send"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
+                    Button(L("Cancel")) {
                         presentationMode.wrappedValue.dismiss()
                     }
                 }
             }
-            .alert("Transaction Sent", isPresented: $showSuccess) {
-                Button("OK") {
-                    presentationMode.wrappedValue.dismiss()
-                }
-            } message: {
-                Text("Transaction hash:\n\(txHash)")
-            }
-            .alert("Whitelist Warning", isPresented: $showWhitelistWarning) {
-                Button("Cancel", role: .cancel) {}
-                Button("Send Anyway", role: .destructive) {
-                    executeSend()
-                }
-            } message: {
-                Text("The recipient address is not in your whitelist. Are you sure you want to send?")
-            }
+            .modifier(AlertsModifier(
+                showSuccess: $showSuccess,
+                showWhitelistWarning: $showWhitelistWarning,
+                txHash: txHash,
+                onDismiss: { presentationMode.wrappedValue.dismiss() },
+                onExecuteSend: executeSend
+            ))
             .sheet(isPresented: $showTokenSelector) {
-                TokenSelectorSheet(selectedToken: $selectedToken, address: keyringManager.currentAccount?.address ?? "")
+                TokenSelectorSheet(
+                    excludeToken: selectedToken.map {
+                        SwapManager.Token(id: $0.id, chain: "", symbol: $0.symbol, decimals: $0.decimals, address: $0.address, logo: $0.logoURL, amount: nil, price: $0.price)
+                    },
+                    onSelect: { token in
+                        selectedToken = TokenItem(id: token.id, chainId: 0, address: token.address, symbol: token.symbol, name: token.symbol, decimals: token.decimals, logoURL: token.logo, price: token.price ?? 0, priceChange24h: nil, isNative: token.address.isEmpty || token.address == "0x")
+                    }
+                )
             }
-            .sheet(isPresented: $showContactPicker) {
-                ContactPickerSheet(selectedAddress: $recipient)
+            .modifier(SheetsModifier(
+                showChainSelector: $showChainSelector,
+                showContactPicker: $showContactPicker,
+                selectedChain: $chainManager.selectedChain,
+                recipient: $recipient,
+                onChainSelected: onChainChanged
+            ))
+    }
+
+    private var contentScrollView: some View {
+        ScrollView {
+            VStack(spacing: 20) {
+                chainSelectorSection
+                recipientSection
+                tokenSelectorSection
+                amountSection
+                gasEstimationSection
+                errorSection
+                sendButtonSection
             }
+            .padding(.vertical)
         }
+    }
+
+    @ViewBuilder
+    private var errorSection: some View {
+        if !errorMessage.isEmpty {
+            HStack(spacing: 6) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundColor(.red)
+                Text(errorMessage)
+                    .foregroundColor(.red)
+                    .font(.caption)
+            }
+            .padding(.horizontal)
+        }
+    }
+
+    private var sendButtonSection: some View {
+        Button(action: sendTransaction) {
+            HStack {
+                if isProcessing {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .scaleEffect(0.8)
+                }
+                Text(isProcessing ? LocalizationManager.shared.t("Sending...") : LocalizationManager.shared.t("Send"))
+                    .fontWeight(.semibold)
+            }
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(isValid ? Color.blue : Color.gray)
+            .foregroundColor(.white)
+            .cornerRadius(12)
+        }
+        .disabled(isProcessing || !isValid)
+        .padding(.horizontal)
     }
     
     // MARK: - Sections
-    
+
+    private var chainSelectorSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(L("Chain"))
+                .font(.headline)
+
+            Button(action: { showChainSelector = true }) {
+                HStack(spacing: 10) {
+                    chainSelectorContent
+
+                    Spacer()
+
+                    Image(systemName: "chevron.down")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .padding(12)
+                .background(Color(.systemGray6))
+                .cornerRadius(10)
+            }
+        }
+        .padding(.horizontal)
+    }
+
+    @ViewBuilder
+    private var chainSelectorContent: some View {
+        if let chain = chainManager.selectedChain {
+            chainIconView(chain)
+                .frame(width: 28, height: 28)
+                .clipShape(Circle())
+
+            Text(chain.name)
+                .fontWeight(.medium)
+                .foregroundColor(.primary)
+        } else {
+            Image(systemName: "link.circle")
+                .foregroundColor(.blue)
+            Text(L("Select Chain"))
+                .foregroundColor(.blue)
+        }
+    }
+
+    private func chainIconView(_ chain: Chain) -> some View {
+        Group {
+            if let url = URL(string: chain.logo), chain.logo.hasPrefix("http") {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image.resizable().scaledToFit()
+                    default:
+                        chainIconFallback(chain)
+                    }
+                }
+            } else {
+                chainIconFallback(chain)
+            }
+        }
+    }
+
+    private func chainIconFallback(_ chain: Chain) -> some View {
+        Circle()
+            .fill(Color.purple.opacity(0.15))
+            .overlay(
+                Text(String(chain.symbol.prefix(2)))
+                    .font(.caption2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.purple)
+            )
+    }
+
+    /// Called after the user picks a different chain in the sheet.
+    private func onChainChanged(_ chain: Chain) {
+        // Persist selection via ChainManager
+        chainManager.selectChain(chain)
+
+        // Clear the previously-selected token (it belongs to the old chain)
+        selectedToken = nil
+
+        // Reset gas estimation fields
+        estimatedGas = ""
+        estimatedGasCost = ""
+
+        // Reset amount
+        amount = ""
+        errorMessage = ""
+    }
+
     private var recipientSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("Recipient")
+                Text(L("Recipient"))
                     .font(.headline)
                 Spacer()
                 // Address book button
                 Button(action: { showContactPicker = true }) {
                     HStack(spacing: 4) {
                         Image(systemName: "person.crop.circle")
-                        Text("Contacts")
+                        Text(L("Contacts"))
                     }
                     .font(.caption)
                     .foregroundColor(.blue)
                 }
             }
             
-            TextField("Address (0x...) or ENS", text: $recipient)
+            TextField(L("Address (0x...) or ENS"), text: $recipient)
                 .autocapitalization(.none)
                 .disableAutocorrection(true)
                 .font(.system(.body, design: .monospaced))
@@ -142,7 +239,7 @@ struct SendTokenView: View {
                     let isValidAddr = EthereumUtil.isValidAddress(recipient)
                     Image(systemName: isValidAddr ? "checkmark.circle.fill" : "xmark.circle.fill")
                         .foregroundColor(isValidAddr ? .green : .red)
-                    Text(isValidAddr ? "Valid address" : "Invalid address")
+                    Text(isValidAddr ? LocalizationManager.shared.t("Valid address") : LocalizationManager.shared.t("Invalid address"))
                         .font(.caption)
                         .foregroundColor(isValidAddr ? .green : .red)
                     
@@ -160,7 +257,7 @@ struct SendTokenView: View {
     
     private var tokenSelectorSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Token")
+            Text(L("Token"))
                 .font(.headline)
             
             Button(action: { showTokenSelector = true }) {
@@ -189,7 +286,7 @@ struct SendTokenView: View {
                     } else {
                         Image(systemName: "plus.circle")
                             .foregroundColor(.blue)
-                        Text("Select Token")
+                        Text(L("Select Token"))
                             .foregroundColor(.blue)
                     }
                     Spacer()
@@ -207,16 +304,16 @@ struct SendTokenView: View {
     private var amountSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("Amount")
+                Text(L("Amount"))
                     .font(.headline)
                 Spacer()
-                Button("Max") { setMaxAmount() }
+                Button(L("Max")) { setMaxAmount() }
                     .font(.caption.weight(.semibold))
                     .foregroundColor(.blue)
             }
             
             HStack {
-                TextField("0.0", text: $amount)
+                TextField(L("0.0"), text: $amount)
                     .keyboardType(.decimalPad)
                     .font(.system(size: 24, weight: .semibold, design: .monospaced))
                     .onChange(of: amount) { _ in estimateGasFee() }
@@ -237,7 +334,7 @@ struct SendTokenView: View {
     private var gasEstimationSection: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
-                Text("Estimated Gas")
+                Text(L("Estimated Gas"))
                     .font(.caption)
                     .foregroundColor(.secondary)
                 Spacer()
@@ -295,7 +392,7 @@ struct SendTokenView: View {
                 }
             } catch {
                 await MainActor.run {
-                    estimatedGasCost = "Unable to estimate"
+                    estimatedGasCost = LocalizationManager.shared.t("Unable to estimate")
                     isEstimatingGas = false
                 }
             }
@@ -382,91 +479,49 @@ struct SendTokenView: View {
     }
 }
 
-// MARK: - Token Selector Sheet
+// MARK: - View Modifiers
 
-struct TokenSelectorSheet: View {
-    @Binding var selectedToken: TokenItem?
-    let address: String
-    @Environment(\.dismiss) var dismiss
-    @StateObject private var tokenManager = TokenManager.shared
-    @StateObject private var chainManager = ChainManager.shared
-    @State private var searchText = ""
-    
-    var body: some View {
-        NavigationView {
-            List {
-                // Available tokens
-                let tokens = filteredTokens
-                if tokens.isEmpty {
-                    VStack(spacing: 12) {
-                        Image(systemName: "magnifyingglass")
-                            .font(.title)
-                            .foregroundColor(.gray)
-                        Text("No tokens found")
-                            .foregroundColor(.secondary)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 40)
-                } else {
-                    ForEach(tokens, id: \.id) { token in
-                        Button(action: {
-                            selectedToken = token
-                            dismiss()
-                        }) {
-                            HStack {
-                                Circle()
-                                    .fill(Color.blue.opacity(0.2))
-                                    .frame(width: 36, height: 36)
-                                    .overlay(
-                                        Text(String(token.symbol.prefix(1)))
-                                            .font(.caption)
-                                            .fontWeight(.bold)
-                                            .foregroundColor(.blue)
-                                    )
-                                
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(token.symbol)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.primary)
-                                    Text(token.name)
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                                Spacer()
-                                if let balance = tokenManager.getCachedBalance(tokenId: token.id) {
-                                    Text(balance.balanceFormatted)
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                }
-                                if selectedToken?.id == token.id {
-                                    Image(systemName: "checkmark.circle.fill")
-                                        .foregroundColor(.blue)
-                                }
-                            }
-                        }
-                    }
-                }
+struct AlertsModifier: ViewModifier {
+    @Binding var showSuccess: Bool
+    @Binding var showWhitelistWarning: Bool
+    let txHash: String
+    let onDismiss: () -> Void
+    let onExecuteSend: () -> Void
+
+    func body(content: Content) -> some View {
+        content
+            .alert(L("Transaction Sent"), isPresented: $showSuccess) {
+                Button(L("OK"), action: onDismiss)
+            } message: {
+                Text("Transaction hash:\n\(txHash)")
             }
-            .searchable(text: $searchText, prompt: "Search tokens")
-            .navigationTitle("Select Token")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Cancel") { dismiss() }
-                }
+            .alert(L("Whitelist Warning"), isPresented: $showWhitelistWarning) {
+                Button(L("Cancel"), role: .cancel) {}
+                Button(L("Send Anyway"), role: .destructive, action: onExecuteSend)
+            } message: {
+                Text(L("The recipient address is not in your whitelist. Are you sure you want to send?"))
             }
-        }
     }
-    
-    private var filteredTokens: [TokenItem] {
-        guard let chain = chainManager.selectedChain else { return [] }
-        let key = "\(address.lowercased())_\(chain.id)"
-        let tokens = tokenManager.tokens[key] ?? []
-        if searchText.isEmpty { return tokens }
-        return tokens.filter {
-            $0.symbol.localizedCaseInsensitiveContains(searchText) ||
-            $0.name.localizedCaseInsensitiveContains(searchText)
-        }
+}
+
+struct SheetsModifier: ViewModifier {
+    @Binding var showChainSelector: Bool
+    @Binding var showContactPicker: Bool
+    @Binding var selectedChain: Chain?
+    @Binding var recipient: String
+    let onChainSelected: (Chain) -> Void
+
+    func body(content: Content) -> some View {
+        content
+            .sheet(isPresented: $showChainSelector) {
+                ChainSelectorSheet(
+                    selectedChain: $selectedChain,
+                    onChainSelected: onChainSelected
+                )
+            }
+            .sheet(isPresented: $showContactPicker) {
+                ContactPickerSheet(selectedAddress: $recipient)
+            }
     }
 }
 
@@ -485,9 +540,9 @@ struct ContactPickerSheet: View {
                         Image(systemName: "person.crop.circle")
                             .font(.system(size: 40))
                             .foregroundColor(.gray)
-                        Text("No contacts")
+                        Text(L("No contacts"))
                             .foregroundColor(.secondary)
-                        Text("Add contacts in Settings")
+                        Text(L("Add contacts in Settings"))
                             .font(.caption)
                             .foregroundColor(.gray)
                     }
@@ -515,11 +570,11 @@ struct ContactPickerSheet: View {
                     }
                 }
             }
-            .navigationTitle("Contacts")
+            .navigationTitle(L("Contacts"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Cancel") { dismiss() }
+                    Button(L("Cancel")) { dismiss() }
                 }
             }
         }

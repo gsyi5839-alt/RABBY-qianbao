@@ -19,7 +19,7 @@ class SyncChainManager: ObservableObject {
         let id: String
         let community_id: Int
         let name: String
-        let native_token_id: String
+        let native_token_id: String?  // Optional - some chains may not have this field
         let logo_url: String?
         let wrapped_token_id: String?
         let symbol: String?
@@ -115,8 +115,8 @@ class SyncChainManager: ObservableObject {
                 id: communityId,
                 name: remote.name,
                 serverId: remote.id,
-                symbol: remote.symbol ?? remote.native_token_id.uppercased(),
-                nativeTokenAddress: remote.native_token_id,
+                symbol: remote.symbol ?? (remote.native_token_id?.uppercased() ?? "ETH"),
+                nativeTokenAddress: remote.native_token_id ?? "eth",
                 rpcUrl: rpcUrl,
                 scanUrl: remote.explorer_host.map { "https://\($0)" } ?? "",
                 logo: remote.logo_url ?? "",

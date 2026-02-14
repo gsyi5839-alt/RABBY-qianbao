@@ -1,0 +1,4 @@
+interface:
+  display_name: "Rabby Open UI Kit"
+  short_description: "Open-source UI components and design tokens"
+  default_prompt: "Use $rabby-open-ui to build a new UI component that matches Rabby design tokens."

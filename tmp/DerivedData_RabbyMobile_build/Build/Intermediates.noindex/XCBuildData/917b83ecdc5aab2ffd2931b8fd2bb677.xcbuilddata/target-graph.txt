@@ -1,0 +1,61 @@
+Target dependency graph (22 targets)
+Target 'RabbyMobile' in project 'RabbyMobile'
+➜ Implicit dependency on target 'Pods-RabbyMobile' in project 'Pods' via file 'Pods_RabbyMobile.framework' in build phase 'Link Binary'
+➜ Implicit dependency on target 'Alamofire' in project 'Pods' via options '-framework Alamofire' in build setting 'OTHER_LDFLAGS'
+➜ Implicit dependency on target 'BigInt' in project 'Pods' via options '-framework BigInt' in build setting 'OTHER_LDFLAGS'
+➜ Implicit dependency on target 'CryptoSwift' in project 'Pods' via options '-framework CryptoSwift' in build setting 'OTHER_LDFLAGS'
+➜ Implicit dependency on target 'EFQRCode' in project 'Pods' via options '-framework EFQRCode' in build setting 'OTHER_LDFLAGS'
+➜ Implicit dependency on target 'GenericJSON' in project 'Pods' via options '-framework GenericJSON' in build setting 'OTHER_LDFLAGS'
+➜ Implicit dependency on target 'KeychainAccess' in project 'Pods' via options '-framework KeychainAccess' in build setting 'OTHER_LDFLAGS'
+➜ Implicit dependency on target 'Kingfisher' in project 'Pods' via options '-framework Kingfisher' in build setting 'OTHER_LDFLAGS'
+➜ Implicit dependency on target 'Logging' in project 'Pods' via options '-framework Logging' in build setting 'OTHER_LDFLAGS'
+➜ Implicit dependency on target 'lottie-ios' in project 'Pods' via options '-framework Lottie' in build setting 'OTHER_LDFLAGS'
+➜ Implicit dependency on target 'Starscream' in project 'Pods' via options '-framework Starscream' in build setting 'OTHER_LDFLAGS'
+➜ Implicit dependency on target 'WalletConnectSwiftV2' in project 'Pods' via options '-framework WalletConnectSwiftV2' in build setting 'OTHER_LDFLAGS'
+➜ Implicit dependency on target 'secp256k1.swift' in project 'Pods' via options '-framework secp256k1' in build setting 'OTHER_LDFLAGS'
+➜ Implicit dependency on target 'web3.swift' in project 'Pods' via options '-framework web3' in build setting 'OTHER_LDFLAGS'
+Target 'Pods-RabbyMobile' in project 'Pods'
+➜ Explicit dependency on target 'Alamofire' in project 'Pods'
+➜ Explicit dependency on target 'BigInt' in project 'Pods'
+➜ Explicit dependency on target 'CryptoSwift' in project 'Pods'
+➜ Explicit dependency on target 'EFQRCode' in project 'Pods'
+➜ Explicit dependency on target 'GenericJSON' in project 'Pods'
+➜ Explicit dependency on target 'KeychainAccess' in project 'Pods'
+➜ Explicit dependency on target 'Kingfisher' in project 'Pods'
+➜ Explicit dependency on target 'Logging' in project 'Pods'
+➜ Explicit dependency on target 'Starscream' in project 'Pods'
+➜ Explicit dependency on target 'SwiftLint' in project 'Pods'
+➜ Explicit dependency on target 'WalletConnectSwiftV2' in project 'Pods'
+➜ Explicit dependency on target 'lottie-ios' in project 'Pods'
+➜ Explicit dependency on target 'secp256k1.swift' in project 'Pods'
+➜ Explicit dependency on target 'web3.swift' in project 'Pods'
+Target 'web3.swift' in project 'Pods'
+➜ Explicit dependency on target 'BigInt' in project 'Pods'
+➜ Explicit dependency on target 'GenericJSON' in project 'Pods'
+➜ Explicit dependency on target 'Logging' in project 'Pods'
+➜ Explicit dependency on target 'secp256k1.swift' in project 'Pods'
+Target 'secp256k1.swift' in project 'Pods' (no dependencies)
+Target 'lottie-ios' in project 'Pods'
+➜ Explicit dependency on target 'lottie-ios-LottiePrivacyInfo' in project 'Pods'
+Target 'lottie-ios-LottiePrivacyInfo' in project 'Pods' (no dependencies)
+Target 'WalletConnectSwiftV2' in project 'Pods'
+➜ Explicit dependency on target 'WalletConnectSwiftV2-WalletConnect_WalletConnectRelay' in project 'Pods'
+Target 'WalletConnectSwiftV2-WalletConnect_WalletConnectRelay' in project 'Pods' (no dependencies)
+Target 'SwiftLint' in project 'Pods' (no dependencies)
+Target 'Starscream' in project 'Pods'
+➜ Explicit dependency on target 'Starscream-Starscream_Privacy' in project 'Pods'
+Target 'Starscream-Starscream_Privacy' in project 'Pods' (no dependencies)
+Target 'Logging' in project 'Pods' (no dependencies)
+Target 'Kingfisher' in project 'Pods'
+➜ Explicit dependency on target 'Kingfisher-Kingfisher' in project 'Pods'
+Target 'Kingfisher-Kingfisher' in project 'Pods' (no dependencies)
+Target 'KeychainAccess' in project 'Pods' (no dependencies)
+Target 'GenericJSON' in project 'Pods' (no dependencies)
+Target 'EFQRCode' in project 'Pods' (no dependencies)
+Target 'CryptoSwift' in project 'Pods'
+➜ Explicit dependency on target 'CryptoSwift-CryptoSwift' in project 'Pods'
+Target 'CryptoSwift-CryptoSwift' in project 'Pods' (no dependencies)
+Target 'BigInt' in project 'Pods' (no dependencies)
+Target 'Alamofire' in project 'Pods'
+➜ Explicit dependency on target 'Alamofire-Alamofire' in project 'Pods'
+Target 'Alamofire-Alamofire' in project 'Pods' (no dependencies)

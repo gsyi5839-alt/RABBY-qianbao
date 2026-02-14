@@ -83,7 +83,7 @@ struct AssetsView: View {
             .refreshable {
                 await refreshBalancesAsync()
             }
-            .navigationTitle("Assets")
+            .navigationTitle(L("Assets"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -130,7 +130,7 @@ struct AssetsView: View {
             .sheet(isPresented: $showAddCustomToken) { AddCustomTokenView() }
             .overlay(alignment: .bottom) {
                 if copiedToast {
-                    Text("Address copied!")
+                    Text(L("Address copied!"))
                         .font(.subheadline).fontWeight(.medium)
                         .padding(.horizontal, 20).padding(.vertical, 10)
                         .background(.ultraThinMaterial)
@@ -196,7 +196,7 @@ struct AssetsView: View {
     // MARK: - Total Balance Card
     private var totalBalanceCard: some View {
         VStack(spacing: 8) {
-            Text("Total Balance")
+            Text(L("Total Balance"))
                 .font(.subheadline)
                 .foregroundColor(.gray)
             
@@ -267,13 +267,13 @@ struct AssetsView: View {
     private var tokenSearchBar: some View {
         HStack {
             Image(systemName: "magnifyingglass").foregroundColor(.gray)
-            TextField("Search tokens", text: $tokenSearch)
+            TextField(L("Search tokens"), text: $tokenSearch)
                 .textFieldStyle(.plain)
                 .autocapitalization(.none)
             
             // LP Token toggle
             Button(action: { tokenManager.showLPTokens.toggle() }) {
-                Text("LP")
+                Text(L("LP"))
                     .font(.caption2).fontWeight(.semibold)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 3)
@@ -305,7 +305,7 @@ struct AssetsView: View {
             if visibleTokens.isEmpty {
                 VStack(spacing: 12) {
                     Image(systemName: "tray").font(.system(size: 40)).foregroundColor(.gray)
-                    Text("No tokens found").foregroundColor(.secondary)
+                    Text(L("No tokens found")).foregroundColor(.secondary)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 40)
@@ -317,7 +317,7 @@ struct AssetsView: View {
                             Button(role: .destructive) {
                                 tokenManager.blockToken(id: token.id)
                             } label: {
-                                Label("Block", systemImage: "eye.slash")
+                                Label(L("Block"), systemImage: "eye.slash")
                             }
                             .tint(.orange)
                         }
@@ -370,7 +370,7 @@ struct AssetsView: View {
                         Spacer()
                         
                         Button(action: { tokenManager.unblockToken(id: token.id) }) {
-                            Text("Unblock")
+                            Text(L("Unblock"))
                                 .font(.caption2)
                                 .foregroundColor(.blue)
                                 .padding(.horizontal, 8)
@@ -568,7 +568,7 @@ struct ReceiveView: View {
                 
                 // Address
                 VStack(spacing: 8) {
-                    Text("Your Address").font(.headline)
+                    Text(L("Your Address")).font(.headline)
                     Text(address)
                         .font(.system(.caption, design: .monospaced))
                         .multilineTextAlignment(.center)
@@ -598,11 +598,11 @@ struct ReceiveView: View {
                 
                 Spacer()
             }
-            .navigationTitle("Receive")
+            .navigationTitle(L("Receive"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") { dismiss() }
+                    Button(L("Done")) { dismiss() }
                 }
             }
         }

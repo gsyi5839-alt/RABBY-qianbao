@@ -1,0 +1,4 @@
+
+module Logging.__Swift {
+  exclude header "Logging-Swift.h"
+}

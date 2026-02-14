@@ -15,4 +15,11 @@ export const config = {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '60000', 10),
     max: parseInt(process.env.RATE_LIMIT_MAX || '100', 10),
   },
+  database: {
+    host: process.env.DATABASE_HOST || 'localhost',
+    port: parseInt(process.env.DATABASE_PORT || '5432', 10),
+    name: process.env.DATABASE_NAME || 'rabby_db',
+    user: process.env.DATABASE_USER || 'rabby_user',
+    password: process.env.DATABASE_PASSWORD || 'rabby_password',
+  },
 };

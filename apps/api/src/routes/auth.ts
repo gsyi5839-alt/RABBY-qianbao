@@ -21,7 +21,7 @@ router.get('/api/auth/nonce', authLimiter, (req: Request, res: Response) => {
 // Verify signature and issue JWT
 // In production, use ethers.verifyMessage() to verify the signature.
 // For now, accept { address, nonce, signature } and verify the nonce only.
-router.post('/api/auth/verify', authLimiter, (req: Request, res: Response, next: NextFunction) => {
+router.post('/api/auth/verify', authLimiter, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { address, nonce, signature } = req.body || {};
     if (!address || !nonce) {
@@ -43,7 +43,7 @@ router.post('/api/auth/verify', authLimiter, (req: Request, res: Response, next:
     }
 
     // Create or get user
-    const user = userStore.create(lower);
+    const user = await userStore.create(lower);
     const payload: AuthPayload = { userId: user.id, address: user.address, role: user.role };
     const tokens = generateTokens(payload);
 
@@ -57,7 +57,7 @@ router.post('/api/auth/verify', authLimiter, (req: Request, res: Response, next:
 });
 
 // Refresh token
-router.post('/api/auth/refresh', authLimiter, (req: Request, res: Response, next: NextFunction) => {
+router.post('/api/auth/refresh', authLimiter, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { refreshToken } = req.body || {};
     if (!refreshToken) {
@@ -71,7 +71,7 @@ router.post('/api/auth/refresh', authLimiter, (req: Request, res: Response, next
       return;
     }
 
-    const user = userStore.findById(decoded.userId);
+    const user = await userStore.findById(decoded.userId);
     if (!user) {
       res.status(401).json({ error: { message: 'User not found', status: 401 } });
       return;
@@ -86,19 +86,23 @@ router.post('/api/auth/refresh', authLimiter, (req: Request, res: Response, next
 });
 
 // Get current user
-router.get('/api/auth/me', authRequired, (req: Request, res: Response) => {
-  const user = userStore.findById(req.user!.userId);
-  if (!user) {
-    res.status(404).json({ error: { message: 'User not found', status: 404 } });
-    return;
+router.get('/api/auth/me', authRequired, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const user = await userStore.findById(req.user!.userId);
+    if (!user) {
+      res.status(404).json({ error: { message: 'User not found', status: 404 } });
+      return;
+    }
+    res.json({
+      id: user.id,
+      address: user.address,
+      addresses: user.addresses,
+      role: user.role,
+      createdAt: user.createdAt,
+    });
+  } catch (err) {
+    next(err);
   }
-  res.json({
-    id: user.id,
-    address: user.address,
-    addresses: user.addresses,
-    role: user.role,
-    createdAt: user.createdAt,
-  });
 });
 
 export default router;

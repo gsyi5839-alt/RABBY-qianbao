@@ -3,6 +3,7 @@ import UIKit
 
 /// Root view that handles wallet state (locked/unlocked)
 struct RootView: View {
+    @EnvironmentObject private var localization: LocalizationManager
     @StateObject private var keyringManager = KeyringManager.shared
     @StateObject private var biometricManager = BiometricAuthManager.shared
     @StateObject private var autoLock = AutoLockManager.shared
@@ -52,7 +53,7 @@ struct RootView: View {
                             Image(systemName: "lock.shield.fill")
                                 .font(.system(size: 60))
                                 .foregroundColor(.blue)
-                            Text("Rabby Wallet")
+                            Text(localization.t("app_name", defaultValue: "Rabby Wallet"))
                                 .font(.title2)
                                 .fontWeight(.bold)
                         }
@@ -75,7 +76,7 @@ struct RootView: View {
             Task {
                 do {
                     let success = try await biometricManager.authenticate(
-                        reason: "Unlock Rabby Wallet"
+                        reason: localization.t("unlock_wallet", defaultValue: "Unlock Wallet")
                     )
                     if success, let password = biometricManager.getBiometricPassword() {
                         try await keyringManager.submitPassword(password)
@@ -117,6 +118,7 @@ struct RootView: View {
 
 /// Onboarding view for new users
 struct OnboardingView: View {
+    @EnvironmentObject private var localization: LocalizationManager
     @State private var showCreateWallet = false
     @State private var showImportWallet = false
     @State private var currentPage = 0
@@ -128,22 +130,22 @@ struct OnboardingView: View {
                 TabView(selection: $currentPage) {
                     onboardingPage(
                         icon: "wallet.pass.fill",
-                        title: "Welcome to Rabby",
-                        subtitle: "The game-changing wallet for Ethereum and all EVM chains",
+                        title: localization.t("welcome_title", defaultValue: "Welcome to Rabby"),
+                        subtitle: localization.t("welcome_subtitle", defaultValue: "The game-changing wallet for Ethereum and all EVM chains"),
                         color: .blue
                     ).tag(0)
                     
                     onboardingPage(
                         icon: "shield.checkered",
-                        title: "Pre-Sign Protection",
-                        subtitle: "Every transaction is checked for risks before you sign",
+                        title: localization.t("onboarding_security_title", defaultValue: "Pre-Sign Protection"),
+                        subtitle: localization.t("onboarding_security_subtitle", defaultValue: "Every transaction is checked for risks before you sign"),
                         color: .green
                     ).tag(1)
                     
                     onboardingPage(
                         icon: "arrow.triangle.2.circlepath.circle.fill",
-                        title: "Multi-Chain Ready",
-                        subtitle: "Seamlessly swap, bridge, and manage assets across chains",
+                        title: localization.t("onboarding_multichain_title", defaultValue: "Multi-Chain Ready"),
+                        subtitle: localization.t("onboarding_multichain_subtitle", defaultValue: "Seamlessly swap, bridge, and manage assets across chains"),
                         color: .purple
                     ).tag(2)
                 }
@@ -153,7 +155,7 @@ struct OnboardingView: View {
                 // Buttons
                 VStack(spacing: 16) {
                     Button(action: { showCreateWallet = true }) {
-                        Text("Create New Wallet")
+                        Text(localization.t("create_wallet", defaultValue: "Create New Wallet"))
                             .font(.headline)
                             .frame(maxWidth: .infinity)
                             .padding()
@@ -161,11 +163,10 @@ struct OnboardingView: View {
                             .foregroundColor(.white)
                             .cornerRadius(12)
                     }
-                    .accessibilityLabel("Create a new wallet")
-                    .accessibilityHint("Generates a new seed phrase and wallet")
+                    .accessibilityLabel(localization.t("create_wallet", defaultValue: "Create New Wallet"))
                     
                     Button(action: { showImportWallet = true }) {
-                        Text("Import Wallet")
+                        Text(localization.t("import_wallet", defaultValue: "Import Wallet"))
                             .font(.headline)
                             .frame(maxWidth: .infinity)
                             .padding()
@@ -173,15 +174,14 @@ struct OnboardingView: View {
                             .foregroundColor(.blue)
                             .cornerRadius(12)
                     }
-                    .accessibilityLabel("Import existing wallet")
-                    .accessibilityHint("Import using seed phrase or private key")
+                    .accessibilityLabel(localization.t("import_wallet", defaultValue: "Import Wallet"))
                     
                     Button(action: { /* Watch-only */ }) {
-                        Text("Watch Address")
+                        Text(localization.t("watch_address", defaultValue: "Watch Address"))
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
-                    .accessibilityLabel("Add watch-only address")
+                    .accessibilityLabel(localization.t("watch_address", defaultValue: "Watch Address"))
                 }
                 .padding(.horizontal, 30)
                 .padding(.bottom, 40)
@@ -225,6 +225,7 @@ struct OnboardingView: View {
 
 /// Unlock view for existing users
 struct UnlockView: View {
+    @EnvironmentObject private var localization: LocalizationManager
     @StateObject private var keyringManager = KeyringManager.shared
     @StateObject private var biometricManager = BiometricAuthManager.shared
     @State private var password = ""
@@ -241,12 +242,12 @@ struct UnlockView: View {
                 .frame(width: 80, height: 80)
                 .foregroundColor(.blue)
             
-            Text("Unlock Wallet")
+            Text(localization.t("unlock_wallet", defaultValue: "Unlock Wallet"))
                 .font(.title)
                 .fontWeight(.bold)
             
             // Password input
-            SecureField("Enter password", text: $password)
+            SecureField(localization.t("enter_password", defaultValue: "Enter password"), text: $password)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.horizontal, 30)
                 .autocapitalization(.none)
@@ -267,7 +268,7 @@ struct UnlockView: View {
                             .progressViewStyle(CircularProgressViewStyle(tint: .white))
                             .scaleEffect(0.8)
                     }
-                    Text(isUnlocking ? "Unlocking..." : "Unlock")
+                    Text(isUnlocking ? localization.t("unlocking", defaultValue: "Unlocking...") : localization.t("unlock", defaultValue: "Unlock"))
                         .font(.headline)
                 }
                 .frame(maxWidth: .infinity)
@@ -284,7 +285,9 @@ struct UnlockView: View {
                 Button(action: unlockWithBiometric) {
                     HStack {
                         Image(systemName: biometricManager.biometricType == .faceID ? "faceid" : "touchid")
-                        Text("Unlock with \(biometricManager.biometricType == .faceID ? "Face ID" : "Touch ID")")
+                        Text(biometricManager.biometricType == .faceID
+                             ? localization.t("unlock_with_face_id", defaultValue: "Unlock with Face ID")
+                             : localization.t("unlock_with_touch_id", defaultValue: "Unlock with Touch ID"))
                     }
                     .foregroundColor(.blue)
                 }
@@ -292,7 +295,7 @@ struct UnlockView: View {
             
             // Forgot password
             Button(action: { showForgotPassword = true }) {
-                Text("Forgot Password?")
+                Text(localization.t("forgot_password", defaultValue: "Forgot Password?"))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -305,18 +308,32 @@ struct UnlockView: View {
     }
     
     private func unlock() {
+        guard !isUnlocking else { return }
         isUnlocking = true
         errorMessage = ""
+
         Task {
             do {
                 try await keyringManager.submitPassword(password)
+                // Success - UI will update automatically via keyringManager.isUnlocked
+                await MainActor.run {
+                    isUnlocking = false
+                    password = "" // Clear password on success
+                }
             } catch {
-                withAnimation { errorMessage = "Incorrect password" }
-                // Haptic feedback for error
-                let generator = UINotificationFeedbackGenerator()
-                generator.notificationOccurred(.error)
+                await MainActor.run {
+                    withAnimation {
+                        errorMessage = localization.t("incorrect_password", defaultValue: "Incorrect password")
+                        isUnlocking = false
+                    }
+                    // Haptic feedback for error
+                    let generator = UINotificationFeedbackGenerator()
+                    generator.notificationOccurred(.error)
+
+                    // Optional: shake animation for password field
+                    password = ""
+                }
             }
-            isUnlocking = false
         }
     }
     
@@ -324,7 +341,7 @@ struct UnlockView: View {
         Task {
             do {
                 let success = try await biometricManager.authenticate(
-                    reason: "Unlock Rabby Wallet"
+                    reason: localization.t("unlock_wallet", defaultValue: "Unlock Wallet")
                 )
                 if success, let savedPassword = biometricManager.getBiometricPassword() {
                     try await keyringManager.submitPassword(savedPassword)
@@ -338,36 +355,37 @@ struct UnlockView: View {
 
 /// Main tab view
 struct MainTabView: View {
+    @EnvironmentObject private var localization: LocalizationManager
     var body: some View {
         TabView {
             AssetsView()
                 .tabItem {
                     Image(systemName: "dollarsign.circle.fill")
-                    Text("Assets")
+                    Text(localization.t("tab_assets", defaultValue: "Assets"))
                 }
             
             SwapView()
                 .tabItem {
                     Image(systemName: "arrow.triangle.2.circlepath.circle.fill")
-                    Text("Swap")
+                    Text(localization.t("tab_swap", defaultValue: "Swap"))
                 }
             
             DAppBrowserView()
                 .tabItem {
                     Image(systemName: "globe")
-                    Text("DApps")
+                    Text(localization.t("tab_dapps", defaultValue: "DApps"))
                 }
             
             TransactionHistoryView()
                 .tabItem {
                     Image(systemName: "clock.fill")
-                    Text("History")
+                    Text(localization.t("tab_history", defaultValue: "History"))
                 }
             
             SettingsView()
                 .tabItem {
                     Image(systemName: "gearshape.fill")
-                    Text("Settings")
+                    Text(localization.t("tab_settings", defaultValue: "Settings"))
                 }
         }
     }
@@ -380,5 +398,6 @@ struct MainTabView: View {
 struct RootView_Previews: PreviewProvider {
     static var previews: some View {
         RootView()
+            .environmentObject(LocalizationManager.shared)
     }
 }

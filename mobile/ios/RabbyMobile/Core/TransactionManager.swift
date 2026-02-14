@@ -40,7 +40,7 @@ class TransactionManager: ObservableObject {
     ) async throws -> EthereumTransaction {
         // Get recommended nonce
         let nonce = try await getRecommendedNonce(address: from, chain: chain)
-        
+
         // Estimate gas
         let gasEstimate = try await estimateGas(
             from: from,
@@ -49,29 +49,28 @@ class TransactionManager: ObservableObject {
             data: data,
             chain: chain
         )
-        
-        // Get gas price
-        let gasPrice = try await getGasPrice(chain: chain)
-        
+
         var transaction = EthereumTransaction(
             to: to,
             from: from,
             nonce: nonce,
-            value: BigUInt(value.hexToData() ?? Data()) ?? 0,
+            value: BigUInt(value.hexToData() ?? Data()),
             data: data.hexToData() ?? Data(),
             gasLimit: gasEstimate,
             chainId: chain.id
         )
-        
-        // Check if chain supports EIP-1559
-        if chain.supportsEIP1559 {
-            let feeData = try await getEIP1559FeeData(chain: chain)
+
+        // Try EIP-1559 if the chain is expected to support it.
+        // getEIP1559FeeData returns nil when baseFeePerGas is absent (non-EIP-1559).
+        if chain.isEIP1559, let feeData = try await getEIP1559FeeData(chain: chain) {
             transaction.maxFeePerGas = feeData.maxFeePerGas
             transaction.maxPriorityFeePerGas = feeData.maxPriorityFeePerGas
         } else {
+            // Legacy transaction – use gasPrice.
+            let gasPrice = try await getGasPrice(chain: chain)
             transaction.gasPrice = gasPrice
         }
-        
+
         return transaction
     }
     
@@ -138,10 +137,10 @@ class TransactionManager: ObservableObject {
             "value": value,
             "data": data
         ]
-        
+
         let gasHex = try await networkManager.estimateGas(transaction: transaction, chain: chain)
-        let gasEstimate = BigUInt(gasHex.hexToData() ?? Data()) ?? BigUInt(21000)
-        
+        let gasEstimate = Self.parseBigUIntFromHex(gasHex)
+
         // Add 20% buffer for safety
         let gasWithBuffer = gasEstimate * 12 / 10
         return gasWithBuffer
@@ -149,23 +148,85 @@ class TransactionManager: ObservableObject {
     
     func getGasPrice(chain: Chain) async throws -> BigUInt {
         let gasPriceHex = try await networkManager.getGasPrice(chain: chain)
-        return BigUInt(gasPriceHex.hexToData() ?? Data()) ?? 0
+        return Self.parseBigUIntFromHex(gasPriceHex)
     }
-    
-    func getEIP1559FeeData(chain: Chain) async throws -> EIP1559FeeData {
-        // Get base fee from latest block
-        let blockNumber = try await networkManager.getBlockNumber(chain: chain)
-        let block = try await networkManager.getBlockByNumber(blockNumber: blockNumber, fullTransactions: false, chain: chain)
-        
-        // Parse base fee (in hex)
-        let baseFee = BigUInt(block.hash.hexToData() ?? Data()) ?? 0
-        
-        // Calculate maxPriorityFeePerGas (tip)
-        let priorityFee = baseFee / 10 // 10% of base fee as default tip
-        
-        // Calculate maxFeePerGas (base fee * 2 + priority fee for next block buffer)
+
+    /// Parse a hex string (with or without 0x prefix) into BigUInt.
+    /// Returns 0 for nil / empty / malformed input.
+    static func parseBigUIntFromHex(_ hex: String) -> BigUInt {
+        let stripped = hex.hasPrefix("0x") || hex.hasPrefix("0X")
+            ? String(hex.dropFirst(2))
+            : hex
+        guard !stripped.isEmpty else { return 0 }
+        return BigUInt(stripped, radix: 16) ?? 0
+    }
+
+    /// Fetch EIP-1559 fee parameters.
+    ///
+    /// Strategy (matches task spec):
+    ///  1. Try OpenAPI gasMarket (preferred for Rabby-consistent UX).
+    ///  2. Fall back to RPC: `eth_getBlockByNumber("latest")` for `baseFeePerGas`,
+    ///     `eth_maxPriorityFeePerGas` for the priority tip.
+    ///  3. If the chain has no `baseFeePerGas` (non-EIP-1559), return `nil`
+    ///     so the caller can fall back to legacy gasPrice.
+    ///
+    /// Formula: maxFeePerGas = baseFee * 2 + maxPriorityFeePerGas
+    func getEIP1559FeeData(chain: Chain) async throws -> EIP1559FeeData? {
+
+        // ── 1. OpenAPI path (preferred) ──────────────────────────────────
+        do {
+            let market = try await OpenAPIService.shared.getGasPrice(chainId: chain.serverId)
+            let level = market.normal
+
+            if let baseFeeInt = level.base_fee, let priorityInt = level.priority_price {
+                let baseFeeWei = BigUInt(baseFeeInt)
+                let priorityWei = BigUInt(priorityInt)
+                // Standard formula: maxFee = baseFee * 2 + priorityFee
+                let maxFeePerGas = baseFeeWei * 2 + priorityWei
+                // Guarantee: maxFeePerGas >= baseFee + priorityFee (always true)
+                return EIP1559FeeData(
+                    maxFeePerGas: maxFeePerGas,
+                    maxPriorityFeePerGas: priorityWei
+                )
+            }
+            // If base_fee / priority_price are nil the chain may not support
+            // EIP-1559 in the API – fall through to RPC detection.
+        } catch {
+            // OpenAPI unavailable – fall through to RPC.
+        }
+
+        // ── 2. RPC path ─────────────────────────────────────────────────
+        // 2a. Get baseFeePerGas from the latest block.
+        let block = try await networkManager.getBlockByNumber(
+            blockNumber: "latest",
+            fullTransactions: false,
+            chain: chain
+        )
+
+        guard let baseFeePerGasHex = block.baseFeePerGas else {
+            // Chain does not include baseFeePerGas → not EIP-1559.
+            // Return nil so caller falls back to legacy gasPrice.
+            return nil
+        }
+
+        let baseFee = Self.parseBigUIntFromHex(baseFeePerGasHex)
+
+        // 2b. Get maxPriorityFeePerGas from the node.
+        var priorityFee: BigUInt
+        do {
+            let priorityHex = try await networkManager.getMaxPriorityFeePerGas(chain: chain)
+            priorityFee = Self.parseBigUIntFromHex(priorityHex)
+        } catch {
+            // Some nodes do not support eth_maxPriorityFeePerGas.
+            // Conservative fallback: 1.5 Gwei or baseFee / 5, whichever is larger.
+            let onePointFiveGwei = BigUInt(1_500_000_000) // 1.5 Gwei
+            priorityFee = max(baseFee / 5, onePointFiveGwei)
+        }
+
+        // 2c. Standard formula: maxFeePerGas = baseFee * 2 + maxPriorityFeePerGas
         let maxFeePerGas = baseFee * 2 + priorityFee
-        
+
+        // Sanity: maxFeePerGas must be >= baseFee + priorityFee (always true with * 2).
         return EIP1559FeeData(
             maxFeePerGas: maxFeePerGas,
             maxPriorityFeePerGas: priorityFee
@@ -177,7 +238,7 @@ class TransactionManager: ObservableObject {
     func getRecommendedNonce(address: String, chain: Chain) async throws -> BigUInt {
         // Get on-chain nonce
         let onChainNonceHex = try await networkManager.getTransactionCount(address: address, chain: chain)
-        let onChainNonce = BigUInt(onChainNonceHex.hexToData() ?? Data()) ?? 0
+        let onChainNonce = Self.parseBigUIntFromHex(onChainNonceHex)
         
         // Get local pending nonce
         let localNonce = getLocalPendingNonce(address: address, chainId: chain.id)
@@ -247,10 +308,10 @@ class TransactionManager: ObservableObject {
     func speedUpTransaction(originalTx: TransactionHistoryItem) async throws -> String {
         let originalTxData = originalTx.rawTx
         
-        guard let chain = chainManager.getChain(byId: originalTxData.chainId) else {
+        guard let _ = chainManager.getChain(byId: originalTxData.chainId) else {
             throw TransactionError.invalidChain
         }
-        
+
         var newTx = originalTxData
         
         // Increase gas price by 10%
@@ -271,10 +332,10 @@ class TransactionManager: ObservableObject {
     func cancelTransaction(originalTx: TransactionHistoryItem) async throws -> String {
         let originalTxData = originalTx.rawTx
         
-        guard let chain = chainManager.getChain(byId: originalTxData.chainId) else {
+        guard let _ = chainManager.getChain(byId: originalTxData.chainId) else {
             throw TransactionError.invalidChain
         }
-        
+
         var cancelTx = EthereumTransaction(
             to: originalTxData.from, // Send to self
             from: originalTxData.from,
@@ -479,22 +540,13 @@ struct EIP1559FeeData {
 // MARK: - Chain Extension
 
 extension Chain {
+    /// Whether this chain is expected to support EIP-1559 (Type-2 transactions).
+    /// Uses the `isEIP1559` property from the chain configuration.
+    /// At runtime, `getEIP1559FeeData` will verify by checking the actual
+    /// `baseFeePerGas` field in the latest block and fall back to legacy
+    /// gasPrice if absent.
     var supportsEIP1559: Bool {
-        // EIP-1559 support for major chains
-        switch id {
-        case 1, 5, 11155111: // Ethereum Mainnet, Goerli, Sepolia
-            return true
-        case 10, 420: // Optimism
-            return true
-        case 137, 80001: // Polygon
-            return true
-        case 42161, 421613: // Arbitrum
-            return true
-        case 8453: // Base
-            return true
-        default:
-            return false
-        }
+        return isEIP1559
     }
 }
 
@@ -545,16 +597,16 @@ extension EthereumTransaction: Codable {
         from = try container.decode(String.self, forKey: .from)
         
         let nonceString = try container.decode(String.self, forKey: .nonce)
-        nonce = BigUInt(nonceString.hexToData() ?? Data()) ?? 0
+        nonce = BigUInt(nonceString.hexToData() ?? Data())
         
         let valueString = try container.decode(String.self, forKey: .value)
-        value = BigUInt(valueString.hexToData() ?? Data()) ?? 0
+        value = BigUInt(valueString.hexToData() ?? Data())
         
         let dataString = try container.decode(String.self, forKey: .data)
         data = dataString.hexToData() ?? Data()
         
         let gasLimitString = try container.decode(String.self, forKey: .gasLimit)
-        gasLimit = BigUInt(gasLimitString.hexToData() ?? Data()) ?? 0
+        gasLimit = BigUInt(gasLimitString.hexToData() ?? Data())
         
         chainId = try container.decode(Int.self, forKey: .chainId)
         

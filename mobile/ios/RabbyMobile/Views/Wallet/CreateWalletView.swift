@@ -9,8 +9,8 @@ struct CreateWalletView: View {
     @State private var password = ""
     @State private var confirmPassword = ""
     @State private var mnemonic: [String] = []
-    @State private var shuffledMnemonic: [String] = []
-    @State private var selectedWords: [String] = []
+    @State private var shuffledMnemonic: [(index: Int, word: String)] = []
+    @State private var selectedWordPairs: [(index: Int, word: String)] = []
     @State private var errorMessage = ""
     @State private var isCreating = false
     
@@ -40,7 +40,7 @@ struct CreateWalletView: View {
                 // Navigation buttons
                 HStack(spacing: 16) {
                     if currentStep > 0 {
-                        Button("Back") {
+                        Button(L("Back")) {
                             currentStep -= 1
                         }
                         .foregroundColor(.blue)
@@ -60,11 +60,11 @@ struct CreateWalletView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Create Wallet")
+            .navigationTitle(L("Create Wallet"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
+                    Button(L("Cancel")) {
                         presentationMode.wrappedValue.dismiss()
                     }
                 }
@@ -76,20 +76,20 @@ struct CreateWalletView: View {
     
     private var passwordStep: some View {
         VStack(spacing: 24) {
-            Text("Set Password")
+            Text(L("Set Password"))
                 .font(.title2)
                 .fontWeight(.bold)
             
-            Text("This password will protect your wallet")
+            Text(L("This password will protect your wallet"))
                 .font(.subheadline)
                 .foregroundColor(.gray)
                 .multilineTextAlignment(.center)
             
-            SecureField("Password (min 8 characters)", text: $password)
+            SecureField(L("Password (min 8 characters)"), text: $password)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .autocapitalization(.none)
             
-            SecureField("Confirm Password", text: $confirmPassword)
+            SecureField(L("Confirm Password"), text: $confirmPassword)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .autocapitalization(.none)
             
@@ -109,11 +109,11 @@ struct CreateWalletView: View {
     
     private var mnemonicStep: some View {
         VStack(spacing: 24) {
-            Text("Backup Secret Phrase")
+            Text(L("Backup Secret Phrase"))
                 .font(.title2)
                 .fontWeight(.bold)
             
-            Text("Write down these 12 words in order. Keep them safe!")
+            Text(L("Write down these 12 words in order. Keep them safe!"))
                 .font(.subheadline)
                 .foregroundColor(.gray)
                 .multilineTextAlignment(.center)
@@ -122,7 +122,7 @@ struct CreateWalletView: View {
             HStack {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .foregroundColor(.orange)
-                Text("Never share your secret phrase with anyone")
+                Text(L("Never share your secret phrase with anyone"))
                     .font(.caption)
             }
             .padding()
@@ -150,7 +150,7 @@ struct CreateWalletView: View {
             Button(action: copyMnemonic) {
                 HStack {
                     Image(systemName: "doc.on.doc")
-                    Text("Copy to Clipboard")
+                    Text(L("Copy to Clipboard"))
                 }
                 .foregroundColor(.blue)
             }
@@ -162,26 +162,26 @@ struct CreateWalletView: View {
     
     private var verifyStep: some View {
         VStack(spacing: 24) {
-            Text("Verify Secret Phrase")
+            Text(L("Verify Secret Phrase"))
                 .font(.title2)
                 .fontWeight(.bold)
             
-            Text("Select words in the correct order")
+            Text(L("Select words in the correct order"))
                 .font(.subheadline)
                 .foregroundColor(.gray)
             
             // Selected words
             VStack(alignment: .leading, spacing: 8) {
-                Text("Your sequence:")
+                Text(L("Your sequence:"))
                     .font(.caption)
                     .foregroundColor(.gray)
                 
                 if #available(iOS 16.0, *) {
                     FlowLayout(spacing: 8) {
-                        ForEach(Array(selectedWords.enumerated()), id: \.offset) { index, word in
-                            Button(action: { removeWord(at: index) }) {
+                        ForEach(Array(selectedWordPairs.enumerated()), id: \.offset) { displayIndex, pair in
+                            Button(action: { removeWord(at: displayIndex) }) {
                                 HStack(spacing: 4) {
-                                    Text("\(index + 1). \(word)")
+                                    Text("\(displayIndex + 1). \(pair.word)")
                                     Image(systemName: "xmark.circle.fill")
                                         .foregroundColor(.red)
                                 }
@@ -195,10 +195,10 @@ struct CreateWalletView: View {
                 } else {
                     // Fallback for iOS 15
                     VStack(alignment: .leading, spacing: 8) {
-                        ForEach(Array(selectedWords.enumerated()), id: \.offset) { index, word in
-                            Button(action: { removeWord(at: index) }) {
+                        ForEach(Array(selectedWordPairs.enumerated()), id: \.offset) { displayIndex, pair in
+                            Button(action: { removeWord(at: displayIndex) }) {
                                 HStack(spacing: 4) {
-                                    Text("\(index + 1). \(word)")
+                                    Text("\(displayIndex + 1). \(pair.word)")
                                     Image(systemName: "xmark.circle.fill")
                                         .foregroundColor(.red)
                                 }
@@ -218,15 +218,16 @@ struct CreateWalletView: View {
             
             // Available words
             VStack(alignment: .leading, spacing: 8) {
-                Text("Select words:")
+                Text(L("Select words:"))
                     .font(.caption)
                     .foregroundColor(.gray)
                 
                 if #available(iOS 16.0, *) {
                     FlowLayout(spacing: 8) {
-                        ForEach(shuffledMnemonic.filter { !selectedWords.contains($0) }, id: \.self) { word in
-                            Button(action: { selectWord(word) }) {
-                                Text(word)
+                        let selectedIndices = Set(selectedWordPairs.map { $0.index })
+                        ForEach(shuffledMnemonic.filter { !selectedIndices.contains($0.index) }, id: \.index) { item in
+                            Button(action: { selectWord(index: item.index, word: item.word) }) {
+                                Text(item.word)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 8)
                                     .background(Color(.systemGray5))
@@ -237,10 +238,11 @@ struct CreateWalletView: View {
                     }
                 } else {
                     // Fallback for iOS 15
+                    let selectedIndices = Set(selectedWordPairs.map { $0.index })
                     VStack(alignment: .leading, spacing: 8) {
-                        ForEach(shuffledMnemonic.filter { !selectedWords.contains($0) }, id: \.self) { word in
-                            Button(action: { selectWord(word) }) {
-                                Text(word)
+                        ForEach(shuffledMnemonic.filter { !selectedIndices.contains($0.index) }, id: \.index) { item in
+                            Button(action: { selectWord(index: item.index, word: item.word) }) {
+                                Text(item.word)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 8)
                                     .background(Color(.systemGray5))
@@ -309,16 +311,18 @@ struct CreateWalletView: View {
     }
     
     private func prepareMnemonicVerification() {
-        shuffledMnemonic = mnemonic.shuffled()
-        selectedWords = []
+        // Create indexed words and shuffle them
+        let indexedWords = mnemonic.enumerated().map { (index: $0, word: $1) }
+        shuffledMnemonic = indexedWords.shuffled()
+        selectedWordPairs = []
     }
-    
-    private func selectWord(_ word: String) {
-        selectedWords.append(word)
+
+    private func selectWord(index: Int, word: String) {
+        selectedWordPairs.append((index: index, word: word))
     }
-    
-    private func removeWord(at index: Int) {
-        selectedWords.remove(at: index)
+
+    private func removeWord(at displayIndex: Int) {
+        selectedWordPairs.remove(at: displayIndex)
     }
     
     private func copyMnemonic() {
@@ -326,34 +330,60 @@ struct CreateWalletView: View {
     }
     
     private func createWallet() {
+        // Verify that selected words match the original mnemonic
+        let selectedWords = selectedWordPairs.map { $0.word }
         guard selectedWords == mnemonic else {
             errorMessage = "Words are not in the correct order. Please try again."
+            selectedWordPairs = [] // Clear selection for retry
             return
         }
-        
+
+        guard !isCreating else { return }
         isCreating = true
-        
+        errorMessage = ""
+
         Task {
             do {
                 // Create keyring with mnemonic
                 let mnemonicString = mnemonic.joined(separator: " ")
+                print("[CreateWallet] Creating wallet with password length: \(password.count)")
+
+                // Step 1: Create new vault with password
                 await keyringManager.createNewVault(password: password)
-                
+                print("[CreateWallet] Vault created in memory")
+
+                // Step 2: Create HD keyring
                 let keyring = HDKeyring(mnemonic: mnemonicString)
                 _ = try await keyring.addAccounts(count: 1)
-                
+                print("[CreateWallet] HD keyring created with 1 account")
+
+                // Step 3: Add keyring to manager
                 await keyringManager.addKeyring(keyring)
-                
-                // Save vault
+                print("[CreateWallet] Keyring added to manager")
+
+                // Step 4: Persist everything
+                print("[CreateWallet] Persisting keyrings...")
                 try await keyringManager.persistAllKeyrings()
-                
+                print("[CreateWallet] ✓ Wallet creation complete")
+
+                // Success - dismiss view
                 await MainActor.run {
+                    isCreating = false
                     presentationMode.wrappedValue.dismiss()
                 }
             } catch {
+                // Error handling
+                print("[CreateWallet] ERROR: \(error)")
                 await MainActor.run {
                     errorMessage = "Failed to create wallet: \(error.localizedDescription)"
                     isCreating = false
+
+                    // Haptic feedback for error
+                    let generator = UINotificationFeedbackGenerator()
+                    generator.notificationOccurred(.error)
+
+                    // Reset to step 2 to allow retry
+                    currentStep = 1
                 }
             }
         }
@@ -366,7 +396,7 @@ struct CreateWalletView: View {
         case 1:
             return !mnemonic.isEmpty
         case 2:
-            return selectedWords.count == mnemonic.count
+            return selectedWordPairs.count == mnemonic.count
         default:
             return false
         }
@@ -408,7 +438,7 @@ struct PasswordStrengthView: View {
     
     var body: some View {
         HStack {
-            Text("Strength:")
+            Text(L("Strength:"))
                 .font(.caption)
             
             Text(strengthText)

@@ -42,34 +42,41 @@ export default function LoginPage() {
   return (
     <div style={{
       minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      background: 'radial-gradient(900px 450px at 20% 10%, rgba(79, 139, 255, 0.25), transparent 55%), var(--r-neutral-bg-2, #0b0e11)',
     }}>
       <div style={{
-        width: 400, padding: 40, background: '#fff',
-        borderRadius: 16, boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
+        width: 400,
+        padding: 40,
+        background: 'var(--r-neutral-card-1, #fff)',
+        borderRadius: 16,
+        boxShadow: 'var(--rabby-shadow-lg, 0 20px 60px rgba(0,0,0,0.15))',
+        border: '1px solid var(--r-neutral-line, #f0f0f0)',
       }}>
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <div style={{
             width: 56, height: 56, borderRadius: 14,
-            background: 'linear-gradient(135deg, #4c65ff, #7084ff)',
+            background: 'linear-gradient(135deg, var(--r-blue-default, #4f8bff), #7aa8ff)',
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
             color: '#fff', fontSize: 24, fontWeight: 700, marginBottom: 16,
           }}>R</div>
-          <h2 style={{ margin: 0, fontSize: 22, color: '#192945' }}>Rabby Admin</h2>
-          <p style={{ margin: '8px 0 0', color: '#6a7587', fontSize: 14 }}>Sign in to manage your platform</p>
+          <h2 style={{ margin: 0, fontSize: 22, color: 'var(--r-neutral-title-1, #192945)' }}>Rabby Admin</h2>
+          <p style={{ margin: '8px 0 0', color: 'var(--r-neutral-foot, #6a7587)', fontSize: 14 }}>Sign in to manage your platform</p>
         </div>
 
         <form onSubmit={handleSubmit}>
           {error && (
             <div style={{
               padding: '10px 14px', borderRadius: 8, marginBottom: 16,
-              background: '#fff2f0', border: '1px solid #ffccc7', color: '#cf1322', fontSize: 13,
+              background: 'var(--r-red-light, #fff2f0)',
+              border: '1px solid rgba(234, 57, 67, 0.35)',
+              color: 'var(--r-red-default, #cf1322)',
+              fontSize: 13,
             }}>
               {error}
             </div>
           )}
           <div style={{ marginBottom: 16 }}>
-            <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#192945', marginBottom: 6 }}>
+            <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: 'var(--r-neutral-title-1, #192945)', marginBottom: 6 }}>
               Username
             </label>
             <input
@@ -77,13 +84,17 @@ export default function LoginPage() {
               placeholder="admin"
               style={{
                 width: '100%', padding: '10px 14px', borderRadius: 8,
-                border: '1px solid #d9d9d9', fontSize: 14, outline: 'none',
+                border: '1px solid var(--r-neutral-line, #d9d9d9)',
+                fontSize: 14,
+                outline: 'none',
                 boxSizing: 'border-box',
+                background: 'var(--r-neutral-bg-3, #f2f4f7)',
+                color: 'var(--r-neutral-title-1, #192945)',
               }}
             />
           </div>
           <div style={{ marginBottom: 24 }}>
-            <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#192945', marginBottom: 6 }}>
+            <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: 'var(--r-neutral-title-1, #192945)', marginBottom: 6 }}>
               Password
             </label>
             <input
@@ -91,8 +102,12 @@ export default function LoginPage() {
               placeholder="\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022"
               style={{
                 width: '100%', padding: '10px 14px', borderRadius: 8,
-                border: '1px solid #d9d9d9', fontSize: 14, outline: 'none',
+                border: '1px solid var(--r-neutral-line, #d9d9d9)',
+                fontSize: 14,
+                outline: 'none',
                 boxSizing: 'border-box',
+                background: 'var(--r-neutral-bg-3, #f2f4f7)',
+                color: 'var(--r-neutral-title-1, #192945)',
               }}
             />
           </div>
@@ -100,7 +115,7 @@ export default function LoginPage() {
             type="submit" disabled={loading}
             style={{
               width: '100%', padding: '12px 0', borderRadius: 8, border: 'none',
-              background: '#4c65ff', color: '#fff', fontSize: 15, fontWeight: 600,
+              background: 'var(--r-blue-default, #4c65ff)', color: '#fff', fontSize: 15, fontWeight: 600,
               cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1,
             }}
           >

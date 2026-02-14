@@ -1,0 +1,5 @@
+
+module Kingfisher.Swift {
+  header "Kingfisher-Swift.h"
+  requires objc
+}

@@ -75,7 +75,7 @@ class GasAccountManager: ObservableObject {
         ]
         
         do {
-            let response: LoginResponse = try await NetworkManager.shared.post(url: url, body: params)
+            let _: LoginResponse = try await NetworkManager.shared.post(url: url, body: params)
             
             self.accountId = address
             self.signature = signature
@@ -173,7 +173,7 @@ class GasAccountManager: ObservableObject {
             "signature": signature,
             "chain_id": chain.serverId,
             "from": fromAddress,
-            "to": transaction.to,
+            "to": transaction.to as Any,
             "value": transaction.value,
             "data": transaction.data,
         ]

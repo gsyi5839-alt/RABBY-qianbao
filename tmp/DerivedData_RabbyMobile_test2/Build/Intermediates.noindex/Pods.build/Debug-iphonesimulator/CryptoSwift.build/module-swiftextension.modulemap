@@ -1,0 +1,5 @@
+
+module CryptoSwift.Swift {
+  header "CryptoSwift-Swift.h"
+  requires objc
+}

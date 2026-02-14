@@ -1,0 +1,72 @@
+{
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/RabbyMobile/Core/AutoLockManager.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/AutoLockManager.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/AutoLockManager.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/AutoLockManager.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/AutoLockManager.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/AutoLockManager.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/RabbyMobile/Core/BIP39.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/BIP39.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/BIP39.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/BIP39.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/BIP39.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/BIP39.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/RabbyMobile/Core/BIP44.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/BIP44.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/BIP44.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/BIP44.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/BIP44.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/BIP44.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/RabbyMobile/Core/BiometricAuthManager.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/BiometricAuthManager.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/BiometricAuthManager.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/BiometricAuthManager.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/BiometricAuthManager.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/BiometricAuthManager.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/RabbyMobile/Core/BridgeManager.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/BridgeManager.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/BridgeManager.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/BridgeManager.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/BridgeManager.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/BridgeManager.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/RabbyMobile/Core/ContactBookManager.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/ContactBookManager.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/ContactBookManager.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/ContactBookManager.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/ContactBookManager.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/ContactBookManager.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/RabbyMobile/Core/CustomRPCManager.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/CustomRPCManager.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/CustomRPCManager.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/CustomRPCManager.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/CustomRPCManager.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/CustomRPCManager.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/RabbyMobile/Core/CustomTestnetManager.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/CustomTestnetManager.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/CustomTestnetManager.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/CustomTestnetManager.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/CustomTestnetManager.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/CustomTestnetManager.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/RabbyMobile/Core/EthereumUtils.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/EthereumUtils.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/EthereumUtils.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/EthereumUtils.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/EthereumUtils.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/EthereumUtils.swiftdeps"
+  },
+  "/Users/macbook/Downloads/Rabby-0.93.77/mobile/ios/RabbyMobile/RabbyMobileApp.swift" : {
+    "const-values" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/RabbyMobileApp.swiftconstvalues",
+    "dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/RabbyMobileApp.d",
+    "diagnostics" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/RabbyMobileApp.dia",
+    "object" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/RabbyMobileApp.o",
+    "swift-dependencies" : "/Users/macbook/Downloads/Rabby-0.93.77/tmp/DerivedData_RabbyMobile_build/Build/Intermediates.noindex/RabbyMobile.build/Debug-iphonesimulator/RabbyMobile.build/Objects-normal/arm64/RabbyMobileApp.swiftdeps"
+  }
+}

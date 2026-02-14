@@ -1,0 +1,4 @@
+interface:
+  display_name: "Web Design Researcher"
+  short_description: "Research competitor UI patterns and summarize"
+  default_prompt: "Use $web-design-researcher to research wallet websites and produce a Notion report."

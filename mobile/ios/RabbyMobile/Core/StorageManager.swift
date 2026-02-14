@@ -66,7 +66,7 @@ class StorageManager {
         let key = try deriveKey(password: password, salt: Data(salt))
         
         // Generate nonce
-        let nonce = try AES.GCM.Nonce()
+        let nonce = AES.GCM.Nonce()
         
         // Encrypt data
         let sealedBox = try AES.GCM.seal(data, using: key, nonce: nonce)

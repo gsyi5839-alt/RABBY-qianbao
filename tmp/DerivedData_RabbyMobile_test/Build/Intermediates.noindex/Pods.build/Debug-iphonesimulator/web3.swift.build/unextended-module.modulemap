@@ -1,0 +1,10 @@
+framework module web3 {
+  umbrella header "web3.swift-umbrella.h"
+
+  export *
+  module * { export * }
+}
+
+module web3.__Swift {
+  exclude header "web3-Swift.h"
+}

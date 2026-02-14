@@ -1,0 +1,126 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.2.4 effective-5.10 (swiftlang-6.2.4.1.4 clang-1700.6.4.2)
+// swift-module-flags: -target arm64-apple-ios15.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -Onone -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name GenericJSON
+// swift-module-flags-ignorable: -no-verify-emitted-module-interface -formal-cxx-interoperability-mode=off -interface-compiler-version 6.2.4
+import Foundation
+@_exported import GenericJSON
+import Swift
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+extension GenericJSON.JSON {
+  public init(_ value: Any) throws
+}
+extension GenericJSON.JSON {
+  public init<T>(encodable: T) throws where T : Swift.Encodable
+}
+extension GenericJSON.JSON : Swift.ExpressibleByBooleanLiteral {
+  public init(booleanLiteral value: Swift.Bool)
+  public typealias BooleanLiteralType = Swift.Bool
+}
+extension GenericJSON.JSON : Swift.ExpressibleByNilLiteral {
+  public init(nilLiteral: ())
+}
+extension GenericJSON.JSON : Swift.ExpressibleByArrayLiteral {
+  public init(arrayLiteral elements: GenericJSON.JSON...)
+  public typealias ArrayLiteralElement = GenericJSON.JSON
+}
+extension GenericJSON.JSON : Swift.ExpressibleByDictionaryLiteral {
+  public init(dictionaryLiteral elements: (Swift.String, GenericJSON.JSON)...)
+  public typealias Key = Swift.String
+  public typealias Value = GenericJSON.JSON
+}
+extension GenericJSON.JSON : Swift.ExpressibleByFloatLiteral {
+  public init(floatLiteral value: Swift.Double)
+  public typealias FloatLiteralType = Swift.Double
+}
+extension GenericJSON.JSON : Swift.ExpressibleByIntegerLiteral {
+  public init(integerLiteral value: Swift.Int)
+  public typealias IntegerLiteralType = Swift.Int
+}
+extension GenericJSON.JSON : Swift.ExpressibleByStringLiteral {
+  public init(stringLiteral value: Swift.String)
+  public typealias ExtendedGraphemeClusterLiteralType = Swift.String
+  public typealias StringLiteralType = Swift.String
+  public typealias UnicodeScalarLiteralType = Swift.String
+}
+@dynamicMemberLookup public enum JSON : Swift.Equatable {
+  case string(Swift.String)
+  case number(Swift.Double)
+  case object([Swift.String : GenericJSON.JSON])
+  case array([GenericJSON.JSON])
+  case bool(Swift.Bool)
+  case null
+  public static func == (a: GenericJSON.JSON, b: GenericJSON.JSON) -> Swift.Bool
+}
+extension GenericJSON.JSON : Swift.Codable {
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension GenericJSON.JSON : Swift.CustomDebugStringConvertible {
+  public var debugDescription: Swift.String {
+    get
+  }
+}
+extension GenericJSON.JSON : Swift.Hashable {
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension GenericJSON.JSON {
+  public func merging(with new: GenericJSON.JSON) -> GenericJSON.JSON
+}
+extension GenericJSON.JSON {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var stringValue: Swift.String? {
+    get
+  }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var doubleValue: Swift.Double? {
+    get
+  }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var boolValue: Swift.Bool? {
+    get
+  }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var objectValue: [Swift.String : GenericJSON.JSON]? {
+    get
+  }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var arrayValue: [GenericJSON.JSON]? {
+    get
+  }
+  #endif
+  public var isNull: Swift.Bool {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public subscript(index: Swift.Int) -> GenericJSON.JSON? {
+    get
+  }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public subscript(key: Swift.String) -> GenericJSON.JSON? {
+    get
+  }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public subscript(dynamicMember member: Swift.String) -> GenericJSON.JSON? {
+    get
+  }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public subscript(keyPath keyPath: Swift.String) -> GenericJSON.JSON? {
+    get
+  }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func queryKeyPath<T>(_ path: T) -> GenericJSON.JSON? where T : Swift.Collection, T.Element == Swift.String
+  #endif
+}

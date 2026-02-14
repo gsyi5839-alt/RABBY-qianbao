@@ -99,7 +99,7 @@ struct BalanceCurveView: View {
                 ProgressView()
                     .frame(height: 120)
             } else if historyData.isEmpty {
-                Text("No data available")
+                Text(L("No data available"))
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .frame(height: 120)
@@ -161,7 +161,7 @@ struct BalanceCurveView: View {
             if isLoading {
                 ProgressView().frame(height: 120)
             } else if historyData.isEmpty {
-                Text("No data available")
+                Text(L("No data available"))
                     .font(.caption).foregroundColor(.secondary)
                     .frame(height: 120)
             } else {

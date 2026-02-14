@@ -31,7 +31,7 @@ struct ImportSuccessView: View {
             }
             
             VStack(spacing: 8) {
-                Text("Import Successful!")
+                Text(L("Import Successful!"))
                     .font(.title2).fontWeight(.bold)
                 
                 Text("Your \(importType) wallet has been imported")
@@ -72,10 +72,10 @@ struct ImportSuccessView: View {
             
             // Set alias
             VStack(alignment: .leading, spacing: 8) {
-                Text("Set a name (optional)")
+                Text(L("Set a name (optional)"))
                     .font(.caption).foregroundColor(.secondary)
                 
-                TextField("Enter a name for this address", text: $aliasName)
+                TextField(L("Enter a name for this address"), text: $aliasName)
                     .padding()
                     .background(Color(.systemGray6))
                     .cornerRadius(8)
@@ -91,7 +91,7 @@ struct ImportSuccessView: View {
             
             // Done button
             Button(action: onDone) {
-                Text("Done")
+                Text(L("Done"))
                     .font(.headline)
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -149,14 +149,14 @@ struct AddFromSeedPhraseView: View {
                 // Info banner
                 HStack(alignment: .top, spacing: 8) {
                     Image(systemName: "info.circle.fill").foregroundColor(.blue)
-                    Text("Select additional addresses to add from your existing seed phrase. Existing addresses are marked.")
+                    Text(L("Select additional addresses to add from your existing seed phrase. Existing addresses are marked."))
                         .font(.caption).foregroundColor(.blue)
                 }
                 .padding().background(Color.blue.opacity(0.1))
                 
                 if isLoading {
                     Spacer()
-                    ProgressView("Deriving addresses...")
+                    ProgressView(L("Deriving addresses..."))
                     Spacer()
                 } else {
                     // Address list
@@ -182,7 +182,7 @@ struct AddFromSeedPhraseView: View {
                                 Spacer()
                                 
                                 if item.isExisting {
-                                    Text("Added")
+                                    Text(L("Added"))
                                         .font(.caption2)
                                         .foregroundColor(.green)
                                         .padding(.horizontal, 6).padding(.vertical, 2)
@@ -225,16 +225,16 @@ struct AddFromSeedPhraseView: View {
                 .padding()
                 .background(Color(.systemBackground))
             }
-            .navigationTitle("Add Address")
+            .navigationTitle(L("Add Address"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(L("Cancel")) { dismiss() }
                 }
             }
             .onAppear { loadAddresses() }
-            .alert("Addresses Added", isPresented: $showSuccess) {
-                Button("Done") { dismiss() }
+            .alert(L("Addresses Added"), isPresented: $showSuccess) {
+                Button(L("Done")) { dismiss() }
             } message: {
                 Text("\(selectedAddresses.count) new address(es) have been added to your wallet.")
             }

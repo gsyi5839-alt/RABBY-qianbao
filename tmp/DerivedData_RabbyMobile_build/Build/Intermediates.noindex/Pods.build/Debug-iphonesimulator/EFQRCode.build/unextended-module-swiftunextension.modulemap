@@ -1,0 +1,4 @@
+
+module EFQRCode.__Swift {
+  exclude header "EFQRCode-Swift.h"
+}

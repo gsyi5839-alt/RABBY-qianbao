@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+:root {
+  color-scheme: light;
+
+  /* Brand */
+  --rabby-brand: #4c65ff;
+  --rabby-brand-light: rgba(76, 101, 255, 0.08);
+  --rabby-brand-hover: #3a52e0;
+
+  /* Light theme tokens */
+  --r-blue-default: #4c65ff;
+  --r-blue-light-1: #edf0ff;
+  --r-blue-light-2: #dbe0ff;
+  --r-green-default: #16c784;
+  --r-red-default: #ea3943;
+  --r-neutral-title-1: #192945;
+  --r-neutral-body: #3e495e;
+  --r-neutral-foot: #6a7587;
+  --r-neutral-line: #e0e5ec;
+  --r-neutral-bg-1: #ffffff;
+  --r-neutral-bg-2: #f2f4f7;
+  --r-neutral-card-1: #ffffff;
+
+  /* Section backgrounds */
+  --section-light-gray: #f7f8fc;
+  --section-dark: #1a1f36;
+
+  /* Shadows */
+  --rabby-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+  --rabby-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --rabby-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--r-neutral-title-1);
+  background: #ffffff;
+}
+
+a { text-decoration: none; color: inherit; }
+button { font-family: inherit; }
+img { max-width: 100%; display: block; }
+
+input:focus, select:focus, textarea:focus, button:focus {
+  outline: none;
+}
+
+/* Component animations */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}

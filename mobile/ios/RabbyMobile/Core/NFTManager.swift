@@ -132,36 +132,175 @@ class NFTManager: ObservableObject {
         return collections.first { $0.contractAddress.lowercased() == contractAddress.lowercased() }
     }
     
-    /// Send NFT (ERC721)
-    func sendNFT(_ nft: NFT, to: String, from: String) async throws -> String {
-        guard nft.type == .erc721 else {
-            throw NFTError.unsupportedType
+    // MARK: - Calldata Builders
+
+    /// Build ERC721 safeTransferFrom calldata.
+    ///
+    /// Function: `safeTransferFrom(address,address,uint256)`
+    /// Selector: `0x42842e0e`
+    ///
+    /// - Parameters:
+    ///   - from: sender address
+    ///   - to:   recipient address
+    ///   - tokenId: the NFT token ID (decimal string)
+    /// - Returns: Complete calldata (4-byte selector + ABI-encoded params)
+    static func buildERC721TransferCalldata(from: String, to: String, tokenId: String) -> Data {
+        // Selector: keccak256("safeTransferFrom(address,address,uint256)")[0..4] = 0x42842e0e
+        let selector = Data([0x42, 0x84, 0x2e, 0x0e])
+
+        let fromParam = EthereumUtil.abiEncodeAddress(from)
+        let toParam = EthereumUtil.abiEncodeAddress(to)
+        let tokenIdParam = EthereumUtil.abiEncodeUint256(BigUInt(tokenId) ?? BigUInt(0))
+
+        return EthereumUtil.abiEncodeFunctionCall(
+            selector: selector,
+            staticParams: [fromParam, toParam, tokenIdParam]
+        )
+    }
+
+    /// Build ERC1155 safeTransferFrom calldata.
+    ///
+    /// Function: `safeTransferFrom(address,address,uint256,uint256,bytes)`
+    /// Selector: `0xf242432a`
+    ///
+    /// ABI layout (after 4-byte selector):
+    ///   Offset 0x00: from     (address, 32 bytes)
+    ///   Offset 0x20: to       (address, 32 bytes)
+    ///   Offset 0x40: tokenId  (uint256, 32 bytes)
+    ///   Offset 0x60: amount   (uint256, 32 bytes)
+    ///   Offset 0x80: offset to `data` (uint256 = 0xa0 = 160, pointing past the 5 head words)
+    ///   Offset 0xa0: length of `data` (uint256 = 0 for empty bytes)
+    ///
+    /// - Parameters:
+    ///   - from:    sender address
+    ///   - to:      recipient address
+    ///   - tokenId: the NFT token ID (decimal string)
+    ///   - amount:  number of tokens to transfer (decimal string, typically "1")
+    /// - Returns: Complete calldata
+    static func buildERC1155TransferCalldata(from: String, to: String, tokenId: String, amount: String) -> Data {
+        // Selector: keccak256("safeTransferFrom(address,address,uint256,uint256,bytes)")[0..4] = 0xf242432a
+        let selector = Data([0xf2, 0x42, 0x43, 0x2a])
+
+        let fromParam    = EthereumUtil.abiEncodeAddress(from)
+        let toParam      = EthereumUtil.abiEncodeAddress(to)
+        let tokenIdParam = EthereumUtil.abiEncodeUint256(BigUInt(tokenId) ?? BigUInt(0))
+        let amountParam  = EthereumUtil.abiEncodeUint256(BigUInt(amount) ?? BigUInt(1))
+
+        // The `bytes` parameter is dynamic. Its offset in the head section points to
+        // where the dynamic data begins, measured from the start of the parameters
+        // (i.e., after the selector). There are 5 head words (5 * 32 = 160 = 0xa0).
+        let bytesOffset = EthereumUtil.abiEncodeUint256(BigUInt(160)) // 5 * 32
+
+        // Dynamic tail: empty bytes (length = 0, no data, no padding needed)
+        let bytesTail = EthereumUtil.abiEncodeBytes(Data())
+
+        return EthereumUtil.abiEncodeFunctionCall(
+            selector: selector,
+            staticParams: [fromParam, toParam, tokenIdParam, amountParam, bytesOffset],
+            dynamicData: bytesTail
+        )
+    }
+
+    /// Build ERC1155 safeBatchTransferFrom calldata.
+    ///
+    /// Function: `safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)`
+    /// Selector: `0x2eb2c2d6`
+    ///
+    /// - Parameters:
+    ///   - from:     sender address
+    ///   - to:       recipient address
+    ///   - tokenIds: array of token IDs (decimal strings)
+    ///   - amounts:  array of amounts (decimal strings), must be same length as tokenIds
+    /// - Returns: Complete calldata
+    static func buildERC1155BatchTransferCalldata(from: String, to: String, tokenIds: [String], amounts: [String]) -> Data {
+        // Selector: keccak256("safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)")[0..4] = 0x2eb2c2d6
+        let selector = Data([0x2e, 0xb2, 0xc2, 0xd6])
+
+        // Head section has 5 words: from, to, offset(ids), offset(amounts), offset(data)
+        // The three dynamic params (uint256[], uint256[], bytes) need offset pointers.
+        //
+        // Head layout (5 * 32 = 160 bytes):
+        //   [0]  from       (static)
+        //   [1]  to         (static)
+        //   [2]  offset to tokenIds array
+        //   [3]  offset to amounts array
+        //   [4]  offset to data bytes
+
+        let fromParam = EthereumUtil.abiEncodeAddress(from)
+        let toParam   = EthereumUtil.abiEncodeAddress(to)
+
+        // Build the dynamic sections first so we can compute offsets.
+        // tokenIds array: length (32 bytes) + N * 32 bytes
+        let tokenIdValues = tokenIds.map { BigUInt($0) ?? BigUInt(0) }
+        var tokenIdsEncoded = EthereumUtil.abiEncodeUint256(BigUInt(tokenIdValues.count))
+        for val in tokenIdValues {
+            tokenIdsEncoded.append(EthereumUtil.abiEncodeUint256(val))
         }
-        
-        // ERC721 safeTransferFrom function
-        let functionSignature = "safeTransferFrom(address,address,uint256)"
-        let selector = Keccak256.hash(string: functionSignature).prefix(4)
-        
-        // Encode parameters
-        var data = Data(selector)
-        
-        // From address (padded to 32 bytes)
-        if let fromData = Data(hexString: String(from.dropFirst(2))) {
-            data.append(Data(repeating: 0, count: 12))
-            data.append(fromData)
+
+        // amounts array: length (32 bytes) + N * 32 bytes
+        let amountValues = amounts.map { BigUInt($0) ?? BigUInt(1) }
+        var amountsEncoded = EthereumUtil.abiEncodeUint256(BigUInt(amountValues.count))
+        for val in amountValues {
+            amountsEncoded.append(EthereumUtil.abiEncodeUint256(val))
         }
-        
-        // To address (padded to 32 bytes)
-        if let toData = Data(hexString: String(to.dropFirst(2))) {
-            data.append(Data(repeating: 0, count: 12))
-            data.append(toData)
+
+        // data bytes: empty
+        let dataEncoded = EthereumUtil.abiEncodeBytes(Data())
+
+        // Offsets: measured from start of params (after selector).
+        // Head size = 5 * 32 = 160 bytes.
+        let headSize = 160
+        let tokenIdsOffset = headSize
+        let amountsOffset  = tokenIdsOffset + tokenIdsEncoded.count
+        let dataOffset     = amountsOffset + amountsEncoded.count
+
+        let tokenIdsOffsetParam = EthereumUtil.abiEncodeUint256(BigUInt(tokenIdsOffset))
+        let amountsOffsetParam  = EthereumUtil.abiEncodeUint256(BigUInt(amountsOffset))
+        let dataOffsetParam     = EthereumUtil.abiEncodeUint256(BigUInt(dataOffset))
+
+        // Assemble tail
+        var dynamicData = Data()
+        dynamicData.append(tokenIdsEncoded)
+        dynamicData.append(amountsEncoded)
+        dynamicData.append(dataEncoded)
+
+        return EthereumUtil.abiEncodeFunctionCall(
+            selector: selector,
+            staticParams: [fromParam, toParam, tokenIdsOffsetParam, amountsOffsetParam, dataOffsetParam],
+            dynamicData: dynamicData
+        )
+    }
+
+    // MARK: - Send NFT (Unified)
+
+    /// Send an NFT to a recipient, automatically selecting the correct transfer
+    /// method based on the NFT type (ERC721 or ERC1155).
+    ///
+    /// - Parameters:
+    ///   - nft:    the NFT to send
+    ///   - to:     recipient address
+    ///   - from:   sender address
+    ///   - amount: number of tokens to transfer (only relevant for ERC1155; ignored for ERC721)
+    /// - Returns: transaction hash
+    func sendNFT(_ nft: NFT, to: String, from: String, amount: String = "1") async throws -> String {
+        let calldata: Data
+
+        switch nft.type {
+        case .erc721:
+            calldata = Self.buildERC721TransferCalldata(
+                from: from,
+                to: to,
+                tokenId: nft.tokenId
+            )
+        case .erc1155:
+            calldata = Self.buildERC1155TransferCalldata(
+                from: from,
+                to: to,
+                tokenId: nft.tokenId,
+                amount: amount
+            )
         }
-        
-        // Token ID (padded to 32 bytes)
-        if let tokenIdNum = UInt256(nft.tokenId) {
-            data.append(tokenIdNum.data)
-        }
-        
+
         // Create transaction
         let chainId = Int(nft.chain) ?? 1
         let transaction = EthereumTransaction(
@@ -169,61 +308,44 @@ class NFTManager: ObservableObject {
             from: from,
             nonce: BigUInt(0),
             value: BigUInt(0),
-            data: data,
+            data: calldata,
             gasLimit: BigUInt(200000),
             chainId: chainId
         )
-        
+
         // Sign and send
         let signedTx = try await KeyringManager.shared.signTransaction(address: from, transaction: transaction)
         let txHash = try await TransactionManager.shared.broadcastTransaction(signedTx)
-        
+
         return txHash
     }
-    
-    /// Send ERC1155 NFT
+
+    /// Send ERC721 NFT (convenience wrapper).
+    func sendERC721(_ nft: NFT, to: String, from: String) async throws -> String {
+        guard nft.type == .erc721 else {
+            throw NFTError.unsupportedType
+        }
+        return try await sendNFT(nft, to: to, from: from)
+    }
+
+    /// Send ERC1155 NFT with a specified amount.
     func sendERC1155(_ nft: NFT, to: String, from: String, amount: String) async throws -> String {
         guard nft.type == .erc1155 else {
             throw NFTError.unsupportedType
         }
-        
-        // ERC1155 safeTransferFrom function
-        let functionSignature = "safeTransferFrom(address,address,uint256,uint256,bytes)"
-        let selector = Keccak256.hash(string: functionSignature).prefix(4)
-        
-        var data = Data(selector)
-        
-        // Encode parameters similar to ERC721
-        // (Implementation details omitted for brevity)
-        
-        // Create and send transaction
-        let chainId = Int(nft.chain) ?? 1
-        let transaction = EthereumTransaction(
-            to: nft.contractAddress,
-            from: from,
-            nonce: BigUInt(0),
-            value: BigUInt(0),
-            data: data,
-            gasLimit: BigUInt(200000),
-            chainId: chainId
-        )
-        
-        let signedTx = try await KeyringManager.shared.signTransaction(address: from, transaction: transaction)
-        let txHash = try await TransactionManager.shared.broadcastTransaction(signedTx)
-        
-        return txHash
+        return try await sendNFT(nft, to: to, from: from, amount: amount)
     }
     
     /// Check if address owns NFT
     func ownsNFT(contractAddress: String, tokenId: String, owner: String, chain: Chain) async throws -> Bool {
         // ERC721 ownerOf function
-        let functionSignature = "ownerOf(uint256)"
-        let selector = Keccak256.hash(string: functionSignature).prefix(4)
-        
-        var callData = Data(selector)
-        if let tokenIdNum = UInt256(tokenId) {
-            callData.append(tokenIdNum.data)
-        }
+        // Selector: keccak256("ownerOf(uint256)")[0..4] = 0x6352211e
+        let selector = Data([0x63, 0x52, 0x21, 0x1e])
+        let tokenIdParam = EthereumUtil.abiEncodeUint256(BigUInt(tokenId) ?? BigUInt(0))
+        let callData = EthereumUtil.abiEncodeFunctionCall(
+            selector: selector,
+            staticParams: [tokenIdParam]
+        )
         
         let callTx: [String: Any] = [
             "to": contractAddress,
@@ -310,23 +432,18 @@ private struct NFTListResponse: Codable {
 
 // MARK: - UInt256 Helper
 
+/// A simple 32-byte big-endian representation for uint256 values.
+/// Backed by BigUInt so it can handle token IDs that exceed UInt64 range.
 struct UInt256 {
     let data: Data
-    
+
     init?(_ string: String) {
-        guard let value = UInt(string) else { return nil }
-        
-        var bytes = Data(repeating: 0, count: 32)
-        var temp = value
-        var index = 31
-        
-        while temp > 0 && index >= 0 {
-            bytes[index] = UInt8(temp & 0xFF)
-            temp >>= 8
-            index -= 1
-        }
-        
-        self.data = bytes
+        guard let value = BigUInt(string) else { return nil }
+        self.data = value.toPaddedData(length: 32)
+    }
+
+    init(_ value: BigUInt) {
+        self.data = value.toPaddedData(length: 32)
     }
 }
 

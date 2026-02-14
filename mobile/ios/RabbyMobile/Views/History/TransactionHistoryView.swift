@@ -20,7 +20,7 @@ struct TransactionHistoryView: View {
                     HStack(spacing: 8) {
                         ForEach(TxFilter.allCases, id: \.self) { filter in
                             Button(action: { selectedFilter = filter }) {
-                                Text(filter.rawValue)
+                                Text(L(filter.rawValue))
                                     .font(.subheadline).fontWeight(selectedFilter == filter ? .semibold : .regular)
                                     .padding(.horizontal, 16).padding(.vertical, 8)
                                     .background(selectedFilter == filter ? Color.blue : Color(.systemGray5))
@@ -41,7 +41,7 @@ struct TransactionHistoryView: View {
                     }
                 }
             }
-            .navigationTitle("History")
+            .navigationTitle(L("History"))
             .navigationBarTitleDisplayMode(.inline)
         }
     }
@@ -49,28 +49,32 @@ struct TransactionHistoryView: View {
     private var allTransactionsList: some View {
         let address = PreferenceManager.shared.currentAccount?.address ?? ""
         let groups = historyManager.getHistory(address: address)
-        
+
         return Group {
             if groups.isEmpty {
-                emptyState("No transactions yet")
+                emptyState(LocalizationManager.shared.t("No transactions yet"))
             } else {
                 List(groups) { group in
-                    transactionGroupRow(group: group)
+                    NavigationLink(destination: TransactionDetailView(transactionGroup: group, chainId: group.chainId)) {
+                        transactionGroupRow(group: group)
+                    }
                 }.listStyle(.plain)
             }
         }
     }
-    
+
     private var pendingTransactionsList: some View {
         let address = PreferenceManager.shared.currentAccount?.address ?? ""
         let pending = historyManager.getPendingTransactions(address: address)
-        
+
         return Group {
             if pending.isEmpty {
-                emptyState("No pending transactions")
+                emptyState(LocalizationManager.shared.t("No pending transactions"))
             } else {
                 List(pending) { group in
-                    transactionGroupRow(group: group)
+                    NavigationLink(destination: TransactionDetailView(transactionGroup: group, chainId: group.chainId)) {
+                        transactionGroupRow(group: group)
+                    }
                 }.listStyle(.plain)
             }
         }
@@ -82,7 +86,7 @@ struct TransactionHistoryView: View {
         
         return Group {
             if swaps.isEmpty {
-                emptyState("No swap history")
+                emptyState(LocalizationManager.shared.t("No swap history"))
             } else {
                 List(swaps) { swap in
                     swapHistoryRow(swap: swap)
@@ -94,7 +98,7 @@ struct TransactionHistoryView: View {
     private var bridgeHistoryList: some View {
         return Group {
             if historyManager.bridgeHistory.isEmpty {
-                emptyState("No bridge history")
+                emptyState(LocalizationManager.shared.t("No bridge history"))
             } else {
                 List(historyManager.bridgeHistory) { bridge in
                     bridgeHistoryRow(bridge: bridge)
@@ -110,7 +114,7 @@ struct TransactionHistoryView: View {
             statusIcon(isPending: group.isPending, isFailed: group.isFailed)
             
             VStack(alignment: .leading, spacing: 4) {
-                Text(tx?.to.prefix(10).appending("...") ?? "Unknown")
+                Text(tx?.to.prefix(10).appending("...") ?? LocalizationManager.shared.t("Unknown"))
                     .font(.subheadline).fontWeight(.medium)
                 Text(group.createdAt, style: .relative)
                     .font(.caption).foregroundColor(.secondary)
@@ -168,7 +172,7 @@ struct TransactionHistoryView: View {
     }
     
     private func statusText(isPending: Bool, isFailed: Bool) -> String {
-        isPending ? "Pending" : isFailed ? "Failed" : "Confirmed"
+        isPending ? LocalizationManager.shared.t("Pending") : isFailed ? LocalizationManager.shared.t("Failed") : LocalizationManager.shared.t("Confirmed")
     }
     
     private func statusColor(isPending: Bool, isFailed: Bool) -> Color {

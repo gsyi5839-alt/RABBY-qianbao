@@ -1,0 +1,4 @@
+
+module GenericJSON.__Swift {
+  exclude header "GenericJSON-Swift.h"
+}

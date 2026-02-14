@@ -1,0 +1,7 @@
+<svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- TRON - TRX -->
+  <circle cx="12" cy="12" r="10" fill="#c63131" opacity="0.15"/>
+  <path d="M12 4L18 8L12 12L6 8L12 4Z" fill="#c63131" opacity="0.8"/>
+  <path d="M12 12L18 8V16L12 20V12Z" fill="#c63131" opacity="0.6"/>
+  <path d="M12 12L6 8V16L12 20V12Z" fill="#c63131" opacity="0.4"/>
+</svg>

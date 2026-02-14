@@ -1,0 +1,2824 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.2.4 effective-5.10 (swiftlang-6.2.4.1.4 clang-1700.6.4.2)
+// swift-module-flags: -target arm64-apple-ios15.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -Onone -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name web3
+// swift-module-flags-ignorable: -no-verify-emitted-module-interface -formal-cxx-interoperability-mode=off -interface-compiler-version 6.2.4
+import BigInt
+import CommonCrypto
+import Darwin
+import Foundation
+import GenericJSON
+import Logging
+import Swift
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+import aes
+import keccaktiny
+import secp256k1
+@_exported import web3
+@_hasMissingDesignatedInitializers public class ABIDecoder {
+  @objc deinit
+}
+extension web3.ABIDecoder {
+  public typealias RawABI = Swift.String
+  public typealias ParsedABIEntry = Swift.String
+  public typealias ABIEntry = [Swift.String]
+  public struct DecodedValue {
+    public func decoded<T>() throws -> T where T : web3.ABIType
+    public func decodedArray<T>() throws -> [T] where T : web3.ABIType
+    public func decodedTupleArray<T>() throws -> [T] where T : web3.ABITuple
+  }
+  public static func decodeData(_ data: web3.ABIDecoder.RawABI, types: [any web3.ABIType.Type], asArray: Swift.Bool = false) throws -> [web3.ABIDecoder.DecodedValue]
+  public static func decode(_ data: web3.ABIDecoder.ParsedABIEntry, to: Swift.String.Type) throws -> Swift.String
+  public static func decode(_ data: web3.ABIDecoder.ParsedABIEntry, to: Swift.Bool.Type) throws -> Swift.Bool
+  public static func decode(_ data: web3.ABIDecoder.ParsedABIEntry, to: web3.EthereumAddress.Type) throws -> web3.EthereumAddress
+  public static func decode(_ data: web3.ABIDecoder.ParsedABIEntry, to: BigInt.BigInt.Type) throws -> BigInt.BigInt
+  public static func decode(_ data: web3.ABIDecoder.ParsedABIEntry, to: BigInt.BigUInt.Type) throws -> BigInt.BigUInt
+  public static func decode(_ data: web3.ABIDecoder.ParsedABIEntry, to: Swift.UInt8.Type) throws -> Swift.UInt8
+  public static func decode(_ data: web3.ABIDecoder.ParsedABIEntry, to: Swift.UInt16.Type) throws -> Swift.UInt16
+  public static func decode(_ data: web3.ABIDecoder.ParsedABIEntry, to: Swift.UInt32.Type) throws -> Swift.UInt32
+  public static func decode(_ data: web3.ABIDecoder.ParsedABIEntry, to: Swift.UInt64.Type) throws -> Swift.UInt64
+  public static func decode(_ data: web3.ABIDecoder.ParsedABIEntry, to: Foundation.URL.Type) throws -> Foundation.URL
+  public static func decode(_ data: web3.ABIDecoder.ParsedABIEntry, to: Foundation.Data.Type) throws -> Foundation.Data
+}
+@_hasMissingDesignatedInitializers public class ABIEncoder {
+  public enum EncodedValue {
+    case value(bytes: [Swift.UInt8], isDynamic: Swift.Bool, staticLength: Swift.Int)
+    indirect case container(values: [web3.ABIEncoder.EncodedValue], isDynamic: Swift.Bool, size: Swift.Int?)
+    public var bytes: [Swift.UInt8] {
+      get
+    }
+    public var hexString: Swift.String {
+      get
+    }
+  }
+  @objc deinit
+}
+extension web3.ABIEncoder {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func encode(_ value: any web3.ABIType, staticSize: Swift.Int? = nil, packed: Swift.Bool = false) throws -> web3.ABIEncoder.EncodedValue
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func encode<T>(_ values: [T], staticSize: Swift.Int? = nil) throws -> web3.ABIEncoder.EncodedValue where T : web3.ABIType
+  #endif
+}
+public protocol ABIEvent {
+  static var name: Swift.String { get }
+  static var types: [any web3.ABIType.Type] { get }
+  static var typesIndexed: [Swift.Bool] { get }
+  var log: web3.EthereumLog { get }
+  #if compiler(>=5.3) && $NonescapableTypes
+  init?(topics: [web3.ABIDecoder.DecodedValue], data: [web3.ABIDecoder.DecodedValue], log: web3.EthereumLog) throws
+  #endif
+  static func signature() throws -> Swift.String
+}
+extension web3.ABIEvent {
+  public static func checkParameters(_ topics: [web3.ABIDecoder.DecodedValue], _ data: [web3.ABIDecoder.DecodedValue]) throws
+  public static func signature() throws -> Swift.String
+}
+public protocol ABIFunction : web3.ABIFunctionEncodable {
+  #if compiler(>=5.3) && $NonescapableTypes
+  var gasPrice: BigInt.BigUInt? { get }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  var gasLimit: BigInt.BigUInt? { get }
+  #endif
+  var contract: web3.EthereumAddress { get }
+  #if compiler(>=5.3) && $NonescapableTypes
+  var from: web3.EthereumAddress? { get }
+  #endif
+}
+public protocol ABIResponse : web3.ABITupleDecodable {
+}
+extension web3.ABIFunction {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func transaction(value: BigInt.BigUInt? = nil, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil) throws -> web3.EthereumTransaction
+  #endif
+}
+extension web3.ABIFunction {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func zkSyncTransaction(value: BigInt.BigUInt? = nil, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil, chainId: Swift.Int? = nil, nonce: Swift.Int? = nil) throws -> web3.ZKSyncTransaction
+  #endif
+}
+public protocol ABIFunctionEncodable {
+  static var name: Swift.String { get }
+  func encode(to encoder: web3.ABIFunctionEncoder) throws
+}
+extension web3.ABIFunctionEncodable {
+  public func decode(_ data: Foundation.Data, expectedTypes: [any web3.ABIType.Type], filteringEmptyEntries filterEmptyEntries: Swift.Bool = true) throws -> [web3.ABIDecoder.DecodedValue]
+}
+public class ABIFunctionEncoder {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func encode(_ value: any web3.ABIType, staticSize: Swift.Int? = nil) throws
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func encode<T>(_ values: [T], staticSize: Swift.Int? = nil) throws where T : web3.ABIType
+  #endif
+  public init(_ name: Swift.String)
+  public func encoded() throws -> Foundation.Data
+  @objc deinit
+}
+public enum ABIError : Swift.Error {
+  case invalidSignature
+  case invalidType
+  case invalidValue
+  case incorrectParameterCount
+  case notCurrentlySupported
+  public static func == (a: web3.ABIError, b: web3.ABIError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum ABIRawType {
+  case FixedUInt(Swift.Int)
+  case FixedInt(Swift.Int)
+  case FixedAddress
+  case FixedBool
+  case FixedBytes(Swift.Int)
+  case DynamicBytes
+  case DynamicString
+  indirect case FixedArray(web3.ABIRawType, Swift.Int)
+  indirect case DynamicArray(web3.ABIRawType)
+  indirect case Tuple([web3.ABIRawType])
+}
+extension web3.ABIRawType : Swift.RawRepresentable {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(rawValue: Swift.String)
+  #endif
+  public var rawValue: Swift.String {
+    get
+  }
+  public typealias RawValue = Swift.String
+}
+public protocol ABIType {
+  static var rawType: web3.ABIRawType { get }
+  typealias ParserFunction = ([Swift.String]) throws -> any web3.ABIType
+  static var parser: Self.ParserFunction { get }
+}
+extension Swift.String : web3.ABIType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: Swift.String.ParserFunction {
+    get
+  }
+}
+extension Swift.Bool : web3.ABIType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: Swift.Bool.ParserFunction {
+    get
+  }
+}
+extension web3.EthereumAddress : web3.ABIType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: web3.EthereumAddress.ParserFunction {
+    get
+  }
+}
+extension BigInt.BigInt : web3.ABIType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: BigInt.BigInt.ParserFunction {
+    get
+  }
+}
+extension BigInt.BigUInt : web3.ABIType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: BigInt.BigUInt.ParserFunction {
+    get
+  }
+}
+extension Swift.UInt8 : web3.ABIType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: Swift.UInt8.ParserFunction {
+    get
+  }
+}
+extension Swift.UInt16 : web3.ABIType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: Swift.UInt16.ParserFunction {
+    get
+  }
+}
+extension Swift.UInt32 : web3.ABIType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: Swift.UInt32.ParserFunction {
+    get
+  }
+}
+extension Swift.UInt64 : web3.ABIType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: Swift.UInt64.ParserFunction {
+    get
+  }
+}
+extension Foundation.URL : web3.ABIType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: Foundation.URL.ParserFunction {
+    get
+  }
+}
+extension web3.ABITuple {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: Self.ParserFunction {
+    get
+  }
+}
+extension Foundation.Data : web3.ABIType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+}
+public protocol ABIStaticSizeDataType : web3.ABIType {
+}
+public struct Data1 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data2 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data3 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data4 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data5 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data6 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data7 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data8 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data9 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data10 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data11 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data12 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data13 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data14 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data15 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data16 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data17 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data18 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data19 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data20 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data21 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data22 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data23 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data24 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data25 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data26 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data27 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data28 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data29 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data30 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data31 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct Data32 : web3.ABIStaticSizeDataType {
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: ([Swift.String]) throws -> any web3.ABIType
+  public init(data: Foundation.Data)
+}
+public struct ABIArray<T> : web3.ABIType where T : web3.ABIType {
+  public init(values: [T])
+  public static var rawType: web3.ABIRawType {
+    get
+  }
+  public static var parser: web3.ABIArray<T>.ParserFunction {
+    get
+  }
+}
+public protocol ABIRevertError : web3.ABIFunctionEncodable {
+  var expectedTypes: [any web3.ABIType.Type] { get }
+}
+extension web3.JSONRPCErrorDetail {
+  public func decode<T>(error: T) throws -> [web3.ABIDecoder.DecodedValue] where T : web3.ABIRevertError
+}
+public protocol ABITupleDecodable {
+  static var types: [any web3.ABIType.Type] { get }
+  #if compiler(>=5.3) && $NonescapableTypes
+  init?(values: [web3.ABIDecoder.DecodedValue]) throws
+  #endif
+}
+extension web3.ABITupleDecodable {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(data: Swift.String) throws
+  #endif
+}
+public protocol ABITupleEncodable {
+  var encodableValues: [any web3.ABIType] { get }
+  func encode(to encoder: web3.ABIFunctionEncoder) throws
+}
+public protocol ABITuple : web3.ABITupleDecodable, web3.ABITupleEncodable, web3.ABIType {
+}
+extension Swift.Array {
+  @inlinable internal var slice: Swift.ArraySlice<Element> {
+    get {
+        self[startIndex ..< endIndex]
+    }
+  }
+}
+open class BaseEthereumClient : web3.EthereumClientProtocol {
+  final public let url: Foundation.URL
+  final public let networkProvider: any web3.NetworkProviderProtocol
+  public var network: web3.EthereumNetwork?
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(networkProvider: any web3.NetworkProviderProtocol, url: Foundation.URL, logger: Logging.Logger? = nil, network: web3.EthereumNetwork?)
+  #endif
+  public func net_version() async throws -> web3.EthereumNetwork
+  public func eth_gasPrice() async throws -> BigInt.BigUInt
+  public func eth_blockNumber() async throws -> Swift.Int
+  public func eth_getBalance(address: web3.EthereumAddress, block: web3.EthereumBlock) async throws -> BigInt.BigUInt
+  public func eth_getCode(address: web3.EthereumAddress, block: web3.EthereumBlock = .Latest) async throws -> Swift.String
+  public func eth_estimateGas(_ transaction: web3.EthereumTransaction) async throws -> BigInt.BigUInt
+  public func eth_sendRawTransaction(_ transaction: web3.EthereumTransaction, withAccount account: any web3.EthereumAccountProtocol) async throws -> Swift.String
+  public func eth_getTransaction(byHash txHash: Swift.String) async throws -> web3.EthereumTransaction
+  public func eth_getTransactionReceipt(txHash: Swift.String) async throws -> web3.EthereumTransactionReceipt
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func eth_getLogs(addresses: [web3.EthereumAddress]?, topics: [Swift.String?]?, fromBlock from: web3.EthereumBlock = .Earliest, toBlock to: web3.EthereumBlock = .Latest) async throws -> [web3.EthereumLog]
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func eth_getLogs(addresses: [web3.EthereumAddress]?, orTopics topics: [[Swift.String]?]?, fromBlock from: web3.EthereumBlock = .Earliest, toBlock to: web3.EthereumBlock = .Latest) async throws -> [web3.EthereumLog]
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func getLogs(addresses: [web3.EthereumAddress]?, topics: web3.Topics?, fromBlock: web3.EthereumBlock, toBlock: web3.EthereumBlock) async throws -> [web3.EthereumLog]
+  #endif
+  public func eth_getBlockByNumber(_ block: web3.EthereumBlock) async throws -> web3.EthereumBlockInfo
+  @objc deinit
+}
+extension web3.BaseEthereumClient {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func net_version(completionHandler: @escaping (Swift.Result<web3.EthereumNetwork, web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func eth_gasPrice(completionHandler: @escaping (Swift.Result<BigInt.BigUInt, web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func eth_blockNumber(completionHandler: @escaping (Swift.Result<Swift.Int, web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func eth_getBalance(address: web3.EthereumAddress, block: web3.EthereumBlock, completionHandler: @escaping (Swift.Result<BigInt.BigUInt, web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func eth_getCode(address: web3.EthereumAddress, block: web3.EthereumBlock = .Latest, completionHandler: @escaping (Swift.Result<Swift.String, web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func eth_estimateGas(_ transaction: web3.EthereumTransaction, completionHandler: @escaping (Swift.Result<BigInt.BigUInt, web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func eth_getTransactionCount(address: web3.EthereumAddress, block: web3.EthereumBlock, completionHandler: @escaping (Swift.Result<Swift.Int, web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func eth_getTransaction(byHash txHash: Swift.String, completionHandler: @escaping (Swift.Result<web3.EthereumTransaction, web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func eth_getTransactionReceipt(txHash: Swift.String, completionHandler: @escaping (Swift.Result<web3.EthereumTransactionReceipt, web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func eth_getBlockByNumber(_ block: web3.EthereumBlock, completionHandler: @escaping (Swift.Result<web3.EthereumBlockInfo, web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func eth_sendRawTransaction(_ transaction: web3.EthereumTransaction, withAccount account: any web3.EthereumAccountProtocol, completionHandler: @escaping (Swift.Result<Swift.String, web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func eth_getLogs(addresses: [web3.EthereumAddress]?, topics: [Swift.String?]?, fromBlock from: web3.EthereumBlock = .Earliest, toBlock to: web3.EthereumBlock = .Latest, completionHandler: @escaping (Swift.Result<[web3.EthereumLog], web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func eth_getLogs(addresses: [web3.EthereumAddress]?, orTopics topics: [[Swift.String]?]?, fromBlock from: web3.EthereumBlock = .Earliest, toBlock to: web3.EthereumBlock = .Latest, completionHandler: @escaping (Swift.Result<[web3.EthereumLog], web3.EthereumClientError>) -> Swift.Void)
+  #endif
+}
+public enum OffchainReadError : Swift.Error {
+  case network
+  case server(code: Swift.Int, message: Swift.String?)
+  case invalidParams
+  case invalidResponse
+  case tooManyRedirections
+}
+extension web3.BaseEthereumClient {
+  public func eth_call(_ transaction: web3.EthereumTransaction, block: web3.EthereumBlock = .Latest) async throws -> Swift.String
+  public func eth_call(_ transaction: web3.EthereumTransaction, resolution: web3.CallResolution = .noOffchain(failOnExecutionError: true), block: web3.EthereumBlock = .Latest) async throws -> Swift.String
+}
+extension web3.BaseEthereumClient {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func eth_call(_ transaction: web3.EthereumTransaction, block: web3.EthereumBlock = .Latest, completionHandler: @escaping (Swift.Result<Swift.String, web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func eth_call(_ transaction: web3.EthereumTransaction, resolution: web3.CallResolution = .noOffchain(failOnExecutionError: true), block: web3.EthereumBlock = .Latest, completionHandler: @escaping (Swift.Result<Swift.String, web3.EthereumClientError>) -> Swift.Void)
+  #endif
+}
+@usableFromInline
+internal struct BatchedCollectionIndex<Base> where Base : Swift.Collection {
+}
+extension web3.BatchedCollectionIndex : Swift.Comparable {
+  @usableFromInline
+  internal static func == <Base>(lhs: web3.BatchedCollectionIndex<Base>, rhs: web3.BatchedCollectionIndex<Base>) -> Swift.Bool where Base : Swift.Collection
+  @usableFromInline
+  internal static func < <Base>(lhs: web3.BatchedCollectionIndex<Base>, rhs: web3.BatchedCollectionIndex<Base>) -> Swift.Bool where Base : Swift.Collection
+}
+@usableFromInline
+internal struct BatchedCollection<Base> : Swift.Collection where Base : Swift.Collection {
+  @usableFromInline
+  internal init(base: Base, size: Swift.Int)
+  @usableFromInline
+  internal typealias Index = web3.BatchedCollectionIndex<Base>
+  @usableFromInline
+  internal var startIndex: web3.BatchedCollection<Base>.Index {
+    get
+  }
+  @usableFromInline
+  internal var endIndex: web3.BatchedCollection<Base>.Index {
+    get
+  }
+  @usableFromInline
+  internal func index(after idx: web3.BatchedCollection<Base>.Index) -> web3.BatchedCollection<Base>.Index
+  @usableFromInline
+  internal subscript(idx: web3.BatchedCollection<Base>.Index) -> Base.SubSequence {
+    get
+  }
+  @usableFromInline
+  internal typealias Element = Base.SubSequence
+  @usableFromInline
+  internal typealias Indices = Swift.DefaultIndices<web3.BatchedCollection<Base>>
+  @usableFromInline
+  internal typealias Iterator = Swift.IndexingIterator<web3.BatchedCollection<Base>>
+  @usableFromInline
+  internal typealias SubSequence = Swift.Slice<web3.BatchedCollection<Base>>
+}
+extension Swift.Collection {
+  @inlinable internal func batched(by size: Swift.Int) -> web3.BatchedCollection<Self> {
+        BatchedCollection(base: self, size: size)
+    }
+}
+extension web3.Web3Extensions where Base == BigInt.BigUInt {
+  public var bytes: [Swift.UInt8] {
+    get
+  }
+}
+extension web3.Web3Extensions where Base == BigInt.BigInt {
+  public var bytes: [Swift.UInt8] {
+    get
+  }
+}
+extension Foundation.Data {
+  public static func ^ (lhs: Foundation.Data, rhs: Foundation.Data) -> Foundation.Data
+}
+extension web3.Web3Extensions where Base == Foundation.Data {
+  public var bytes: [Swift.UInt8] {
+    get
+  }
+  public var strippingZeroesFromBytes: Foundation.Data {
+    get
+  }
+  public var bytes4: Foundation.Data {
+    get
+  }
+  public var bytes32: Foundation.Data {
+    get
+  }
+}
+extension Swift.String {
+  public init(hexFromBytes bytes: [Swift.UInt8])
+}
+extension web3.Web3Extensions where Base == Swift.String {
+  public var bytes: [Swift.UInt8] {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var bytesFromHex: [Swift.UInt8]? {
+    get
+  }
+  #endif
+}
+public typealias ENSRegistryResolverParameter = web3.ENSContracts.ResolveParameter
+public enum ENSContracts {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func registryAddress(for network: web3.EthereumNetwork) -> web3.EthereumAddress?
+  #endif
+  public enum ResolveParameter {
+    case address(web3.EthereumAddress)
+    case name(Swift.String)
+  }
+  public enum ENSResolverFunctions {
+    public struct addr : web3.ABIFunction {
+      public static let name: Swift.String
+      public let gasPrice: BigInt.BigUInt?
+      public let gasLimit: BigInt.BigUInt?
+      public var contract: web3.EthereumAddress
+      public let from: web3.EthereumAddress?
+      public let _node: Foundation.Data
+      #if compiler(>=5.3) && $NonescapableTypes
+      public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil, _node: Foundation.Data)
+      #endif
+      #if compiler(>=5.3) && $NonescapableTypes
+      public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil, parameter: web3.ENSRegistryResolverParameter)
+      #endif
+      public func encode(to encoder: web3.ABIFunctionEncoder) throws
+    }
+    public struct name : web3.ABIFunction {
+      public static let name: Swift.String
+      public let gasPrice: BigInt.BigUInt?
+      public let gasLimit: BigInt.BigUInt?
+      public var contract: web3.EthereumAddress
+      public let from: web3.EthereumAddress?
+      public let _node: Foundation.Data
+      #if compiler(>=5.3) && $NonescapableTypes
+      public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil, parameter: web3.ENSRegistryResolverParameter)
+      #endif
+      public func encode(to encoder: web3.ABIFunctionEncoder) throws
+    }
+  }
+  public enum ENSOffchainResolverFunctions {
+    public static var interfaceId: Foundation.Data {
+      get
+    }
+    public struct resolve : web3.ABIFunction {
+      public static var name: Swift.String
+      public let gasPrice: BigInt.BigUInt?
+      public let gasLimit: BigInt.BigUInt?
+      public var contract: web3.EthereumAddress
+      public let from: web3.EthereumAddress?
+      public let name: Foundation.Data
+      public let data: Foundation.Data
+      #if compiler(>=5.3) && $NonescapableTypes
+      public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil, name: Foundation.Data, data: Foundation.Data)
+      #endif
+      #if compiler(>=5.3) && $NonescapableTypes
+      public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil, parameter: web3.ENSRegistryResolverParameter)
+      #endif
+      public func encode(to encoder: web3.ABIFunctionEncoder) throws
+    }
+  }
+  public enum ENSRegistryFunctions {
+    public struct resolver : web3.ABIFunction {
+      public static let name: Swift.String
+      public let gasPrice: BigInt.BigUInt?
+      public let gasLimit: BigInt.BigUInt?
+      public var contract: web3.EthereumAddress
+      public let from: web3.EthereumAddress?
+      #if compiler(>=5.3) && $NonescapableTypes
+      public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil, parameter: web3.ENSContracts.ResolveParameter)
+      #endif
+      public func encode(to encoder: web3.ABIFunctionEncoder) throws
+    }
+  }
+  public struct AddressResponse : web3.ABIResponse, web3.MulticallDecodableResponse {
+    public static var types: [any web3.ABIType.Type]
+    public let value: web3.EthereumAddress
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(values: [web3.ABIDecoder.DecodedValue]) throws
+    #endif
+    public typealias Value = web3.EthereumAddress
+  }
+  public struct StringResponse : web3.ABIResponse, web3.MulticallDecodableResponse {
+    public static var types: [any web3.ABIType.Type]
+    public let value: Swift.String
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(values: [web3.ABIDecoder.DecodedValue]) throws
+    #endif
+    public typealias Value = Swift.String
+  }
+  public struct AddressAsDataResponse : web3.ABIResponse, web3.MulticallDecodableResponse {
+    public static var types: [any web3.ABIType.Type]
+    public let value: web3.EthereumAddress
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(values: [web3.ABIDecoder.DecodedValue]) throws
+    #endif
+    public typealias Value = web3.EthereumAddress
+  }
+  public struct StringAsDataResponse : web3.ABIResponse, web3.MulticallDecodableResponse {
+    public static var types: [any web3.ABIType.Type]
+    public let value: Swift.String
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(values: [web3.ABIDecoder.DecodedValue]) throws
+    #endif
+    public typealias Value = Swift.String
+  }
+}
+extension web3.EthereumNameService {
+  public func resolve(addresses: [web3.EthereumAddress]) async throws -> [web3.EthereumNameService.AddressResolveOutput]
+  public func resolve(names: [Swift.String]) async throws -> [web3.EthereumNameService.NameResolveOutput]
+}
+extension web3.EthereumNameService {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func resolve(addresses: [web3.EthereumAddress], completion: @escaping (Swift.Result<[web3.EthereumNameService.AddressResolveOutput], any Swift.Error>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func resolve(names: [Swift.String], completion: @escaping (Swift.Result<[web3.EthereumNameService.NameResolveOutput], any Swift.Error>) -> Swift.Void)
+  #endif
+}
+extension web3.EthereumNameService {
+  public enum ResolveOutput<Value> : Swift.Equatable where Value : Swift.Equatable {
+    case couldNotBeResolved(web3.EthereumNameServiceError)
+    case resolved(Value)
+    public static func == (a: web3.EthereumNameService.ResolveOutput<Value>, b: web3.EthereumNameService.ResolveOutput<Value>) -> Swift.Bool
+  }
+  public struct AddressResolveOutput : Swift.Equatable {
+    public let address: web3.EthereumAddress
+    public let output: web3.EthereumNameService.ResolveOutput<Swift.String>
+    public static func == (a: web3.EthereumNameService.AddressResolveOutput, b: web3.EthereumNameService.AddressResolveOutput) -> Swift.Bool
+  }
+  public struct NameResolveOutput : Swift.Equatable {
+    public let ens: Swift.String
+    public let output: web3.EthereumNameService.ResolveOutput<web3.EthereumAddress>
+    public static func == (a: web3.EthereumNameService.NameResolveOutput, b: web3.EthereumNameService.NameResolveOutput) -> Swift.Bool
+  }
+}
+public protocol ERC1271Protocol {
+  init(client: any web3.EthereumClientProtocol)
+  func isValidSignature(contract: web3.EthereumAddress, messageHash: Foundation.Data, signature: Foundation.Data) async throws -> Swift.Bool
+  #if compiler(>=5.3) && $NonescapableTypes
+  func isValidSignature(contract: web3.EthereumAddress, messageHash: Foundation.Data, signature: Foundation.Data, completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
+  #endif
+}
+public class ERC1271 : web3.ERC1271Protocol {
+  required public init(client: any web3.EthereumClientProtocol)
+  public func isValidSignature(contract: web3.EthereumAddress, messageHash: Foundation.Data, signature: Foundation.Data) async throws -> Swift.Bool
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func isValidSignature(contract: web3.EthereumAddress, messageHash: Foundation.Data, signature: Foundation.Data, completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
+  #endif
+  @objc deinit
+}
+public enum ERC1271Error : Swift.Error {
+  case invalidInput
+  public static func == (a: web3.ERC1271Error, b: web3.ERC1271Error) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum ERC1271Functions {
+  public struct isValidSignature : web3.ABIFunction {
+    public static let name: Swift.String
+    public let gasPrice: BigInt.BigUInt?
+    public let gasLimit: BigInt.BigUInt?
+    public let from: web3.EthereumAddress?
+    public var contract: web3.EthereumAddress
+    public let message: Foundation.Data
+    public let signature: Foundation.Data
+    public init(contract: web3.EthereumAddress, message: Foundation.Data, signature: Foundation.Data) throws
+    public func encode(to encoder: web3.ABIFunctionEncoder) throws
+  }
+}
+public enum ERC1271Responses {
+  public struct isValidResponse : web3.ABIResponse {
+    public static var types: [any web3.ABIType.Type]
+    public let isValid: Swift.Bool
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(values: [web3.ABIDecoder.DecodedValue]) throws
+    #endif
+  }
+}
+open class ERC165 {
+  final public let client: any web3.EthereumClientProtocol
+  required public init(client: any web3.EthereumClientProtocol)
+  public func supportsInterface(contract: web3.EthereumAddress, id: Foundation.Data) async throws -> Swift.Bool
+  @objc deinit
+}
+extension web3.ERC165 {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func supportsInterface(contract: web3.EthereumAddress, id: Foundation.Data, completionHandler: @escaping (Swift.Result<Swift.Bool, any Swift.Error>) -> Swift.Void)
+  #endif
+}
+public enum ERC165Functions {
+  public static var interfaceId: Foundation.Data {
+    get
+  }
+  public struct supportsInterface : web3.ABIFunction {
+    public static let name: Swift.String
+    public let gasPrice: BigInt.BigUInt?
+    public let gasLimit: BigInt.BigUInt?
+    public var contract: web3.EthereumAddress
+    public let from: web3.EthereumAddress?
+    public let interfaceId: Foundation.Data
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, interfaceId: Foundation.Data, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil)
+    #endif
+    public func encode(to encoder: web3.ABIFunctionEncoder) throws
+  }
+}
+public enum ERC165Responses {
+  public struct supportsInterfaceResponse : web3.ABIResponse {
+    public static var types: [any web3.ABIType.Type]
+    public let supported: Swift.Bool
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(values: [web3.ABIDecoder.DecodedValue]) throws
+    #endif
+  }
+}
+public protocol ERC20Protocol {
+  init(client: any web3.EthereumClientProtocol)
+  func name(tokenContract: web3.EthereumAddress) async throws -> Swift.String
+  func symbol(tokenContract: web3.EthereumAddress) async throws -> Swift.String
+  func decimals(tokenContract: web3.EthereumAddress) async throws -> Swift.UInt8
+  func balanceOf(tokenContract: web3.EthereumAddress, address: web3.EthereumAddress) async throws -> BigInt.BigUInt
+  func allowance(tokenContract: web3.EthereumAddress, address: web3.EthereumAddress, spender: web3.EthereumAddress) async throws -> BigInt.BigUInt
+  func transferEventsTo(recipient: web3.EthereumAddress, fromBlock: web3.EthereumBlock, toBlock: web3.EthereumBlock) async throws -> [web3.ERC20Events.Transfer]
+  func transferEventsFrom(sender: web3.EthereumAddress, fromBlock: web3.EthereumBlock, toBlock: web3.EthereumBlock) async throws -> [web3.ERC20Events.Transfer]
+  #if compiler(>=5.3) && $NonescapableTypes
+  func name(tokenContract: web3.EthereumAddress, completionHandler: @escaping (Swift.Result<Swift.String, any Swift.Error>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func symbol(tokenContract: web3.EthereumAddress, completionHandler: @escaping (Swift.Result<Swift.String, any Swift.Error>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func decimals(tokenContract: web3.EthereumAddress, completionHandler: @escaping (Swift.Result<Swift.UInt8, any Swift.Error>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func balanceOf(tokenContract: web3.EthereumAddress, address: web3.EthereumAddress, completionHandler: @escaping (Swift.Result<BigInt.BigUInt, any Swift.Error>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func allowance(tokenContract: web3.EthereumAddress, address: web3.EthereumAddress, spender: web3.EthereumAddress, completionHandler: @escaping (Swift.Result<BigInt.BigUInt, any Swift.Error>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func transferEventsTo(recipient: web3.EthereumAddress, fromBlock: web3.EthereumBlock, toBlock: web3.EthereumBlock, completionHandler: @escaping (Swift.Result<[web3.ERC20Events.Transfer], any Swift.Error>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func transferEventsFrom(sender: web3.EthereumAddress, fromBlock: web3.EthereumBlock, toBlock: web3.EthereumBlock, completionHandler: @escaping (Swift.Result<[web3.ERC20Events.Transfer], any Swift.Error>) -> Swift.Void)
+  #endif
+}
+open class ERC20 : web3.ERC20Protocol {
+  required public init(client: any web3.EthereumClientProtocol)
+  public func name(tokenContract: web3.EthereumAddress) async throws -> Swift.String
+  public func symbol(tokenContract: web3.EthereumAddress) async throws -> Swift.String
+  public func decimals(tokenContract: web3.EthereumAddress) async throws -> Swift.UInt8
+  public func balanceOf(tokenContract: web3.EthereumAddress, address: web3.EthereumAddress) async throws -> BigInt.BigUInt
+  public func allowance(tokenContract: web3.EthereumAddress, address: web3.EthereumAddress, spender: web3.EthereumAddress) async throws -> BigInt.BigUInt
+  public func transferEventsTo(recipient: web3.EthereumAddress, fromBlock: web3.EthereumBlock, toBlock: web3.EthereumBlock) async throws -> [web3.ERC20Events.Transfer]
+  public func transferEventsFrom(sender: web3.EthereumAddress, fromBlock: web3.EthereumBlock, toBlock: web3.EthereumBlock) async throws -> [web3.ERC20Events.Transfer]
+  @objc deinit
+}
+extension web3.ERC20 {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func name(tokenContract: web3.EthereumAddress, completionHandler: @escaping (Swift.Result<Swift.String, any Swift.Error>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func symbol(tokenContract: web3.EthereumAddress, completionHandler: @escaping (Swift.Result<Swift.String, any Swift.Error>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func decimals(tokenContract: web3.EthereumAddress, completionHandler: @escaping (Swift.Result<Swift.UInt8, any Swift.Error>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func balanceOf(tokenContract: web3.EthereumAddress, address: web3.EthereumAddress, completionHandler: @escaping (Swift.Result<BigInt.BigUInt, any Swift.Error>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func allowance(tokenContract: web3.EthereumAddress, address: web3.EthereumAddress, spender: web3.EthereumAddress, completionHandler: @escaping (Swift.Result<BigInt.BigUInt, any Swift.Error>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func transferEventsTo(recipient: web3.EthereumAddress, fromBlock: web3.EthereumBlock, toBlock: web3.EthereumBlock, completionHandler: @escaping (Swift.Result<[web3.ERC20Events.Transfer], any Swift.Error>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func transferEventsFrom(sender: web3.EthereumAddress, fromBlock: web3.EthereumBlock, toBlock: web3.EthereumBlock, completionHandler: @escaping (Swift.Result<[web3.ERC20Events.Transfer], any Swift.Error>) -> Swift.Void)
+  #endif
+}
+public enum ERC20Events {
+  public struct Transfer : web3.ABIEvent {
+    public static let name: Swift.String
+    public static let types: [any web3.ABIType.Type]
+    public static let typesIndexed: [Swift.Bool]
+    public let log: web3.EthereumLog
+    public let from: web3.EthereumAddress
+    public let to: web3.EthereumAddress
+    public let value: BigInt.BigUInt
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(topics: [web3.ABIDecoder.DecodedValue], data: [web3.ABIDecoder.DecodedValue], log: web3.EthereumLog) throws
+    #endif
+  }
+}
+public enum ERC20Functions {
+  public struct name : web3.ABIFunction {
+    public static let name: Swift.String
+    public let gasPrice: BigInt.BigUInt?
+    public let gasLimit: BigInt.BigUInt?
+    public var contract: web3.EthereumAddress
+    public let from: web3.EthereumAddress?
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil)
+    #endif
+    public func encode(to encoder: web3.ABIFunctionEncoder) throws
+  }
+  public struct symbol : web3.ABIFunction {
+    public static let name: Swift.String
+    public let gasPrice: BigInt.BigUInt?
+    public let gasLimit: BigInt.BigUInt?
+    public var contract: web3.EthereumAddress
+    public let from: web3.EthereumAddress?
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil)
+    #endif
+    public func encode(to encoder: web3.ABIFunctionEncoder) throws
+  }
+  public struct decimals : web3.ABIFunction {
+    public static let name: Swift.String
+    public let gasPrice: BigInt.BigUInt?
+    public let gasLimit: BigInt.BigUInt?
+    public var contract: web3.EthereumAddress
+    public let from: web3.EthereumAddress?
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil)
+    #endif
+    public func encode(to encoder: web3.ABIFunctionEncoder) throws
+  }
+  public struct balanceOf : web3.ABIFunction {
+    public static let name: Swift.String
+    public let gasPrice: BigInt.BigUInt?
+    public let gasLimit: BigInt.BigUInt?
+    public var contract: web3.EthereumAddress
+    public let from: web3.EthereumAddress?
+    public let account: web3.EthereumAddress
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil, account: web3.EthereumAddress)
+    #endif
+    public func encode(to encoder: web3.ABIFunctionEncoder) throws
+  }
+  public struct allowance : web3.ABIFunction {
+    public static let name: Swift.String
+    public let gasPrice: BigInt.BigUInt?
+    public let gasLimit: BigInt.BigUInt?
+    public var contract: web3.EthereumAddress
+    public let from: web3.EthereumAddress?
+    public let owner: web3.EthereumAddress
+    public let spender: web3.EthereumAddress
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil, owner: web3.EthereumAddress, spender: web3.EthereumAddress)
+    #endif
+    public func encode(to encoder: web3.ABIFunctionEncoder) throws
+  }
+  public struct approve : web3.ABIFunction {
+    public static let name: Swift.String
+    public let gasPrice: BigInt.BigUInt?
+    public let gasLimit: BigInt.BigUInt?
+    public var contract: web3.EthereumAddress
+    public let from: web3.EthereumAddress?
+    public let spender: web3.EthereumAddress
+    public let value: BigInt.BigUInt
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil, spender: web3.EthereumAddress, value: BigInt.BigUInt)
+    #endif
+    public func encode(to encoder: web3.ABIFunctionEncoder) throws
+  }
+  public struct transfer : web3.ABIFunction {
+    public static let name: Swift.String
+    public let gasPrice: BigInt.BigUInt?
+    public let gasLimit: BigInt.BigUInt?
+    public var contract: web3.EthereumAddress
+    public let from: web3.EthereumAddress?
+    public let to: web3.EthereumAddress
+    public let value: BigInt.BigUInt
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil, to: web3.EthereumAddress, value: BigInt.BigUInt)
+    #endif
+    public func encode(to encoder: web3.ABIFunctionEncoder) throws
+  }
+  public struct transferFrom : web3.ABIFunction {
+    public static let name: Swift.String
+    public let gasPrice: BigInt.BigUInt?
+    public let gasLimit: BigInt.BigUInt?
+    public var contract: web3.EthereumAddress
+    public let from: web3.EthereumAddress?
+    public let sender: web3.EthereumAddress
+    public let to: web3.EthereumAddress
+    public let value: BigInt.BigUInt
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil, sender: web3.EthereumAddress, to: web3.EthereumAddress, value: BigInt.BigUInt)
+    #endif
+    public func encode(to encoder: web3.ABIFunctionEncoder) throws
+  }
+}
+public enum ERC20Responses {
+  public struct nameResponse : web3.ABIResponse, web3.MulticallDecodableResponse {
+    public static var types: [any web3.ABIType.Type]
+    public let value: Swift.String
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(values: [web3.ABIDecoder.DecodedValue]) throws
+    #endif
+    public typealias Value = Swift.String
+  }
+  public struct symbolResponse : web3.ABIResponse, web3.MulticallDecodableResponse {
+    public static var types: [any web3.ABIType.Type]
+    public let value: Swift.String
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(values: [web3.ABIDecoder.DecodedValue]) throws
+    #endif
+    public typealias Value = Swift.String
+  }
+  public struct decimalsResponse : web3.ABIResponse, web3.MulticallDecodableResponse {
+    public static var types: [any web3.ABIType.Type]
+    public let value: Swift.UInt8
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(values: [web3.ABIDecoder.DecodedValue]) throws
+    #endif
+    public typealias Value = Swift.UInt8
+  }
+  public struct balanceResponse : web3.ABIResponse, web3.MulticallDecodableResponse {
+    public static var types: [any web3.ABIType.Type]
+    public let value: BigInt.BigUInt
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(values: [web3.ABIDecoder.DecodedValue]) throws
+    #endif
+    public typealias Value = BigInt.BigUInt
+  }
+}
+@_inheritsConvenienceInitializers open class ERC721 : web3.ERC165 {
+  public func balanceOf(contract: web3.EthereumAddress, address: web3.EthereumAddress) async throws -> BigInt.BigUInt
+  public func ownerOf(contract: web3.EthereumAddress, tokenId: BigInt.BigUInt) async throws -> web3.EthereumAddress
+  public func transferEventsTo(recipient: web3.EthereumAddress, fromBlock: web3.EthereumBlock, toBlock: web3.EthereumBlock) async throws -> [web3.ERC721Events.Transfer]
+  public func transferEventsFrom(sender: web3.EthereumAddress, fromBlock: web3.EthereumBlock, toBlock: web3.EthereumBlock) async throws -> [web3.ERC721Events.Transfer]
+  required public init(client: any web3.EthereumClientProtocol)
+  @objc deinit
+}
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class ERC721Metadata : web3.ERC721 {
+  public struct Token : Swift.Equatable, Swift.Decodable {
+    public typealias PropertyType = Swift.Decodable & Swift.Equatable
+    public struct Property<T> : Swift.Equatable, Swift.Decodable where T : Swift.Decodable, T : Swift.Equatable {
+      public var description: T
+      public static func == (a: web3.ERC721Metadata.Token.Property<T>, b: web3.ERC721Metadata.Token.Property<T>) -> Swift.Bool
+      public init(from decoder: any Swift.Decoder) throws
+    }
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init(title: Swift.String?, type: Swift.String?, properties: web3.ERC721Metadata.Token.Properties?)
+    #endif
+    public init(from decoder: any Swift.Decoder) throws
+    public struct Properties : Swift.Equatable, Swift.Decodable {
+      public var name: web3.ERC721Metadata.Token.Property<Swift.String?>
+      public var description: web3.ERC721Metadata.Token.Property<Swift.String?>
+      public var image: web3.ERC721Metadata.Token.Property<Foundation.URL?>
+      public static func == (a: web3.ERC721Metadata.Token.Properties, b: web3.ERC721Metadata.Token.Properties) -> Swift.Bool
+      public init(from decoder: any Swift.Decoder) throws
+    }
+    public var title: Swift.String?
+    public var type: Swift.String?
+    public var properties: web3.ERC721Metadata.Token.Properties?
+    public static func == (a: web3.ERC721Metadata.Token, b: web3.ERC721Metadata.Token) -> Swift.Bool
+  }
+  final public let session: Foundation.URLSession
+  public init(client: any web3.EthereumClientProtocol, metadataSession: Foundation.URLSession)
+  public func name(contract: web3.EthereumAddress) async throws -> Swift.String
+  public func symbol(contract: web3.EthereumAddress) async throws -> Swift.String
+  public func tokenURI(contract: web3.EthereumAddress, tokenID: BigInt.BigUInt) async throws -> Foundation.URL
+  public func tokenMetadata(contract: web3.EthereumAddress, tokenID: BigInt.BigUInt) async throws -> web3.ERC721Metadata.Token
+  @objc deinit
+}
+@_inheritsConvenienceInitializers public class ERC721Enumerable : web3.ERC721 {
+  public func totalSupply(contract: web3.EthereumAddress) async throws -> BigInt.BigUInt
+  public func tokenByIndex(contract: web3.EthereumAddress, index: BigInt.BigUInt) async throws -> BigInt.BigUInt
+  public func tokenOfOwnerByIndex(contract: web3.EthereumAddress, owner: web3.EthereumAddress, index: BigInt.BigUInt) async throws -> BigInt.BigUInt
+  required public init(client: any web3.EthereumClientProtocol)
+  @objc deinit
+}
+extension web3.ERC721 {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func balanceOf(contract: web3.EthereumAddress, address: web3.EthereumAddress, completionHandler: @escaping (Swift.Result<BigInt.BigUInt, any Swift.Error>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func ownerOf(contract: web3.EthereumAddress, tokenId: BigInt.BigUInt, completionHandler: @escaping (Swift.Result<web3.EthereumAddress, any Swift.Error>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func transferEventsTo(recipient: web3.EthereumAddress, fromBlock: web3.EthereumBlock, toBlock: web3.EthereumBlock, completionHandler: @escaping (Swift.Result<[web3.ERC721Events.Transfer], any Swift.Error>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func transferEventsFrom(sender: web3.EthereumAddress, fromBlock: web3.EthereumBlock, toBlock: web3.EthereumBlock, completionHandler: @escaping (Swift.Result<[web3.ERC721Events.Transfer], any Swift.Error>) -> Swift.Void)
+  #endif
+}
+extension web3.ERC721Metadata {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func name(contract: web3.EthereumAddress, completionHandler: @escaping (Swift.Result<Swift.String, any Swift.Error>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func symbol(contract: web3.EthereumAddress, completionHandler: @escaping (Swift.Result<Swift.String, any Swift.Error>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func tokenURI(contract: web3.EthereumAddress, tokenID: BigInt.BigUInt, completionHandler: @escaping (Swift.Result<Foundation.URL, any Swift.Error>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func tokenMetadata(contract: web3.EthereumAddress, tokenID: BigInt.BigUInt, completionHandler: @escaping (Swift.Result<web3.ERC721Metadata.Token, any Swift.Error>) -> Swift.Void)
+  #endif
+}
+extension web3.ERC721Enumerable {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func totalSupply(contract: web3.EthereumAddress, completionHandler: @escaping (Swift.Result<BigInt.BigUInt, any Swift.Error>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func tokenByIndex(contract: web3.EthereumAddress, index: BigInt.BigUInt, completionHandler: @escaping (Swift.Result<BigInt.BigUInt, any Swift.Error>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func tokenOfOwnerByIndex(contract: web3.EthereumAddress, owner: web3.EthereumAddress, index: BigInt.BigUInt, completionHandler: @escaping (Swift.Result<BigInt.BigUInt, any Swift.Error>) -> Swift.Void)
+  #endif
+}
+public enum ERC721Events {
+  public struct Transfer : web3.ABIEvent {
+    public static let name: Swift.String
+    public static let types: [any web3.ABIType.Type]
+    public static let typesIndexed: [Swift.Bool]
+    public let log: web3.EthereumLog
+    public let from: web3.EthereumAddress
+    public let to: web3.EthereumAddress
+    public let tokenId: BigInt.BigUInt
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(topics: [web3.ABIDecoder.DecodedValue], data: [web3.ABIDecoder.DecodedValue], log: web3.EthereumLog) throws
+    #endif
+  }
+  public struct Approval : web3.ABIEvent {
+    public static let name: Swift.String
+    public static let types: [any web3.ABIType.Type]
+    public static let typesIndexed: [Swift.Bool]
+    public let log: web3.EthereumLog
+    public let from: web3.EthereumAddress
+    public let approved: web3.EthereumAddress
+    public let tokenId: BigInt.BigUInt
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(topics: [web3.ABIDecoder.DecodedValue], data: [web3.ABIDecoder.DecodedValue], log: web3.EthereumLog) throws
+    #endif
+  }
+  public struct ApprovalForAll : web3.ABIEvent {
+    public static let name: Swift.String
+    public static let types: [any web3.ABIType.Type]
+    public static let typesIndexed: [Swift.Bool]
+    public let log: web3.EthereumLog
+    public let from: web3.EthereumAddress
+    public let `operator`: web3.EthereumAddress
+    public let approved: Swift.Bool
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(topics: [web3.ABIDecoder.DecodedValue], data: [web3.ABIDecoder.DecodedValue], log: web3.EthereumLog) throws
+    #endif
+  }
+}
+public enum ERC721Functions {
+  public static var interfaceId: Foundation.Data {
+    get
+  }
+  public struct balanceOf : web3.ABIFunction {
+    public static let name: Swift.String
+    public let gasPrice: BigInt.BigUInt?
+    public let gasLimit: BigInt.BigUInt?
+    public var contract: web3.EthereumAddress
+    public let from: web3.EthereumAddress?
+    public let owner: web3.EthereumAddress
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, owner: web3.EthereumAddress, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil)
+    #endif
+    public func encode(to encoder: web3.ABIFunctionEncoder) throws
+  }
+  public struct ownerOf : web3.ABIFunction {
+    public static let name: Swift.String
+    public let gasPrice: BigInt.BigUInt?
+    public let gasLimit: BigInt.BigUInt?
+    public var contract: web3.EthereumAddress
+    public let from: web3.EthereumAddress?
+    public let tokenId: BigInt.BigUInt
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, tokenId: BigInt.BigUInt, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil)
+    #endif
+    public func encode(to encoder: web3.ABIFunctionEncoder) throws
+  }
+  public struct transferFrom : web3.ABIFunction {
+    public static let name: Swift.String
+    public let gasPrice: BigInt.BigUInt?
+    public let gasLimit: BigInt.BigUInt?
+    public var contract: web3.EthereumAddress
+    public let from: web3.EthereumAddress?
+    public let sender: web3.EthereumAddress
+    public let to: web3.EthereumAddress
+    public let tokenId: BigInt.BigUInt
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil, sender: web3.EthereumAddress, to: web3.EthereumAddress, tokenId: BigInt.BigUInt)
+    #endif
+    public func encode(to encoder: web3.ABIFunctionEncoder) throws
+  }
+  public struct safeTransferFrom : web3.ABIFunction {
+    public static let name: Swift.String
+    public let gasPrice: BigInt.BigUInt?
+    public let gasLimit: BigInt.BigUInt?
+    public var contract: web3.EthereumAddress
+    public let from: web3.EthereumAddress?
+    public let sender: web3.EthereumAddress
+    public let to: web3.EthereumAddress
+    public let tokenId: BigInt.BigUInt
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil, sender: web3.EthereumAddress, to: web3.EthereumAddress, tokenId: BigInt.BigUInt)
+    #endif
+    public func encode(to encoder: web3.ABIFunctionEncoder) throws
+  }
+  public struct safeTransferFromAndData : web3.ABIFunction {
+    public static let name: Swift.String
+    public let gasPrice: BigInt.BigUInt?
+    public let gasLimit: BigInt.BigUInt?
+    public var contract: web3.EthereumAddress
+    public let from: web3.EthereumAddress?
+    public let sender: web3.EthereumAddress
+    public let to: web3.EthereumAddress
+    public let tokenId: BigInt.BigUInt
+    public let data: Foundation.Data
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil, sender: web3.EthereumAddress, to: web3.EthereumAddress, tokenId: BigInt.BigUInt, data: Foundation.Data)
+    #endif
+    public func encode(to encoder: web3.ABIFunctionEncoder) throws
+  }
+}
+public enum ERC721MetadataFunctions {
+  public static var interfaceId: Foundation.Data {
+    get
+  }
+  public struct name : web3.ABIFunction {
+    public static let name: Swift.String
+    public let gasPrice: BigInt.BigUInt?
+    public let gasLimit: BigInt.BigUInt?
+    public var contract: web3.EthereumAddress
+    public let from: web3.EthereumAddress?
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil)
+    #endif
+    public func encode(to encoder: web3.ABIFunctionEncoder) throws
+  }
+  public struct symbol : web3.ABIFunction {
+    public static let name: Swift.String
+    public let gasPrice: BigInt.BigUInt?
+    public let gasLimit: BigInt.BigUInt?
+    public var contract: web3.EthereumAddress
+    public let from: web3.EthereumAddress?
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil)
+    #endif
+    public func encode(to encoder: web3.ABIFunctionEncoder) throws
+  }
+  public struct tokenURI : web3.ABIFunction {
+    public static let name: Swift.String
+    public let gasPrice: BigInt.BigUInt?
+    public let gasLimit: BigInt.BigUInt?
+    public var contract: web3.EthereumAddress
+    public let from: web3.EthereumAddress?
+    public let tokenID: BigInt.BigUInt
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, tokenID: BigInt.BigUInt, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil)
+    #endif
+    public func encode(to encoder: web3.ABIFunctionEncoder) throws
+  }
+}
+public enum ERC721EnumerableFunctions {
+  public static var interfaceId: Foundation.Data {
+    get
+  }
+  public struct totalSupply : web3.ABIFunction {
+    public static let name: Swift.String
+    public let gasPrice: BigInt.BigUInt?
+    public let gasLimit: BigInt.BigUInt?
+    public var contract: web3.EthereumAddress
+    public let from: web3.EthereumAddress?
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil)
+    #endif
+    public func encode(to encoder: web3.ABIFunctionEncoder) throws
+  }
+  public struct tokenByIndex : web3.ABIFunction {
+    public static let name: Swift.String
+    public let gasPrice: BigInt.BigUInt?
+    public let gasLimit: BigInt.BigUInt?
+    public var contract: web3.EthereumAddress
+    public let from: web3.EthereumAddress?
+    public let index: BigInt.BigUInt
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, index: BigInt.BigUInt, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil)
+    #endif
+    public func encode(to encoder: web3.ABIFunctionEncoder) throws
+  }
+  public struct tokenOfOwnerByIndex : web3.ABIFunction {
+    public static let name: Swift.String
+    public let gasPrice: BigInt.BigUInt?
+    public let gasLimit: BigInt.BigUInt?
+    public var contract: web3.EthereumAddress
+    public let from: web3.EthereumAddress?
+    public let address: web3.EthereumAddress
+    public let index: BigInt.BigUInt
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, address: web3.EthereumAddress, index: BigInt.BigUInt, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil)
+    #endif
+    public func encode(to encoder: web3.ABIFunctionEncoder) throws
+  }
+}
+public enum ERC721Responses {
+  public struct balanceResponse : web3.ABIResponse, web3.MulticallDecodableResponse {
+    public static var types: [any web3.ABIType.Type]
+    public let value: BigInt.BigUInt
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(values: [web3.ABIDecoder.DecodedValue]) throws
+    #endif
+    public typealias Value = BigInt.BigUInt
+  }
+  public struct ownerResponse : web3.ABIResponse, web3.MulticallDecodableResponse {
+    public static var types: [any web3.ABIType.Type]
+    public let value: web3.EthereumAddress
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(values: [web3.ABIDecoder.DecodedValue]) throws
+    #endif
+    public typealias Value = web3.EthereumAddress
+  }
+}
+public enum ERC721MetadataResponses {
+  public struct nameResponse : web3.ABIResponse, web3.MulticallDecodableResponse {
+    public static var types: [any web3.ABIType.Type]
+    public let value: Swift.String
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(values: [web3.ABIDecoder.DecodedValue]) throws
+    #endif
+    public typealias Value = Swift.String
+  }
+  public struct symbolResponse : web3.ABIResponse, web3.MulticallDecodableResponse {
+    public static var types: [any web3.ABIType.Type]
+    public let value: Swift.String
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(values: [web3.ABIDecoder.DecodedValue]) throws
+    #endif
+    public typealias Value = Swift.String
+  }
+  public struct tokenURIResponse : web3.ABIResponse, web3.MulticallDecodableResponse {
+    public static var types: [any web3.ABIType.Type]
+    @available(*, deprecated, renamed: "value")
+    public var uri: Foundation.URL {
+      get
+    }
+    public let value: Foundation.URL
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(values: [web3.ABIDecoder.DecodedValue]) throws
+    #endif
+    public typealias Value = Foundation.URL
+  }
+}
+public enum ERC721EnumerableResponses {
+  public struct numberResponse : web3.ABIResponse, web3.MulticallDecodableResponse {
+    public static var types: [any web3.ABIType.Type]
+    public let value: BigInt.BigUInt
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(values: [web3.ABIDecoder.DecodedValue]) throws
+    #endif
+    public typealias Value = BigInt.BigUInt
+  }
+}
+public protocol EthereumAccountProtocol {
+  var address: web3.EthereumAddress { get }
+  func sign(data: Foundation.Data) throws -> Foundation.Data
+  func sign(hash: Swift.String) throws -> Foundation.Data
+  func sign(hex: Swift.String) throws -> Foundation.Data
+  func sign(message: Foundation.Data) throws -> Foundation.Data
+  func sign(message: Swift.String) throws -> Foundation.Data
+  func signMessage(message: Foundation.Data) throws -> Swift.String
+  func signMessage(message: web3.TypedData) throws -> Swift.String
+  func sign(transaction: web3.EthereumTransaction) throws -> web3.SignedTransaction
+}
+public enum EthereumAccountError : Swift.Error {
+  case createAccountError
+  case importAccountError
+  case loadAccountError
+  case signError
+  public static func == (a: web3.EthereumAccountError, b: web3.EthereumAccountError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public class EthereumAccount : web3.EthereumAccountProtocol {
+  public var publicKey: Swift.String {
+    get
+    set
+  }
+  public var address: web3.EthereumAddress {
+    get
+    set
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  required public init(keyStorage: any web3.EthereumSingleKeyStorageProtocol, keystorePassword password: Swift.String, logger: Logging.Logger? = nil) throws
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  required public init(keyStorage: any web3.EthereumSingleKeyStorageProtocol, logger: Logging.Logger? = nil) throws
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  required public init(addressString: Swift.String, keyStorage: any web3.EthereumMultipleKeyStorageProtocol, keystorePassword password: Swift.String, logger: Logging.Logger? = nil) throws
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  required public init(addressString: Swift.String, keyStorage: any web3.EthereumMultipleKeyStorageProtocol, logger: Logging.Logger? = nil) throws
+  #endif
+  public static func create(addingTo keyStorage: any web3.EthereumMultipleKeyStorageProtocol, keystorePassword password: Swift.String) throws -> web3.EthereumAccount
+  public static func create(replacing keyStorage: any web3.EthereumSingleKeyStorageProtocol, keystorePassword password: Swift.String) throws -> web3.EthereumAccount
+  public static func importAccount(addingTo keyStorage: any web3.EthereumMultipleKeyStorageProtocol, privateKey: Swift.String, keystorePassword password: Swift.String) throws -> web3.EthereumAccount
+  public static func importAccount(replacing keyStorage: any web3.EthereumSingleKeyStorageProtocol, privateKey: Swift.String, keystorePassword password: Swift.String) throws -> web3.EthereumAccount
+  public func sign(data: Foundation.Data) throws -> Foundation.Data
+  public func sign(hex: Swift.String) throws -> Foundation.Data
+  public func sign(hash: Swift.String) throws -> Foundation.Data
+  public func sign(message: Foundation.Data) throws -> Foundation.Data
+  public func sign(message: Swift.String) throws -> Foundation.Data
+  public func signMessage(message: Foundation.Data) throws -> Swift.String
+  public func signMessage(message: web3.TypedData) throws -> Swift.String
+  @objc deinit
+}
+extension web3.EthereumAccountProtocol {
+  public func signRaw(_ transaction: web3.EthereumTransaction) throws -> Foundation.Data
+  public func sign(transaction: web3.EthereumTransaction) throws -> web3.SignedTransaction
+}
+public struct EthereumAddress : Swift.Codable, Swift.Hashable {
+  @available(*, deprecated, message: "Shouldn't rely on the actual String representation. Use asString() instead to get an unformatted representation")
+  public var value: Swift.String {
+    get
+  }
+  public static let zero: web3.EthereumAddress
+  public init(_ value: Swift.String)
+  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: any Swift.Encoder) throws
+  public func hash(into hasher: inout Swift.Hasher)
+  public static func == (lhs: web3.EthereumAddress, rhs: web3.EthereumAddress) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension web3.EthereumAddress {
+  public func asString() -> Swift.String
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func asNumber() -> BigInt.BigUInt?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func asData() -> Foundation.Data?
+  #endif
+  public func toChecksumAddress() -> Swift.String
+}
+extension web3.EthereumAddress : Swift.ExpressibleByStringLiteral {
+  public init(stringLiteral value: Swift.String)
+  public typealias ExtendedGraphemeClusterLiteralType = Swift.String
+  public typealias StringLiteralType = Swift.String
+  public typealias UnicodeScalarLiteralType = Swift.String
+}
+public enum EthereumBlock : Swift.Hashable {
+  case Latest
+  case Earliest
+  case Pending
+  case Number(Swift.Int)
+  public var stringValue: Swift.String {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var intValue: Swift.Int? {
+    get
+  }
+  #endif
+  public init(rawValue: Swift.Int)
+  public init(rawValue: Swift.String)
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension web3.EthereumBlock : Swift.Codable {
+  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+extension web3.EthereumBlock : Swift.Comparable {
+  public static func == (lhs: web3.EthereumBlock, rhs: web3.EthereumBlock) -> Swift.Bool
+  public static func < (lhs: web3.EthereumBlock, rhs: web3.EthereumBlock) -> Swift.Bool
+}
+public struct EthereumBlockInfo : Swift.Equatable {
+  public var number: web3.EthereumBlock
+  public var timestamp: Foundation.Date
+  public var transactions: [Swift.String]
+  public static func == (a: web3.EthereumBlockInfo, b: web3.EthereumBlockInfo) -> Swift.Bool
+}
+extension web3.EthereumBlockInfo : Swift.Codable {
+  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+extension web3.ABIFunction {
+  public func execute(withClient client: any web3.EthereumClientProtocol, account: any web3.EthereumAccountProtocol) async throws -> Swift.String
+  public func call<T>(withClient client: any web3.EthereumClientProtocol, responseType: T.Type, block: web3.EthereumBlock = .Latest, resolution: web3.CallResolution = .noOffchain(failOnExecutionError: true)) async throws -> T where T : web3.ABIResponse
+}
+public struct EventFilter {
+  public let type: any web3.ABIEvent.Type
+  public let allowedSenders: [web3.EthereumAddress]
+  public init(type: any web3.ABIEvent.Type, allowedSenders: [web3.EthereumAddress])
+}
+public struct Events {
+  public let events: [any web3.ABIEvent]
+  public let logs: [web3.EthereumLog]
+}
+extension web3.EthereumClientProtocol {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func getEvents(addresses: [web3.EthereumAddress]?, orTopics: [[Swift.String]?]?, fromBlock: web3.EthereumBlock, toBlock: web3.EthereumBlock, matching matches: [web3.EventFilter]) async throws -> web3.Events
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func getEvents(addresses: [web3.EthereumAddress]?, orTopics: [[Swift.String]?]?, fromBlock: web3.EthereumBlock, toBlock: web3.EthereumBlock, eventTypes: [any web3.ABIEvent.Type]) async throws -> web3.Events
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func getEvents(addresses: [web3.EthereumAddress]?, topics: [Swift.String?]?, fromBlock: web3.EthereumBlock, toBlock: web3.EthereumBlock, eventTypes: [any web3.ABIEvent.Type]) async throws -> web3.Events
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func getEvents(addresses: [web3.EthereumAddress]?, topics: [Swift.String?]?, fromBlock: web3.EthereumBlock, toBlock: web3.EthereumBlock, matching matches: [web3.EventFilter]) async throws -> web3.Events
+  #endif
+  public func handleLogs(_ logs: [web3.EthereumLog], _ matches: [web3.EventFilter]) -> web3.Events
+}
+extension web3.EthereumClientProtocol {
+  public typealias EventsCompletionHandler = (Swift.Result<web3.Events, any Swift.Error>) -> Swift.Void
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func getEvents(addresses: [web3.EthereumAddress]?, orTopics: [[Swift.String]?]?, fromBlock: web3.EthereumBlock, toBlock: web3.EthereumBlock, matching matches: [web3.EventFilter], completionHandler: @escaping Self.EventsCompletionHandler)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func getEvents(addresses: [web3.EthereumAddress]?, orTopics: [[Swift.String]?]?, fromBlock: web3.EthereumBlock, toBlock: web3.EthereumBlock, eventTypes: [any web3.ABIEvent.Type], completionHandler: @escaping Self.EventsCompletionHandler)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func getEvents(addresses: [web3.EthereumAddress]?, topics: [Swift.String?]?, fromBlock: web3.EthereumBlock, toBlock: web3.EthereumBlock, eventTypes: [any web3.ABIEvent.Type], completionHandler: @escaping Self.EventsCompletionHandler)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func getEvents(addresses: [web3.EthereumAddress]?, topics: [Swift.String?]?, fromBlock: web3.EthereumBlock, toBlock: web3.EthereumBlock, matching matches: [web3.EventFilter], completionHandler: @escaping Self.EventsCompletionHandler)
+  #endif
+}
+public enum CallResolution {
+  case noOffchain(failOnExecutionError: Swift.Bool)
+  case offchainAllowed(maxRedirects: Swift.Int)
+}
+public protocol EthereumClientProtocol : web3.EthereumRPCProtocol {
+  #if compiler(>=5.3) && $NonescapableTypes
+  var network: web3.EthereumNetwork? { get }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func net_version(completionHandler: @escaping (Swift.Result<web3.EthereumNetwork, web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func eth_gasPrice(completionHandler: @escaping (Swift.Result<BigInt.BigUInt, web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func eth_blockNumber(completionHandler: @escaping (Swift.Result<Swift.Int, web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func eth_getBalance(address: web3.EthereumAddress, block: web3.EthereumBlock, completionHandler: @escaping (Swift.Result<BigInt.BigUInt, web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func eth_getCode(address: web3.EthereumAddress, block: web3.EthereumBlock, completionHandler: @escaping (Swift.Result<Swift.String, web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func eth_estimateGas(_ transaction: web3.EthereumTransaction, completionHandler: @escaping (Swift.Result<BigInt.BigUInt, web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func eth_sendRawTransaction(_ transaction: web3.EthereumTransaction, withAccount account: any web3.EthereumAccountProtocol, completionHandler: @escaping (Swift.Result<Swift.String, web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func eth_getTransactionCount(address: web3.EthereumAddress, block: web3.EthereumBlock, completionHandler: @escaping (Swift.Result<Swift.Int, web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func eth_getTransaction(byHash txHash: Swift.String, completionHandler: @escaping (Swift.Result<web3.EthereumTransaction, web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func eth_getTransactionReceipt(txHash: Swift.String, completionHandler: @escaping (Swift.Result<web3.EthereumTransactionReceipt, web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func eth_call(_ transaction: web3.EthereumTransaction, block: web3.EthereumBlock, completionHandler: @escaping (Swift.Result<Swift.String, web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func eth_call(_ transaction: web3.EthereumTransaction, resolution: web3.CallResolution, block: web3.EthereumBlock, completionHandler: @escaping (Swift.Result<Swift.String, web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func eth_getLogs(addresses: [web3.EthereumAddress]?, topics: [Swift.String?]?, fromBlock: web3.EthereumBlock, toBlock: web3.EthereumBlock, completionHandler: @escaping (Swift.Result<[web3.EthereumLog], web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func eth_getLogs(addresses: [web3.EthereumAddress]?, orTopics: [[Swift.String]?]?, fromBlock: web3.EthereumBlock, toBlock: web3.EthereumBlock, completionHandler: @escaping (Swift.Result<[web3.EthereumLog], web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func eth_getBlockByNumber(_ block: web3.EthereumBlock, completionHandler: @escaping (Swift.Result<web3.EthereumBlockInfo, web3.EthereumClientError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func getLogs(addresses: [web3.EthereumAddress]?, topics: web3.Topics?, fromBlock: web3.EthereumBlock, toBlock: web3.EthereumBlock) async throws -> [web3.EthereumLog]
+  #endif
+  func net_version() async throws -> web3.EthereumNetwork
+  func eth_gasPrice() async throws -> BigInt.BigUInt
+  func eth_blockNumber() async throws -> Swift.Int
+  func eth_getBalance(address: web3.EthereumAddress, block: web3.EthereumBlock) async throws -> BigInt.BigUInt
+  func eth_getCode(address: web3.EthereumAddress, block: web3.EthereumBlock) async throws -> Swift.String
+  func eth_estimateGas(_ transaction: web3.EthereumTransaction) async throws -> BigInt.BigUInt
+  func eth_sendRawTransaction(_ transaction: web3.EthereumTransaction, withAccount account: any web3.EthereumAccountProtocol) async throws -> Swift.String
+  func eth_getTransaction(byHash txHash: Swift.String) async throws -> web3.EthereumTransaction
+  func eth_getTransactionReceipt(txHash: Swift.String) async throws -> web3.EthereumTransactionReceipt
+  func eth_call(_ transaction: web3.EthereumTransaction, block: web3.EthereumBlock) async throws -> Swift.String
+  func eth_call(_ transaction: web3.EthereumTransaction, resolution: web3.CallResolution, block: web3.EthereumBlock) async throws -> Swift.String
+  #if compiler(>=5.3) && $NonescapableTypes
+  func eth_getLogs(addresses: [web3.EthereumAddress]?, topics: [Swift.String?]?, fromBlock: web3.EthereumBlock, toBlock: web3.EthereumBlock) async throws -> [web3.EthereumLog]
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  func eth_getLogs(addresses: [web3.EthereumAddress]?, orTopics: [[Swift.String]?]?, fromBlock: web3.EthereumBlock, toBlock: web3.EthereumBlock) async throws -> [web3.EthereumLog]
+  #endif
+  func eth_getBlockByNumber(_ block: web3.EthereumBlock) async throws -> web3.EthereumBlockInfo
+}
+public struct EthereumHeader : Swift.Codable {
+  public let parentHash: Swift.String
+  public let sha3Uncles: Swift.String
+  public let miner: Swift.String
+  public let stateRoot: Swift.String
+  public let transactionsRoot: Swift.String
+  public let receiptsRoot: Swift.String
+  public let logsBloom: Swift.String
+  public let difficulty: Swift.String
+  public let number: Swift.String
+  public let gasLimit: Swift.String
+  public let gasUsed: Swift.String
+  public let timestamp: Swift.String
+  public let extraData: Swift.String
+  public let mixHash: Swift.String
+  public let nonce: Swift.String
+  public let hash: Swift.String
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public class EthereumHttpClient : web3.BaseEthereumClient {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(url: Foundation.URL, sessionConfig: Foundation.URLSessionConfiguration = URLSession.shared.configuration, logger: Logging.Logger? = nil, network: web3.EthereumNetwork? = nil)
+  #endif
+  @objc deinit
+}
+public protocol EthereumSingleKeyStorageProtocol {
+  func storePrivateKey(key: Foundation.Data) throws
+  func loadPrivateKey() throws -> Foundation.Data
+}
+public protocol EthereumMultipleKeyStorageProtocol {
+  func deleteAllKeys() throws
+  func deletePrivateKey(for address: web3.EthereumAddress) throws
+  func fetchAccounts() throws -> [web3.EthereumAddress]
+  func loadPrivateKey(for address: web3.EthereumAddress) throws -> Foundation.Data
+  func storePrivateKey(key: Foundation.Data, with address: web3.EthereumAddress) throws
+}
+public enum EthereumKeyStorageError : Swift.Error {
+  case notFound
+  case failedToSave
+  case failedToLoad
+  case failedToDelete
+  public static func == (a: web3.EthereumKeyStorageError, b: web3.EthereumKeyStorageError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public class EthereumKeyLocalStorage : web3.EthereumSingleKeyStorageProtocol {
+  public init()
+  public func storePrivateKey(key: Foundation.Data) throws
+  public func loadPrivateKey() throws -> Foundation.Data
+  @objc deinit
+}
+extension web3.EthereumKeyLocalStorage : web3.EthereumMultipleKeyStorageProtocol {
+  public func fetchAccounts() throws -> [web3.EthereumAddress]
+  public func storePrivateKey(key: Foundation.Data, with address: web3.EthereumAddress) throws
+  public func loadPrivateKey(for address: web3.EthereumAddress) throws -> Foundation.Data
+  public func deleteAllKeys() throws
+  public func deletePrivateKey(for address: web3.EthereumAddress) throws
+}
+extension web3.EthereumSingleKeyStorageProtocol {
+  public func encryptAndStorePrivateKey(key: Foundation.Data, keystorePassword: Swift.String) throws
+  public func loadAndDecryptPrivateKey(keystorePassword: Swift.String) throws -> Foundation.Data
+}
+extension web3.EthereumMultipleKeyStorageProtocol {
+  public func encryptAndStorePrivateKey(key: Foundation.Data, keystorePassword: Swift.String) throws
+  public func loadAndDecryptPrivateKey(for address: web3.EthereumAddress, keystorePassword: Swift.String) throws -> Foundation.Data
+}
+public struct EthereumLog : Swift.Equatable {
+  public let logIndex: BigInt.BigUInt?
+  public let transactionIndex: BigInt.BigUInt?
+  public let transactionHash: Swift.String?
+  public let blockHash: Swift.String?
+  public let blockNumber: web3.EthereumBlock
+  public let address: web3.EthereumAddress
+  public var data: Swift.String
+  public var topics: [Swift.String]
+  public let removed: Swift.Bool?
+  public static func == (a: web3.EthereumLog, b: web3.EthereumLog) -> Swift.Bool
+}
+extension web3.EthereumLog : Swift.Codable {
+  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+extension web3.EthereumLog : Swift.Comparable {
+  public static func < (lhs: web3.EthereumLog, rhs: web3.EthereumLog) -> Swift.Bool
+}
+public enum ResolutionMode {
+  case onchain
+  case allowOffchainLookup
+  public static func == (a: web3.ResolutionMode, b: web3.ResolutionMode) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum EthereumNameServiceError : Swift.Error, Swift.Equatable {
+  case noNetwork
+  case ensUnknown
+  case invalidInput
+  case decodeIssue
+  case tooManyRedirections
+  public static func == (a: web3.EthereumNameServiceError, b: web3.EthereumNameServiceError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public class EthereumNameService {
+  #if compiler(>=5.3) && $NonescapableTypes
+  required public init(client: any web3.EthereumClientProtocol, registryAddress: web3.EthereumAddress? = nil, maximumRedirections: Swift.Int = 5)
+  #endif
+  public func resolve(address: web3.EthereumAddress, mode: web3.ResolutionMode) async throws -> Swift.String
+  public func resolve(ens: Swift.String, mode: web3.ResolutionMode) async throws -> web3.EthereumAddress
+  @objc deinit
+}
+extension web3.EthereumNameService {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func resolve(address: web3.EthereumAddress, mode: web3.ResolutionMode, completionHandler: @escaping (Swift.Result<Swift.String, web3.EthereumNameServiceError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func resolve(ens: Swift.String, mode: web3.ResolutionMode, completionHandler: @escaping (Swift.Result<web3.EthereumAddress, web3.EthereumNameServiceError>) -> Swift.Void)
+  #endif
+}
+public enum EthereumNetwork : Swift.Equatable, Swift.Decodable {
+  case mainnet
+  case kovan
+  case goerli
+  case sepolia
+  case custom(Swift.String)
+  public static func fromString(_ networkId: Swift.String) -> web3.EthereumNetwork
+  public var stringValue: Swift.String {
+    get
+  }
+  public var intValue: Swift.Int {
+    get
+  }
+  public init(from decoder: any Swift.Decoder) throws
+}
+public func == (lhs: web3.EthereumNetwork, rhs: web3.EthereumNetwork) -> Swift.Bool
+public struct EquatableError : Swift.Error, Swift.Equatable {
+  public static func == (lhs: web3.EquatableError, rhs: web3.EquatableError) -> Swift.Bool
+}
+public enum EthereumClientError : Swift.Error, Swift.Equatable {
+  case tooManyResults
+  case executionError(web3.JSONRPCErrorDetail)
+  case unexpectedReturnValue
+  case noResultFound
+  case decodeIssue
+  case encodeIssue
+  case noInputData
+  case webSocketError(web3.EquatableError)
+  case connectionNotOpen
+  public static func == (a: web3.EthereumClientError, b: web3.EthereumClientError) -> Swift.Bool
+}
+public protocol EthereumRPCProtocol : AnyObject {
+  var networkProvider: any web3.NetworkProviderProtocol { get }
+  #if compiler(>=5.3) && $NonescapableTypes
+  var network: web3.EthereumNetwork? { get }
+  #endif
+  func eth_getTransactionCount(address: web3.EthereumAddress, block: web3.EthereumBlock) async throws -> Swift.Int
+}
+extension web3.EthereumRPCProtocol {
+  public func eth_getTransactionCount(address: web3.EthereumAddress, block: web3.EthereumBlock) async throws -> Swift.Int
+  public func failureHandler(_ error: any Swift.Error) -> web3.EthereumClientError
+}
+public enum EthereumSubscriptionType : Swift.Equatable, Swift.Hashable {
+  case newBlockHeaders
+  case logs(web3.LogsParams?)
+  case newPendingTransactions
+  case syncing
+  public static func == (a: web3.EthereumSubscriptionType, b: web3.EthereumSubscriptionType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct EthereumSubscription : Swift.Hashable {
+  public static func == (a: web3.EthereumSubscription, b: web3.EthereumSubscription) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum EthereumSubscriptionParamElement : Swift.Encodable {
+  case method(Swift.String)
+  case logsParams(web3.LogsParams)
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+public struct LogsParams : Swift.Codable, Swift.Equatable, Swift.Hashable {
+  public let address: web3.EthereumAddress?
+  public let topics: [Swift.String]?
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(address: web3.EthereumAddress?, topics: [Swift.String]?)
+  #endif
+  public static func == (a: web3.LogsParams, b: web3.LogsParams) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct EthereumSyncStatus : Swift.Codable {
+  public let result: web3.ResultUnion
+  public init(result: web3.ResultUnion)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public enum ResultUnion : Swift.Codable {
+  case bool(Swift.Bool)
+  case resultClass(web3.ResultClass)
+  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+public struct ResultClass : Swift.Codable {
+  public struct Status : Swift.Codable {
+    public let startingBlock: Swift.Int
+    public let currentBlock: Swift.Int
+    public let highestBlock: Swift.Int
+    public let pulledStates: Swift.Int
+    public let knownStates: Swift.Int
+    public init(startingBlock: Swift.Int, currentBlock: Swift.Int, highestBlock: Swift.Int, pulledStates: Swift.Int, knownStates: Swift.Int)
+    public func encode(to encoder: any Swift.Encoder) throws
+    public init(from decoder: any Swift.Decoder) throws
+  }
+  public let syncing: Swift.Bool
+  public let status: web3.ResultClass.Status
+  public init(syncing: Swift.Bool, status: web3.ResultClass.Status)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public protocol EthereumTransactionProtocol {
+  #if compiler(>=5.3) && $NonescapableTypes
+  init(from: web3.EthereumAddress?, to: web3.EthereumAddress, value: BigInt.BigUInt?, data: Foundation.Data?, nonce: Swift.Int?, gasPrice: BigInt.BigUInt?, gasLimit: BigInt.BigUInt?, chainId: Swift.Int?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  init(from: web3.EthereumAddress?, to: web3.EthereumAddress, data: Foundation.Data, gasPrice: BigInt.BigUInt, gasLimit: BigInt.BigUInt)
+  #endif
+  init(to: web3.EthereumAddress, data: Foundation.Data)
+  #if compiler(>=5.3) && $NonescapableTypes
+  var raw: Foundation.Data? { get }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  var hash: Foundation.Data? { get }
+  #endif
+}
+public struct EthereumTransaction : web3.EthereumTransactionProtocol, Swift.Equatable, Swift.Codable {
+  public let from: web3.EthereumAddress?
+  public let to: web3.EthereumAddress
+  public let value: BigInt.BigUInt?
+  public let data: Foundation.Data?
+  public var nonce: Swift.Int?
+  public let gasPrice: BigInt.BigUInt?
+  public let gasLimit: BigInt.BigUInt?
+  public let gas: BigInt.BigUInt?
+  public let blockNumber: web3.EthereumBlock?
+  public let input: Swift.String?
+  public var hash: Foundation.Data? {
+    get
+  }
+  public var chainId: Swift.Int? {
+    get
+    set
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(from: web3.EthereumAddress?, to: web3.EthereumAddress, value: BigInt.BigUInt?, data: Foundation.Data?, nonce: Swift.Int?, gasPrice: BigInt.BigUInt?, gasLimit: BigInt.BigUInt?, chainId: Swift.Int?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(from: web3.EthereumAddress?, to: web3.EthereumAddress, data: Foundation.Data, gasPrice: BigInt.BigUInt, gasLimit: BigInt.BigUInt)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(from: web3.EthereumAddress?, to: web3.EthereumAddress, value: BigInt.BigUInt = 0, data: Foundation.Data, gasPrice: BigInt.BigUInt, gasLimit: BigInt.BigUInt)
+  #endif
+  public init(to: web3.EthereumAddress, data: Foundation.Data)
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var raw: Foundation.Data? {
+    get
+  }
+  #endif
+  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: any Swift.Encoder) throws
+  public static func == (a: web3.EthereumTransaction, b: web3.EthereumTransaction) -> Swift.Bool
+}
+public struct SignedTransaction {
+  public let transaction: web3.EthereumTransaction
+  public let signature: web3.Signature
+  public init(transaction: web3.EthereumTransaction, signature raw: Foundation.Data)
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var raw: Foundation.Data? {
+    get
+  }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var hash: Foundation.Data? {
+    get
+  }
+  #endif
+}
+public enum EthereumTransactionReceiptStatus : Swift.Int {
+  case success
+  case failure
+  case notProcessed
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(rawValue: Swift.Int)
+  #endif
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+public struct EthereumTransactionReceipt : Swift.Decodable {
+  public var transactionHash: Swift.String
+  public var transactionIndex: BigInt.BigUInt
+  public var blockHash: Swift.String
+  public var blockNumber: BigInt.BigUInt
+  public var gasUsed: BigInt.BigUInt
+  public var contractAddress: web3.EthereumAddress?
+  public var logs: [web3.EthereumLog]
+  public var status: web3.EthereumTransactionReceiptStatus
+  public init(from decoder: any Swift.Decoder) throws
+}
+public protocol Web3Extendable {
+  associatedtype T
+  var web3: Self.T { get }
+}
+extension web3.Web3Extendable {
+  public var web3: web3.Web3Extensions<Self> {
+    get
+  }
+}
+public struct Web3Extensions<Base> {
+  public var base: Base {
+    get
+  }
+}
+extension Foundation.Data : web3.Web3Extendable {
+  @available(iOS 8.0, tvOS 9.0, watchOS 2.0, macOS 10.10, *)
+  public typealias T = web3.Web3Extensions<Foundation.Data>
+}
+extension Swift.String : web3.Web3Extendable {
+  public typealias T = web3.Web3Extensions<Swift.String>
+}
+extension BigInt.BigUInt : web3.Web3Extendable {
+  public typealias T = web3.Web3Extensions<BigInt.BigUInt>
+}
+extension BigInt.BigInt : web3.Web3Extendable {
+  public typealias T = web3.Web3Extensions<BigInt.BigInt>
+}
+extension Swift.Int : web3.Web3Extendable {
+  public typealias T = web3.Web3Extensions<Swift.Int>
+}
+@_specialize(exported: false, kind: full, where T == Swift.Int)
+@_specialize(exported: false, kind: full, where T == Swift.UInt)
+@_specialize(exported: false, kind: full, where T == Swift.UInt8)
+@_specialize(exported: false, kind: full, where T == Swift.UInt16)
+@_specialize(exported: false, kind: full, where T == Swift.UInt32)
+@_specialize(exported: false, kind: full, where T == Swift.UInt64)
+@inlinable internal func arrayOfBytes<T>(value: T, length totalBytes: Swift.Int = MemoryLayout<T>.size) -> [Swift.UInt8] where T : Swift.FixedWidthInteger {
+    let valuePointer = UnsafeMutablePointer<T>.allocate(capacity: 1)
+    valuePointer.pointee = value
+
+    let bytesPointer = UnsafeMutablePointer<UInt8>(OpaquePointer(valuePointer))
+    var bytes = [UInt8](repeating: 0, count: totalBytes)
+    for j in 0..<min(MemoryLayout<T>.size, totalBytes) {
+        bytes[totalBytes - 1 - j] = (bytesPointer + j).pointee
+    }
+
+    valuePointer.deinitialize(count: 1)
+    valuePointer.deallocate()
+
+    return bytes
+}
+extension BigInt.BigUInt {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(hex: Swift.String)
+  #endif
+}
+extension web3.Web3Extensions where Base == BigInt.BigUInt {
+  public var hexString: Swift.String {
+    get
+  }
+  public var hexStringNoLeadingZeroes: Swift.String {
+    get
+  }
+}
+extension BigInt.BigInt {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(hex: Swift.String)
+  #endif
+}
+extension Swift.Int {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(hex: Swift.String)
+  #endif
+}
+extension web3.Web3Extensions where Base == Swift.Int {
+  public var hexString: Swift.String {
+    get
+  }
+}
+extension Foundation.Data {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(hex: Swift.String)
+  #endif
+}
+extension web3.Web3Extensions where Base == Foundation.Data {
+  public var hexString: Swift.String {
+    get
+  }
+}
+extension Swift.String {
+  public init(bytes: [Swift.UInt8])
+}
+extension web3.Web3Extensions where Base == Swift.String {
+  public var noHexPrefix: Swift.String {
+    get
+  }
+  public var withHexPrefix: Swift.String {
+    get
+  }
+  public var stringValue: Swift.String {
+    get
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var hexData: Foundation.Data? {
+    get
+  }
+  #endif
+}
+final public class HMAC {
+  public enum Error : Swift.Error {
+    case authenticateError
+    case invalidInput
+    public static func == (a: web3.HMAC.Error, b: web3.HMAC.Error) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public enum Variant {
+    case sha256
+    case sha512
+    public static func == (a: web3.HMAC.Variant, b: web3.HMAC.Variant) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public init(key: [Swift.UInt8], variant: web3.HMAC.Variant = .sha256)
+  final public func authenticate(_ bytes: [Swift.UInt8]) throws -> [Swift.UInt8]
+  @objc deinit
+}
+public class HttpNetworkProvider : web3.NetworkProviderProtocol {
+  final public let session: Foundation.URLSession
+  public init(session: Foundation.URLSession, url: Foundation.URL)
+  @objc deinit
+  public func send<P, U>(method: Swift.String, params: P, receive: U.Type) async throws -> Any where P : Swift.Encodable, U : Swift.Decodable
+}
+extension Swift.FixedWidthInteger {
+  @inlinable internal func bytes(totalBytes: Swift.Int = MemoryLayout<Self>.size) -> [Swift.UInt8] {
+        arrayOfBytes(value: littleEndian, length: totalBytes)
+         
+         
+         
+    }
+}
+public struct JSONRPCResult<T> : Swift.Decodable where T : Swift.Decodable {
+  public var id: Swift.Int
+  public var jsonrpc: Swift.String
+  public var result: T
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct JSONRPCErrorDetail : Swift.Decodable, Swift.Equatable, Swift.CustomStringConvertible {
+  public var code: Swift.Int
+  public var message: Swift.String
+  public var data: Swift.String?
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(code: Swift.Int, message: Swift.String, data: Swift.String?)
+  #endif
+  public var description: Swift.String {
+    get
+  }
+  public static func == (a: web3.JSONRPCErrorDetail, b: web3.JSONRPCErrorDetail) -> Swift.Bool
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct JSONRPCErrorResult : Swift.Decodable {
+  public var id: Swift.Int
+  public var jsonrpc: Swift.String
+  public var error: web3.JSONRPCErrorDetail
+  public init(from decoder: any Swift.Decoder) throws
+}
+public enum JSONRPCErrorCode {
+  public static var invalidInput: Swift.Int
+  public static var tooManyResults: Swift.Int
+  public static var contractExecution: Swift.Int
+}
+public enum JSONRPCError : Swift.Error {
+  case executionError(web3.JSONRPCErrorResult)
+  case requestRejected(Foundation.Data)
+  case encodingError
+  case decodingError
+  case unknownError
+  case noResult
+  case invalidConnection
+  case connectionNotOpen
+  case connectionTimeout
+  case pendingRequestsOnReconnecting
+  case maxAttemptsReachedOnReconnecting
+  public var isExecutionError: Swift.Bool {
+    get
+  }
+}
+extension web3.Web3Extensions where Base == Foundation.Data {
+  public var keccak256: Foundation.Data {
+    get
+  }
+}
+extension web3.Web3Extensions where Base == Swift.String {
+  public var keccak256: Foundation.Data {
+    get
+  }
+  public var keccak256fromHex: Foundation.Data {
+    get
+  }
+}
+public enum KeyUtilError : Swift.Error {
+  case invalidContext
+  case privateKeyInvalid
+  case unknownError
+  case signatureFailure
+  case signatureParseFailure
+  case badArguments
+  public static func == (a: web3.KeyUtilError, b: web3.KeyUtilError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers public class KeyUtil {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func generatePrivateKeyData() -> Foundation.Data?
+  #endif
+  public static func generatePublicKey(from privateKey: Foundation.Data) throws -> Foundation.Data
+  public static func generateAddress(from publicKey: Foundation.Data) -> web3.EthereumAddress
+  public static func sign(message: Foundation.Data, with privateKey: Foundation.Data, hashing: Swift.Bool) throws -> Foundation.Data
+  public static func recoverPublicKey(message: Foundation.Data, signature: Foundation.Data) throws -> Swift.String
+  @objc deinit
+}
+public typealias MulticallResponse = web3.Multicall.Response
+public struct Multicall {
+  public init(client: any web3.EthereumClientProtocol)
+  public func aggregate(calls: [web3.Multicall.Call]) async throws -> web3.MulticallResponse
+  public func tryAggregate(requireSuccess: Swift.Bool, calls: [web3.Multicall.Call]) async throws -> web3.Multicall.Multicall2Response
+}
+extension web3.Multicall {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func aggregate(calls: [web3.Multicall.Call], completionHandler: @escaping (Swift.Result<web3.MulticallResponse, web3.Multicall.MulticallError>) -> Swift.Void)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func tryAggregate(requireSuccess: Swift.Bool, calls: [web3.Multicall.Call], completionHandler: @escaping (Swift.Result<web3.Multicall.Multicall2Response, web3.Multicall.MulticallError>) -> Swift.Void)
+  #endif
+}
+extension web3.Multicall {
+  public enum MulticallError : Swift.Error {
+    case contractUnavailable
+    case executionFailed((any Swift.Error)?)
+  }
+  public enum CallError : Swift.Error {
+    case contractFailure
+    case couldNotDecodeResponse((any Swift.Error)?)
+  }
+  public typealias Output = Swift.Result<Swift.String, web3.Multicall.CallError>
+  public struct Response : web3.ABIResponse {
+    public static var types: [any web3.ABIType.Type]
+    public let block: BigInt.BigUInt
+    public let outputs: [web3.Multicall.Output]
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(values: [web3.ABIDecoder.DecodedValue]) throws
+    #endif
+  }
+  public struct Multicall2Result : web3.ABITuple {
+    public static var types: [any web3.ABIType.Type]
+    public var encodableValues: [any web3.ABIType] {
+      get
+    }
+    public let success: Swift.Bool
+    public let returnData: Swift.String
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(values: [web3.ABIDecoder.DecodedValue]) throws
+    #endif
+    public func encode(to encoder: web3.ABIFunctionEncoder) throws
+  }
+  public struct Multicall2Response : web3.ABIResponse {
+    public static var types: [any web3.ABIType.Type]
+    public let outputs: [web3.Multicall.Output]
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(values: [web3.ABIDecoder.DecodedValue]) throws
+    #endif
+  }
+  public struct Call : web3.ABITuple {
+    public static var types: [any web3.ABIType.Type]
+    public var encodableValues: [any web3.ABIType] {
+      get
+    }
+    public let target: web3.EthereumAddress
+    public let encodedFunction: Foundation.Data
+    public let handler: ((web3.Multicall.Output) throws -> Swift.Void)?
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init<Function>(function: Function, handler: ((web3.Multicall.Output) throws -> Swift.Void)? = nil) throws where Function : web3.ABIFunction
+    #endif
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(values: [web3.ABIDecoder.DecodedValue]) throws
+    #endif
+    public func encode(to encoder: web3.ABIFunctionEncoder) throws
+  }
+  public struct Aggregator {
+    public var calls: [web3.Multicall.Call] {
+      get
+    }
+    public init()
+    public mutating func append<Function>(_ f: Function) throws where Function : web3.ABIFunction
+    #if compiler(>=5.3) && $NonescapableTypes
+    public mutating func append<Function>(_ f: Function, handler: @escaping (web3.Multicall.Output) throws -> Swift.Void) throws where Function : web3.ABIFunction
+    #endif
+    #if compiler(>=5.3) && $NonescapableTypes
+    public mutating func append<Function, Response>(function f: Function, response: Response.Type, handler: @escaping (Swift.Result<Response.Value, web3.Multicall.CallError>) throws -> Swift.Void) throws where Function : web3.ABIFunction, Response : web3.MulticallDecodableResponse
+    #endif
+  }
+}
+public protocol MulticallDecodableResponse {
+  associatedtype Value
+  var value: Self.Value { get }
+  #if compiler(>=5.3) && $NonescapableTypes
+  init?(data: Swift.String) throws
+  #endif
+}
+extension web3.Multicall {
+  public enum Contract {
+    #if compiler(>=5.3) && $NonescapableTypes
+    public static func registryAddress(for network: web3.EthereumNetwork) -> web3.EthereumAddress?
+    #endif
+    public enum Functions {
+      public struct aggregate : web3.ABIFunction {
+        public static let name: Swift.String
+        public let gasPrice: BigInt.BigUInt?
+        public let gasLimit: BigInt.BigUInt?
+        public var contract: web3.EthereumAddress
+        public let from: web3.EthereumAddress?
+        public let calls: [web3.Multicall.Call]
+        #if compiler(>=5.3) && $NonescapableTypes
+        public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil, calls: [web3.Multicall.Call])
+        #endif
+        public func encode(to encoder: web3.ABIFunctionEncoder) throws
+      }
+      public struct tryAggregate : web3.ABIFunction {
+        public static let name: Swift.String
+        public let gasPrice: BigInt.BigUInt?
+        public let gasLimit: BigInt.BigUInt?
+        public var contract: web3.EthereumAddress
+        public let from: web3.EthereumAddress?
+        public let requireSuccess: Swift.Bool
+        public let calls: [web3.Multicall.Call]
+        #if compiler(>=5.3) && $NonescapableTypes
+        public init(contract: web3.EthereumAddress, from: web3.EthereumAddress? = nil, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil, requireSuccess: Swift.Bool, calls: [web3.Multicall.Call])
+        #endif
+        public func encode(to encoder: web3.ABIFunctionEncoder) throws
+      }
+    }
+  }
+}
+public protocol NetworkProviderProtocol {
+  var session: Foundation.URLSession { get }
+  func send<P, U>(method: Swift.String, params: P, receive: U.Type) async throws -> Any where P : Swift.Encodable, U : Swift.Decodable
+}
+public struct OffchainLookup : web3.ABIRevertError {
+  public var expectedTypes: [any web3.ABIType.Type] {
+    get
+  }
+  public static var name: Swift.String
+  public var address: web3.EthereumAddress
+  public var urls: [Swift.String]
+  public var callData: Foundation.Data
+  public var callbackFunction: Foundation.Data
+  public var extraData: Foundation.Data
+  public func encode(to encoder: web3.ABIFunctionEncoder) throws
+  public init(address: web3.EthereumAddress, urls: [Swift.String], callData: Foundation.Data, callbackFunction: Foundation.Data, extraData: Foundation.Data)
+}
+public struct PBKDF2 {
+  public enum Error : Swift.Error {
+    case invalidInput
+    case derivedKeyTooLong
+    public static func == (a: web3.PBKDF2.Error, b: web3.PBKDF2.Error) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(password: [Swift.UInt8], salt: [Swift.UInt8], iterations: Swift.Int = 4096, keyLength: Swift.Int? = nil, variant: web3.HMAC.Variant = .sha256) throws
+  #endif
+  public func calculate() throws -> [Swift.UInt8]
+}
+public enum Topics : Swift.Encodable {
+  case plain([Swift.String?])
+  case composed([[Swift.String]?])
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+public struct RLP {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public static func encode(_ item: Any) -> Foundation.Data?
+  #endif
+}
+final public class SHA2 {
+  @usableFromInline
+  final internal let variant: web3.SHA2.Variant
+  @usableFromInline
+  final internal let size: Swift.Int
+  @usableFromInline
+  final internal let blockSize: Swift.Int
+  @usableFromInline
+  final internal let digestLength: Swift.Int
+  @usableFromInline
+  final internal var accumulated: [Swift.UInt8]
+  @usableFromInline
+  final internal var processedBytesTotalCount: Swift.Int
+  @usableFromInline
+  final internal var accumulatedHash32: [Swift.UInt32]
+  @usableFromInline
+  final internal var accumulatedHash64: [Swift.UInt64]
+  @frozen public enum Variant : Swift.RawRepresentable {
+    case sha256, sha512
+    public var digestLength: Swift.Int {
+      get
+    }
+    public var blockSize: Swift.Int {
+      get
+    }
+    public typealias RawValue = Swift.Int
+    public var rawValue: web3.SHA2.Variant.RawValue {
+      get
+    }
+    #if compiler(>=5.3) && $NonescapableTypes
+    public init?(rawValue: web3.SHA2.Variant.RawValue)
+    #endif
+    @usableFromInline
+    internal var h: [Swift.UInt64] {
+      get
+    }
+    @usableFromInline
+    internal var finalLength: Swift.Int {
+      get
+    }
+  }
+  public init(variant: web3.SHA2.Variant)
+  @inlinable final public func calculate(for bytes: [Swift.UInt8]) -> [Swift.UInt8] {
+        do {
+            return try update(withBytes: bytes.slice, isLast: true)
+        } catch {
+            return []
+        }
+    }
+  @usableFromInline
+  final internal func process64(block chunk: Swift.ArraySlice<Swift.UInt8>, currentHash hh: inout [Swift.UInt64])
+  @usableFromInline
+  final internal func process32(block chunk: Swift.ArraySlice<Swift.UInt8>, currentHash hh: inout [Swift.UInt32])
+  @objc deinit
+}
+extension web3.SHA2 {
+  @inlinable final public func update(withBytes bytes: Swift.ArraySlice<Swift.UInt8>, isLast: Swift.Bool = false) throws -> [Swift.UInt8] {
+        accumulated += bytes
+
+        if isLast {
+            let lengthInBits = (processedBytesTotalCount + accumulated.count) * 8
+            let lengthBytes = lengthInBits.bytes(totalBytes: blockSize / 8)  
+                                                                                  
+            bitPadding(to: &accumulated, blockSize: blockSize, allowance: blockSize / 8)
+
+             
+            accumulated += lengthBytes
+        }
+
+        var processedBytes = 0
+        for chunk in accumulated.batched(by: blockSize) {
+            if isLast || (accumulated.count - processedBytes) >= blockSize {
+                switch variant {
+                case .sha256:
+                    process32(block: chunk, currentHash: &accumulatedHash32)
+                case .sha512:
+                    process64(block: chunk, currentHash: &accumulatedHash64)
+                }
+                processedBytes += chunk.count
+            }
+        }
+        accumulated.removeFirst(processedBytes)
+        processedBytesTotalCount += processedBytes
+
+         
+        var result = [UInt8](repeating: 0, count: variant.digestLength)
+        switch variant {
+        case .sha256:
+            var pos = 0
+            for idx in 0..<accumulatedHash32.count where idx < variant.finalLength {
+                let h = accumulatedHash32[idx]
+                result[pos + 0] = UInt8((h >> 24) & 0xff)
+                result[pos + 1] = UInt8((h >> 16) & 0xff)
+                result[pos + 2] = UInt8((h >> 8) & 0xff)
+                result[pos + 3] = UInt8(h & 0xff)
+                pos += 4
+            }
+        case .sha512:
+            var pos = 0
+            for idx in 0..<accumulatedHash64.count where idx < variant.finalLength {
+                let h = accumulatedHash64[idx]
+                result[pos + 0] = UInt8((h >> 56) & 0xff)
+                result[pos + 1] = UInt8((h >> 48) & 0xff)
+                result[pos + 2] = UInt8((h >> 40) & 0xff)
+                result[pos + 3] = UInt8((h >> 32) & 0xff)
+                result[pos + 4] = UInt8((h >> 24) & 0xff)
+                result[pos + 5] = UInt8((h >> 16) & 0xff)
+                result[pos + 6] = UInt8((h >> 8) & 0xff)
+                result[pos + 7] = UInt8(h & 0xff)
+                pos += 8
+            }
+        }
+
+         
+        if isLast {
+            switch variant {
+            case .sha256:
+                accumulatedHash32 = variant.h.lazy.map { UInt32($0) }  
+            case .sha512:
+                accumulatedHash64 = variant.h
+            }
+        }
+
+        return result
+    }
+}
+public struct Signature : Swift.Equatable {
+  public let r: Foundation.Data
+  public let s: Foundation.Data
+  public let v: Swift.Int
+  public let recoveryParam: Swift.Int
+  public var flattened: Foundation.Data {
+    get
+  }
+  public init(r: Foundation.Data, s: Foundation.Data, v: Swift.Int, recoveryParam: Swift.Int)
+  public init(raw: Foundation.Data)
+  public static let zero: web3.Signature
+  public static func == (a: web3.Signature, b: web3.Signature) -> Swift.Bool
+}
+public struct SiweMessage : Swift.Hashable {
+  public var domain: Swift.String
+  public var address: Swift.String
+  public var statement: Swift.String?
+  public var uri: Foundation.URL
+  public var version: Swift.String
+  public var chainId: Swift.Int
+  public var nonce: Swift.String
+  public var issuedAt: Foundation.Date
+  public var expirationTime: Foundation.Date?
+  public var notBefore: Foundation.Date?
+  public var requestId: Swift.String?
+  public var resources: [Foundation.URL]?
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(domain: Swift.String, address: Swift.String, statement: Swift.String?, uri: Foundation.URL, version: Swift.String, chainId: Swift.Int, nonce: Swift.String, issuedAt: Foundation.Date, expirationTime: Foundation.Date?, notBefore: Foundation.Date?, requestId: Swift.String?, resources: [Foundation.URL]?) throws
+  #endif
+  public static func == (a: web3.SiweMessage, b: web3.SiweMessage) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension web3.SiweMessage : Swift.Codable {
+  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+extension web3.SiweMessage : Swift.CustomStringConvertible {
+  public var description: Swift.String {
+    get
+  }
+  public init(_ description: Swift.String) throws
+}
+extension web3.SiweMessage {
+  public enum ValidationError : Swift.Error {
+    case invalidDomain
+    case invalidAddress
+    case invalidVersion
+    case invalidChainId
+    case invalidNonce
+    case invalidRequestId
+    public static func == (a: web3.SiweMessage.ValidationError, b: web3.SiweMessage.ValidationError) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public class SiweVerifier {
+  public enum Error : Swift.Error {
+    case differentNetwork
+    case messageIsNotActiveYet
+    case messageIsExpired
+    case invalidMessageData
+    case invalidSignature
+    public static func == (a: web3.SiweVerifier.Error, b: web3.SiweVerifier.Error) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public init(client: any web3.EthereumClientProtocol, dateProvider: @escaping () -> Foundation.Date = Date.init)
+  final public func verify(_ message: Swift.String, against signature: Swift.String) async throws -> Swift.Bool
+  public func verify(message: web3.SiweMessage, against signature: Swift.String) async throws -> Swift.Bool
+  @objc deinit
+}
+extension web3.Web3Extensions where Base == Swift.String {
+  public var isNumeric: Swift.Bool {
+    get
+  }
+  public var isAddress: Swift.Bool {
+    get
+  }
+}
+public struct TypedVariable : Swift.Codable, Swift.Equatable {
+  public var name: Swift.String
+  public var type: Swift.String
+  public init(name: Swift.String, type: Swift.String)
+  public static func == (a: web3.TypedVariable, b: web3.TypedVariable) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct TypedData : Swift.Codable, Swift.Equatable {
+  public var types: [Swift.String : [web3.TypedVariable]]
+  public var primaryType: Swift.String
+  public var domain: GenericJSON.JSON
+  public var message: GenericJSON.JSON
+  public init(types: [Swift.String : [web3.TypedVariable]], primaryType: Swift.String, domain: GenericJSON.JSON, message: GenericJSON.JSON)
+  public static func == (a: web3.TypedData, b: web3.TypedData) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension web3.TypedData : Swift.CustomStringConvertible {
+  public var description: Swift.String {
+    get
+  }
+}
+extension web3.TypedData {
+  public var typeHash: Foundation.Data {
+    get
+  }
+  public func signableHash() throws -> Foundation.Data
+  public func encodeType(primaryType: Swift.String) -> Foundation.Data
+  public func encodeData(data: GenericJSON.JSON, type: Swift.String) throws -> Foundation.Data
+}
+extension Swift.UInt32 {
+  @_specialize(exported: false, kind: full, where T == Swift.ArraySlice<Swift.UInt8>)
+  @inlinable internal init<T>(bytes: T, fromIndex index: T.Index) where T : Swift.Collection, T.Element == Swift.UInt8, T.Index == Swift.Int {
+        if bytes.isEmpty {
+            self = 0
+            return
+        }
+
+        let count = bytes.count
+
+        let val0 = count > 0 ? UInt32(bytes[index.advanced(by: 0)]) << 24 : 0
+        let val1 = count > 1 ? UInt32(bytes[index.advanced(by: 1)]) << 16 : 0
+        let val2 = count > 2 ? UInt32(bytes[index.advanced(by: 2)]) << 8 : 0
+        let val3 = count > 3 ? UInt32(bytes[index.advanced(by: 3)]) : 0
+
+        self = val0 | val1 | val2 | val3
+    }
+}
+extension Swift.UInt64 {
+  @_specialize(exported: false, kind: full, where T == Swift.ArraySlice<Swift.UInt8>)
+  @inlinable internal init<T>(bytes: T, fromIndex index: T.Index) where T : Swift.Collection, T.Element == Swift.UInt8, T.Index == Swift.Int {
+        if bytes.isEmpty {
+            self = 0
+            return
+        }
+
+        let count = bytes.count
+
+        let val0 = count > 0 ? UInt64(bytes[index.advanced(by: 0)]) << 56 : 0
+        let val1 = count > 1 ? UInt64(bytes[index.advanced(by: 1)]) << 48 : 0
+        let val2 = count > 2 ? UInt64(bytes[index.advanced(by: 2)]) << 40 : 0
+        let val3 = count > 3 ? UInt64(bytes[index.advanced(by: 3)]) << 32 : 0
+        let val4 = count > 4 ? UInt64(bytes[index.advanced(by: 4)]) << 24 : 0
+        let val5 = count > 5 ? UInt64(bytes[index.advanced(by: 5)]) << 16 : 0
+        let val6 = count > 6 ? UInt64(bytes[index.advanced(by: 6)]) << 8 : 0
+        let val7 = count > 7 ? UInt64(bytes[index.advanced(by: 7)]) : 0
+
+        self = val0 | val1 | val2 | val3 | val4 | val5 | val6 | val7
+    }
+}
+@inlinable internal func rotateRight(_ value: Swift.UInt32, by: Swift.UInt32) -> Swift.UInt32 {
+    (value >> by) | (value << (32 - by))
+}
+@inlinable internal func rotateRight(_ value: Swift.UInt64, by: Swift.UInt64) -> Swift.UInt64 {
+    (value >> by) | (value << (64 - by))
+}
+@inline(__always) @inlinable internal func bitPadding(to data: inout [Swift.UInt8], blockSize: Swift.Int, allowance: Swift.Int = 0) {
+    let msgLength = data.count
+     
+     
+    data.append(0x80)
+
+     
+    let max = blockSize - allowance  
+    if msgLength % blockSize < max {  
+        data += [UInt8](repeating: 0, count: max - 1 - (msgLength % blockSize))
+    } else {
+        data += [UInt8](repeating: 0, count: blockSize + max - 1 - (msgLength % blockSize))
+    }
+}
+public protocol ZKSyncClientProtocol : web3.EthereumRPCProtocol {
+  func eth_sendRawZKSyncTransaction(_ transaction: web3.ZKSyncTransaction, withAccount account: any web3.EthereumAccountProtocol) async throws -> Swift.String
+  func gasPrice() async throws -> BigInt.BigUInt
+  func estimateGas(_ transaction: web3.ZKSyncTransaction) async throws -> BigInt.BigUInt
+}
+extension web3.ZKSyncClientProtocol {
+  public func eth_sendRawZKSyncTransaction(_ transaction: web3.ZKSyncTransaction, withAccount account: any web3.EthereumAccountProtocol) async throws -> Swift.String
+  public func gasPrice() async throws -> BigInt.BigUInt
+  public func estimateGas(_ transaction: web3.ZKSyncTransaction) async throws -> BigInt.BigUInt
+}
+public class ZKSyncClient : web3.BaseEthereumClient, web3.ZKSyncClientProtocol {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(url: Foundation.URL, sessionConfig: Foundation.URLSessionConfiguration = URLSession.shared.configuration, logger: Logging.Logger? = nil, network: web3.EthereumNetwork? = nil)
+  #endif
+  @objc deinit
+}
+public struct ZKSyncTransaction : Swift.Equatable {
+  public static let eip712Type: Swift.UInt8
+  public static let defaultGasPerPubDataLimit: BigInt.BigUInt
+  public let txType: Swift.UInt8
+  public var from: web3.EthereumAddress
+  public var to: web3.EthereumAddress
+  public var value: BigInt.BigUInt
+  public var data: Foundation.Data
+  public var chainId: Swift.Int?
+  public var nonce: Swift.Int?
+  public var gasPrice: BigInt.BigUInt?
+  public var gasLimit: BigInt.BigUInt?
+  public var gasPerPubData: BigInt.BigUInt
+  public var maxFeePerGas: BigInt.BigUInt?
+  public var maxPriorityFeePerGas: BigInt.BigUInt?
+  public var paymasterParams: web3.ZKSyncTransaction.PaymasterParams
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init(from: web3.EthereumAddress, to: web3.EthereumAddress, value: BigInt.BigUInt, data: Foundation.Data, chainId: Swift.Int? = nil, nonce: Swift.Int? = nil, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil, gasPerPubData: BigInt.BigUInt = ZKSyncTransaction.defaultGasPerPubDataLimit, maxFeePerGas: BigInt.BigUInt? = nil, maxPriorityFeePerGas: BigInt.BigUInt? = nil, paymasterParams: web3.ZKSyncTransaction.PaymasterParams = .none)
+  #endif
+  public struct PaymasterParams : Swift.Equatable {
+    public var paymaster: web3.EthereumAddress
+    public var input: Foundation.Data
+    public init(paymaster: web3.EthereumAddress, input: Foundation.Data)
+    public var isEmpty: Swift.Bool {
+      get
+    }
+    public static let none: web3.ZKSyncTransaction.PaymasterParams
+    public static func == (a: web3.ZKSyncTransaction.PaymasterParams, b: web3.ZKSyncTransaction.PaymasterParams) -> Swift.Bool
+  }
+  public var maxFee: BigInt.BigUInt {
+    get
+  }
+  public var maxPriorityFee: BigInt.BigUInt {
+    get
+  }
+  public var paymaster: web3.EthereumAddress {
+    get
+  }
+  public var eip712Representation: web3.TypedData {
+    get
+  }
+  public static func == (a: web3.ZKSyncTransaction, b: web3.ZKSyncTransaction) -> Swift.Bool
+}
+public struct ZKSyncSignedTransaction {
+  public let transaction: web3.ZKSyncTransaction
+  public let signature: web3.Signature
+  public init(transaction: web3.ZKSyncTransaction, signature: web3.Signature)
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var raw: Foundation.Data? {
+    get
+  }
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public var hash: Foundation.Data? {
+    get
+  }
+  #endif
+}
+extension web3.ABIFunction {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func zkTransaction(from: web3.EthereumAddress, value: BigInt.BigUInt? = nil, gasPrice: BigInt.BigUInt? = nil, gasLimit: BigInt.BigUInt? = nil, feeToken: web3.EthereumAddress = .zero) throws -> web3.ZKSyncTransaction
+  #endif
+}
+extension web3.ABIError : Swift.Equatable {}
+extension web3.ABIError : Swift.Hashable {}
+extension web3.ERC1271Error : Swift.Equatable {}
+extension web3.ERC1271Error : Swift.Hashable {}
+extension web3.EthereumAccountError : Swift.Equatable {}
+extension web3.EthereumAccountError : Swift.Hashable {}
+extension web3.EthereumKeyStorageError : Swift.Equatable {}
+extension web3.EthereumKeyStorageError : Swift.Hashable {}
+extension web3.ResolutionMode : Swift.Equatable {}
+extension web3.ResolutionMode : Swift.Hashable {}
+extension web3.EthereumNameServiceError : Swift.Hashable {}
+extension web3.EthereumTransactionReceiptStatus : Swift.Equatable {}
+extension web3.EthereumTransactionReceiptStatus : Swift.Hashable {}
+extension web3.EthereumTransactionReceiptStatus : Swift.RawRepresentable {}
+extension web3.HMAC.Error : Swift.Equatable {}
+extension web3.HMAC.Error : Swift.Hashable {}
+extension web3.HMAC.Variant : Swift.Equatable {}
+extension web3.HMAC.Variant : Swift.Hashable {}
+extension web3.KeyUtilError : Swift.Equatable {}
+extension web3.KeyUtilError : Swift.Hashable {}
+extension web3.PBKDF2.Error : Swift.Equatable {}
+extension web3.PBKDF2.Error : Swift.Hashable {}
+extension web3.SHA2.Variant : Swift.Equatable {}
+extension web3.SHA2.Variant : Swift.Hashable {}
+extension web3.SHA2.Variant : Swift.Sendable {}
+extension web3.SHA2.Variant : Swift.BitwiseCopyable {}
+extension web3.SiweMessage.ValidationError : Swift.Equatable {}
+extension web3.SiweMessage.ValidationError : Swift.Hashable {}
+extension web3.SiweVerifier.Error : Swift.Equatable {}
+extension web3.SiweVerifier.Error : Swift.Hashable {}

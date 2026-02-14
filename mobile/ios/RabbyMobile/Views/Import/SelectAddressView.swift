@@ -42,7 +42,7 @@ struct SelectAddressView: View {
                 // Address list
                 if isLoading {
                     Spacer()
-                    ProgressView("Deriving addresses...")
+                    ProgressView(L("Deriving addresses..."))
                     Spacer()
                 } else {
                     addressList
@@ -51,11 +51,11 @@ struct SelectAddressView: View {
                 // Bottom bar
                 bottomBar
             }
-            .navigationTitle("Select Addresses")
+            .navigationTitle(L("Select Addresses"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(L("Cancel")) { dismiss() }
                 }
             }
             .onAppear { deriveAddresses() }
@@ -72,12 +72,12 @@ struct SelectAddressView: View {
     private var hdPathSection: some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
-                Text("HD Path").font(.caption).foregroundColor(.secondary)
+                Text(L("HD Path")).font(.caption).foregroundColor(.secondary)
                 Text(hdPath).font(.system(.subheadline, design: .monospaced))
             }
             Spacer()
             Button(action: { showPathEditor = true }) {
-                Label("Edit", systemImage: "pencil")
+                Label(L("Edit"), systemImage: "pencil")
                     .font(.caption).foregroundColor(.blue)
             }
         }
@@ -115,7 +115,7 @@ struct SelectAddressView: View {
                     
                     // Used indicator
                     if addr.isUsed {
-                        Text("Used")
+                        Text(L("Used"))
                             .font(.caption2)
                             .padding(.horizontal, 6).padding(.vertical, 2)
                             .background(Color.green.opacity(0.2))
@@ -137,7 +137,7 @@ struct SelectAddressView: View {
             Button(action: loadMore) {
                 HStack {
                     Spacer()
-                    Text("Load More Addresses")
+                    Text(L("Load More Addresses"))
                         .font(.subheadline).foregroundColor(.blue)
                     Spacer()
                 }
@@ -261,7 +261,7 @@ struct HDPathEditorSheet: View {
     var body: some View {
         NavigationView {
             List {
-                Section("Common Paths") {
+                Section(L("Common Paths")) {
                     ForEach(commonPaths, id: \.1) { (name, path) in
                         Button(action: {
                             currentPath = path
@@ -282,12 +282,12 @@ struct HDPathEditorSheet: View {
                     }
                 }
                 
-                Section("Custom Path") {
-                    TextField("m/44'/60'/0'/0", text: $customPath)
+                Section(L("Custom Path")) {
+                    TextField(L("m/44'/60'/0'/0"), text: $customPath)
                         .font(.system(.body, design: .monospaced))
                         .autocapitalization(.none)
                     
-                    Button("Apply Custom Path") {
+                    Button(L("Apply Custom Path")) {
                         if !customPath.isEmpty {
                             currentPath = customPath
                             onPathChanged()
@@ -297,11 +297,11 @@ struct HDPathEditorSheet: View {
                     .disabled(customPath.isEmpty)
                 }
             }
-            .navigationTitle("HD Path")
+            .navigationTitle(L("HD Path"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(L("Cancel")) { dismiss() }
                 }
             }
         }

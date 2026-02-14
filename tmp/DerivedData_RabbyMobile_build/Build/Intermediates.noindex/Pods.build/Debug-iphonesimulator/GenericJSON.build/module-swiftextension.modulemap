@@ -1,0 +1,5 @@
+
+module GenericJSON.Swift {
+  header "GenericJSON-Swift.h"
+  requires objc
+}

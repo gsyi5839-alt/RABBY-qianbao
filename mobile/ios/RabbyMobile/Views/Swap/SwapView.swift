@@ -9,10 +9,12 @@ struct SwapView: View {
     @State private var fromToken: SwapManager.Token?
     @State private var toToken: SwapManager.Token?
     @State private var selectedQuote: SwapManager.SwapQuote?
-    @State private var showTokenSelector = false
-    @State private var isSelectingFrom = true
+    @State private var showFromTokenSelector = false
+    @State private var showToTokenSelector = false
     @State private var isSwapping = false
     @State private var showSlippageSheet = false
+    @State private var slippageValue: Double = 0.5
+    @State private var isAutoSlippage: Bool = true
     @State private var showResult = false
     @State private var txHash: String?
     @State private var errorMessage: String?
@@ -37,17 +39,19 @@ struct SwapView: View {
                     
                     // Slippage setting
                     HStack {
-                        Text("Slippage")
+                        Text(L("Slippage"))
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                         Spacer()
                         Button(action: { showSlippageSheet = true }) {
-                            Text(swapManager.autoSlippage ? "Auto" : "\(swapManager.slippage)%")
-                                .font(.subheadline)
-                                .foregroundColor(.blue)
-                            Image(systemName: "chevron.right")
-                                .font(.caption)
-                                .foregroundColor(.blue)
+                            HStack(spacing: 6) {
+                                Text(isAutoSlippage ? LocalizationManager.shared.t("Auto") : "\(formatSlippageDisplay(slippageValue))%")
+                                    .font(.subheadline)
+                                    .foregroundColor(.blue)
+                                Image(systemName: "gearshape")
+                                    .font(.caption)
+                                    .foregroundColor(.blue)
+                            }
                         }
                     }
                     .padding(.horizontal)
@@ -55,7 +59,7 @@ struct SwapView: View {
                     // Quotes list
                     if !swapManager.quotes.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Best Quotes")
+                            Text(L("Best Quotes"))
                                 .font(.headline)
                                 .padding(.horizontal)
                             
@@ -79,7 +83,7 @@ struct SwapView: View {
                             if isSwapping {
                                 ProgressView().tint(.white)
                             }
-                            Text(isSwapping ? "Swapping..." : "Swap")
+                            Text(isSwapping ? LocalizationManager.shared.t("Swapping...") : LocalizationManager.shared.t("Swap"))
                                 .fontWeight(.semibold)
                         }
                         .frame(maxWidth: .infinity)
@@ -93,14 +97,48 @@ struct SwapView: View {
                 }
                 .padding(.vertical)
             }
-            .navigationTitle("Swap")
+            .navigationTitle(L("Swap"))
             .navigationBarTitleDisplayMode(.inline)
         }
         .onChange(of: fromAmount) { _ in fetchQuotes() }
-        .alert("Swap Successful", isPresented: $showResult) {
-            Button("OK") { resetForm() }
+        .sheet(isPresented: $showSlippageSheet) {
+            SlippageSettingsSheet(
+                slippage: $slippageValue,
+                isAutoSlippage: $isAutoSlippage
+            )
+            .modifier(SheetPresentationModifier(detents: [.medium, .large]))
+        }
+        .sheet(isPresented: $showFromTokenSelector) {
+            TokenSelectorSheet(
+                excludeToken: toToken,
+                onSelect: { token in
+                    fromToken = token
+                    fromAmount = ""
+                    selectedQuote = nil
+                }
+            )
+            .modifier(SheetPresentationModifier(detents: [.large]))
+        }
+        .sheet(isPresented: $showToTokenSelector) {
+            TokenSelectorSheet(
+                excludeToken: fromToken,
+                onSelect: { token in
+                    toToken = token
+                    selectedQuote = nil
+                    fetchQuotes()
+                }
+            )
+            .modifier(SheetPresentationModifier(detents: [.large]))
+        }
+        .onAppear {
+            // Sync local state from SwapManager
+            isAutoSlippage = swapManager.autoSlippage
+            slippageValue = Double(swapManager.slippage) ?? 0.5
+        }
+        .alert(L("Swap Successful"), isPresented: $showResult) {
+            Button(L("OK")) { resetForm() }
         } message: {
-            Text("Transaction: \(txHash ?? "")")
+            Text(LocalizationManager.shared.t("ios.swap.txResult", args: ["hash": txHash ?? ""]))
         }
     }
     
@@ -113,14 +151,17 @@ struct SwapView: View {
             Text(title).font(.caption).foregroundColor(.secondary)
             HStack {
                 Button(action: {
-                    isSelectingFrom = isFrom
-                    showTokenSelector = true
+                    if isFrom {
+                        showFromTokenSelector = true
+                    } else {
+                        showToTokenSelector = true
+                    }
                 }) {
                     HStack {
                         if let token = token {
                             Text(token.symbol).fontWeight(.semibold)
                         } else {
-                            Text("Select").foregroundColor(.secondary)
+                            Text(L("Select")).foregroundColor(.secondary)
                         }
                         Image(systemName: "chevron.down").font(.caption)
                     }
@@ -129,7 +170,7 @@ struct SwapView: View {
                 }
                 
                 if isFrom {
-                    TextField("0.0", text: amount)
+                    TextField(L("0.0"), text: amount)
                         .keyboardType(.decimalPad)
                         .multilineTextAlignment(.trailing)
                         .font(.title2)
@@ -202,4 +243,15 @@ struct SwapView: View {
     }
     
     private func resetForm() { fromAmount = ""; selectedQuote = nil; txHash = nil }
+
+    private func formatSlippageDisplay(_ value: Double) -> String {
+        if value == value.rounded() && value == Double(Int(value)) {
+            return String(format: "%.0f", value)
+        }
+        let formatted = String(format: "%.2f", value)
+        var result = formatted
+        while result.hasSuffix("0") { result = String(result.dropLast()) }
+        if result.hasSuffix(".") { result = String(result.dropLast()) }
+        return result
+    }
 }

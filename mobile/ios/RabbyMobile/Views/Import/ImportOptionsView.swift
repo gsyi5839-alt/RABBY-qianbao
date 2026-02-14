@@ -46,7 +46,7 @@ struct ImportOptionsView: View {
                     
                     Divider().padding(.vertical, 8)
                     
-                    Text("Hardware Wallets").font(.headline).frame(maxWidth: .infinity, alignment: .leading)
+                    Text(L("Hardware Wallets")).font(.headline).frame(maxWidth: .infinity, alignment: .leading)
                     
                     // Ledger
                     importOptionCard(
@@ -57,7 +57,7 @@ struct ImportOptionsView: View {
                     
                     Divider().padding(.vertical, 8)
                     
-                    Text("Multi-Sig & Others").font(.headline).frame(maxWidth: .infinity, alignment: .leading)
+                    Text(L("Multi-Sig & Others")).font(.headline).frame(maxWidth: .infinity, alignment: .leading)
                     
                     // Gnosis Safe
                     importOptionCard(
@@ -75,10 +75,10 @@ struct ImportOptionsView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Import Wallet")
+            .navigationTitle(L("Import Wallet"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
+                ToolbarItem(placement: .cancellationAction) { Button(L("Cancel")) { dismiss() } }
             }
             .sheet(isPresented: $showMnemonic) { ImportWalletView() }
             .sheet(isPresented: $showPrivateKey) { ImportPrivateKeyView() }
@@ -130,22 +130,22 @@ struct ImportPrivateKeyView: View {
                 VStack(spacing: 20) {
                     HStack(alignment: .top, spacing: 8) {
                         Image(systemName: "exclamationmark.triangle.fill").foregroundColor(.orange)
-                        Text("Never share your private key. Anyone with your key can steal your assets.")
+                        Text(L("Never share your private key. Anyone with your key can steal your assets."))
                             .font(.caption).foregroundColor(.orange)
                     }
                     .padding().background(Color.orange.opacity(0.1)).cornerRadius(8)
                     
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Private Key").font(.headline)
-                        SecureField("Enter private key (with or without 0x prefix)", text: $privateKey)
+                        Text(L("Private Key")).font(.headline)
+                        SecureField(L("Enter private key (with or without 0x prefix)"), text: $privateKey)
                             .padding().background(Color(.systemGray6)).cornerRadius(8)
                             .autocapitalization(.none)
                     }
                     
                     if !keyringManager.isInitialized {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Password").font(.headline)
-                            SecureField("Create a password", text: $password)
+                            Text(L("Password")).font(.headline)
+                            SecureField(L("Create a password"), text: $password)
                                 .padding().background(Color(.systemGray6)).cornerRadius(8)
                         }
                     }
@@ -168,12 +168,12 @@ struct ImportPrivateKeyView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Import Private Key")
+            .navigationTitle(L("Import Private Key"))
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } } }
-            .alert("Import Successful", isPresented: $showSuccess) {
-                Button("OK") { dismiss() }
-            } message: { Text("Your wallet has been imported successfully.") }
+            .toolbar { ToolbarItem(placement: .cancellationAction) { Button(L("Cancel")) { dismiss() } } }
+            .alert(L("Import Successful"), isPresented: $showSuccess) {
+                Button(L("OK")) { dismiss() }
+            } message: { Text(L("Your wallet has been imported successfully.")) }
         }
     }
     
@@ -215,15 +215,15 @@ struct WatchAddressImportView: View {
                     // Info
                     HStack(alignment: .top, spacing: 8) {
                         Image(systemName: "eye.fill").foregroundColor(.blue)
-                        Text("Watch-only addresses let you monitor balances and transactions without the ability to sign or send.")
+                        Text(L("Watch-only addresses let you monitor balances and transactions without the ability to sign or send."))
                             .font(.caption).foregroundColor(.blue)
                     }
                     .padding().background(Color.blue.opacity(0.1)).cornerRadius(8)
                     
                     // Address input
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Address or ENS").font(.headline)
-                        TextField("0x... or name.eth", text: $address)
+                        Text(L("Address or ENS")).font(.headline)
+                        TextField(L("0x... or name.eth"), text: $address)
                             .padding().background(Color(.systemGray6)).cornerRadius(8)
                             .autocapitalization(.none)
                             .onChange(of: address) { newValue in
@@ -234,7 +234,7 @@ struct WatchAddressImportView: View {
                     
                     // ENS resolved
                     if isResolving {
-                        HStack { ProgressView(); Text("Resolving ENS...").font(.caption).foregroundColor(.secondary) }
+                        HStack { ProgressView(); Text(L("Resolving ENS...")).font(.caption).foregroundColor(.secondary) }
                     }
                     
                     if let resolved = resolvedAddress {
@@ -264,12 +264,12 @@ struct WatchAddressImportView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Watch Address")
+            .navigationTitle(L("Watch Address"))
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } } }
-            .alert("Address Added", isPresented: $showSuccess) {
-                Button("OK") { dismiss() }
-            } message: { Text("Watch address has been added. You can monitor it but cannot sign transactions.") }
+            .toolbar { ToolbarItem(placement: .cancellationAction) { Button(L("Cancel")) { dismiss() } } }
+            .alert(L("Address Added"), isPresented: $showSuccess) {
+                Button(L("OK")) { dismiss() }
+            } message: { Text(L("Watch address has been added. You can monitor it but cannot sign transactions.")) }
         }
     }
     
@@ -321,7 +321,7 @@ struct GnosisSafeImportView: View {
                 VStack(spacing: 20) {
                     // Chain selector
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Network").font(.headline)
+                        Text(L("Network")).font(.headline)
                         Menu {
                             ForEach(chainManager.mainnetChains) { chain in
                                 Button(chain.name) { selectedChain = chain }
@@ -338,8 +338,8 @@ struct GnosisSafeImportView: View {
                     
                     // Address input
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Safe Address").font(.headline)
-                        TextField("0x...", text: $safeAddress)
+                        Text(L("Safe Address")).font(.headline)
+                        TextField(L("0x..."), text: $safeAddress)
                             .padding().background(Color(.systemGray6)).cornerRadius(8)
                             .autocapitalization(.none)
                     }
@@ -351,9 +351,9 @@ struct GnosisSafeImportView: View {
                     // Safe info display
                     if let info = safeInfo {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Safe Details").font(.headline)
-                            HStack { Text("Threshold").foregroundColor(.secondary); Spacer(); Text("\(info.threshold) of \(info.owners.count)") }
-                            Text("Owners").foregroundColor(.secondary)
+                            Text(L("Safe Details")).font(.headline)
+                            HStack { Text(L("Threshold")).foregroundColor(.secondary); Spacer(); Text("\(info.threshold) of \(info.owners.count)") }
+                            Text(L("Owners")).foregroundColor(.secondary)
                             ForEach(info.owners, id: \.self) { owner in
                                 Text(owner).font(.system(.caption, design: .monospaced)).lineLimit(1)
                             }
@@ -375,7 +375,7 @@ struct GnosisSafeImportView: View {
                         .disabled(safeAddress.isEmpty || selectedChain == nil || isLoading)
                     } else {
                         Button(action: importSafe) {
-                            Text("Import Safe").fontWeight(.semibold)
+                            Text(L("Import Safe")).fontWeight(.semibold)
                                 .frame(maxWidth: .infinity).padding()
                                 .background(Color.blue).foregroundColor(.white).cornerRadius(12)
                         }
@@ -383,11 +383,11 @@ struct GnosisSafeImportView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Import Gnosis Safe")
+            .navigationTitle(L("Import Gnosis Safe"))
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } } }
-            .alert("Safe Imported", isPresented: $showSuccess) {
-                Button("OK") { dismiss() }
+            .toolbar { ToolbarItem(placement: .cancellationAction) { Button(L("Cancel")) { dismiss() } } }
+            .alert(L("Safe Imported"), isPresented: $showSuccess) {
+                Button(L("OK")) { dismiss() }
             }
         }
     }
@@ -438,24 +438,24 @@ struct JsonKeystoreImportView: View {
             ScrollView {
                 VStack(spacing: 20) {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("JSON Keystore").font(.headline)
+                        Text(L("JSON Keystore")).font(.headline)
                         TextEditor(text: $keystoreJSON)
                             .frame(minHeight: 150)
                             .padding(4).background(Color(.systemGray6)).cornerRadius(8)
                             .autocapitalization(.none)
-                        Text("Paste the contents of your JSON keystore file").font(.caption).foregroundColor(.secondary)
+                        Text(L("Paste the contents of your JSON keystore file")).font(.caption).foregroundColor(.secondary)
                     }
                     
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Keystore Password").font(.headline)
-                        SecureField("Password used to encrypt the keystore", text: $keystorePassword)
+                        Text(L("Keystore Password")).font(.headline)
+                        SecureField(L("Password used to encrypt the keystore"), text: $keystorePassword)
                             .padding().background(Color(.systemGray6)).cornerRadius(8)
                     }
                     
                     if !KeyringManager.shared.isInitialized {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("New Wallet Password").font(.headline)
-                            SecureField("Create a new wallet password", text: $walletPassword)
+                            Text(L("New Wallet Password")).font(.headline)
+                            SecureField(L("Create a new wallet password"), text: $walletPassword)
                                 .padding().background(Color(.systemGray6)).cornerRadius(8)
                         }
                     }
@@ -478,11 +478,11 @@ struct JsonKeystoreImportView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Import JSON Keystore")
+            .navigationTitle(L("Import JSON Keystore"))
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } } }
-            .alert("Import Successful", isPresented: $showSuccess) {
-                Button("OK") { dismiss() }
+            .toolbar { ToolbarItem(placement: .cancellationAction) { Button(L("Cancel")) { dismiss() } } }
+            .alert(L("Import Successful"), isPresented: $showSuccess) {
+                Button(L("OK")) { dismiss() }
             }
         }
     }

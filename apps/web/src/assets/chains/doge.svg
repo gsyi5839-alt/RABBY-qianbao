@@ -1,0 +1,8 @@
+<svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- DOGE - Dogecoin -->
+  <circle cx="12" cy="12" r="10" fill="#c2a633" opacity="0.2"/>
+  <path d="M6 8c0 1.5 1.5s2.5 1.5 3l3 3.5h-3m-3.5" stroke="#c2a633" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  <circle cx="14" cy="9" r="2" fill="#fff"/>
+  <text x="12" y="20" font-size="8" fill="#c2a633" text-anchor="middle" font-weight="bold">D</text>
+  <text x="12" y="14" font-size="4" fill="#fff" text-anchor="middle">OGE</text>
+</svg>

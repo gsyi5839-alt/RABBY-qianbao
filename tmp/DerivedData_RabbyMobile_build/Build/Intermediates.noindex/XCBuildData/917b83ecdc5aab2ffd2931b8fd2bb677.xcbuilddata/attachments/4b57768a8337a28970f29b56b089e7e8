@@ -1,0 +1,4 @@
+
+module WalletConnectSwiftV2.__Swift {
+  exclude header "WalletConnectSwiftV2-Swift.h"
+}

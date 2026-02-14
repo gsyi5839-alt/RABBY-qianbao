@@ -1,0 +1,10 @@
+framework module Logging {
+  umbrella header "Logging-umbrella.h"
+
+  export *
+  module * { export * }
+}
+
+module Logging.__Swift {
+  exclude header "Logging-Swift.h"
+}

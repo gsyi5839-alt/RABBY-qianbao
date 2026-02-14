@@ -30,7 +30,7 @@ struct GasPriceBarView: View {
                                 .foregroundColor(.secondary)
                         }
                     } else {
-                        Text("Gas unavailable")
+                        Text(L("Gas unavailable"))
                             .font(.caption).foregroundColor(.secondary)
                     }
                     
@@ -87,7 +87,7 @@ struct GasPriceBarView: View {
                 .font(.caption).fontWeight(.bold)
                 .foregroundColor(color)
             
-            Text("Gwei")
+            Text(L("Gwei"))
                 .font(.system(size: 8))
                 .foregroundColor(.secondary)
             

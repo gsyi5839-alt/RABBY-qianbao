@@ -24,63 +24,96 @@ router.post('/api/admin/login', (req: Request, res: Response) => {
 
 // ===== Dapps CRUD =====
 
-router.get('/api/admin/dapps', adminRequired, (req: Request, res: Response) => {
-  const includeDisabled = String(req.query.all || '') === 'true';
-  res.json({ list: adminStore.listDapps(includeDisabled) });
+router.get('/api/admin/dapps', adminRequired, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const includeDisabled = String(req.query.all || '') === 'true';
+    const list = await adminStore.listDapps(includeDisabled);
+    res.json({ list });
+  } catch (err) {
+    next(err);
+  }
 });
 
-router.post('/api/admin/dapps', adminRequired, (req: Request, res: Response, next: NextFunction) => {
+router.post('/api/admin/dapps', adminRequired, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { name, url, icon, category, enabled = true, order = 0 } = req.body || {};
+    const { name, url, icon, category, description, chain, users, volume, status, addedDate, riskLevel, enabled = true, order = 0 } = req.body || {};
     if (!name || !url) {
       res.status(400).json({ error: { message: 'name and url are required', status: 400 } });
       return;
     }
-    const dapp = adminStore.createDapp({ name, url, icon: icon || '', category: category || '', enabled, order });
+    const dapp = await adminStore.createDapp({
+      name,
+      url,
+      icon: icon || '',
+      category: category || 'DeFi',
+      description,
+      chain,
+      users,
+      volume,
+      status: status || 'approved',
+      addedDate,
+      riskLevel,
+      enabled,
+      order
+    });
     res.status(201).json(dapp);
   } catch (err) {
     next(err);
   }
 });
 
-router.put('/api/admin/dapps/:id', adminRequired, (req: Request, res: Response) => {
-  const updated = adminStore.updateDapp(String(req.params.id), req.body);
-  if (!updated) {
-    res.status(404).json({ error: { message: 'Dapp not found', status: 404 } });
-    return;
+router.put('/api/admin/dapps/:id', adminRequired, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const updated = await adminStore.updateDapp(String(req.params.id), req.body);
+    if (!updated) {
+      res.status(404).json({ error: { message: 'Dapp not found', status: 404 } });
+      return;
+    }
+    res.json(updated);
+  } catch (err) {
+    next(err);
   }
-  res.json(updated);
 });
 
-router.delete('/api/admin/dapps/:id', adminRequired, (req: Request, res: Response) => {
-  const ok = adminStore.deleteDapp(String(req.params.id));
-  if (!ok) {
-    res.status(404).json({ error: { message: 'Dapp not found', status: 404 } });
-    return;
+router.delete('/api/admin/dapps/:id', adminRequired, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const ok = await adminStore.deleteDapp(String(req.params.id));
+    if (!ok) {
+      res.status(404).json({ error: { message: 'Dapp not found', status: 404 } });
+      return;
+    }
+    res.json({ success: true });
+  } catch (err) {
+    next(err);
   }
-  res.json({ success: true });
 });
 
 // ===== Chains CRUD =====
 
-router.get('/api/admin/chains', adminRequired, (req: Request, res: Response) => {
-  const includeDisabled = String(req.query.all || '') === 'true';
-  res.json({ list: adminStore.listChains(includeDisabled) });
+router.get('/api/admin/chains', adminRequired, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const includeDisabled = String(req.query.all || '') === 'true';
+    const list = await adminStore.listChains(includeDisabled);
+    res.json({ list });
+  } catch (err) {
+    next(err);
+  }
 });
 
-router.post('/api/admin/chains', adminRequired, (req: Request, res: Response, next: NextFunction) => {
+router.post('/api/admin/chains', adminRequired, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { chainId, name, nativeCurrency, rpcUrl, explorerUrl, enabled = true, order = 0 } = req.body || {};
+    const { chainId, name, symbol, rpcUrl, explorerUrl, logo, enabled = true, order = 0 } = req.body || {};
     if (!chainId || !name || !rpcUrl) {
       res.status(400).json({ error: { message: 'chainId, name, and rpcUrl are required', status: 400 } });
       return;
     }
-    const chain = adminStore.createChain({
+    const chain = await adminStore.createChain({
       chainId,
       name,
-      nativeCurrency: nativeCurrency || { name: 'ETH', symbol: 'ETH', decimals: 18 },
+      symbol,
       rpcUrl,
-      explorerUrl: explorerUrl || '',
+      explorerUrl,
+      logo,
       enabled,
       order,
     });
@@ -90,43 +123,55 @@ router.post('/api/admin/chains', adminRequired, (req: Request, res: Response, ne
   }
 });
 
-router.put('/api/admin/chains/:id', adminRequired, (req: Request, res: Response) => {
-  const updated = adminStore.updateChain(String(req.params.id), req.body);
-  if (!updated) {
-    res.status(404).json({ error: { message: 'Chain not found', status: 404 } });
-    return;
+router.put('/api/admin/chains/:id', adminRequired, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const updated = await adminStore.updateChain(String(req.params.id), req.body);
+    if (!updated) {
+      res.status(404).json({ error: { message: 'Chain not found', status: 404 } });
+      return;
+    }
+    res.json(updated);
+  } catch (err) {
+    next(err);
   }
-  res.json(updated);
 });
 
-router.delete('/api/admin/chains/:id', adminRequired, (req: Request, res: Response) => {
-  const ok = adminStore.deleteChain(String(req.params.id));
-  if (!ok) {
-    res.status(404).json({ error: { message: 'Chain not found', status: 404 } });
-    return;
+router.delete('/api/admin/chains/:id', adminRequired, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const ok = await adminStore.deleteChain(String(req.params.id));
+    if (!ok) {
+      res.status(404).json({ error: { message: 'Chain not found', status: 404 } });
+      return;
+    }
+    res.json({ success: true });
+  } catch (err) {
+    next(err);
   }
-  res.json({ success: true });
 });
 
 // ===== Stats =====
 
-router.get('/api/admin/stats', adminRequired, (_req: Request, res: Response) => {
-  const users = userStore.getAll();
-  const totalUsers = userStore.count();
-  const totalAddresses = users.reduce((sum, u) => sum + u.addresses.length, 0);
+router.get('/api/admin/stats', adminRequired, async (_req: Request, res: Response, next: NextFunction) => {
+  try {
+    const users = await userStore.getAll();
+    const totalUsers = await userStore.count();
+    const totalAddresses = users.reduce((sum, u) => sum + u.addresses.length, 0);
 
-  // Registration time distribution (by day)
-  const registrationByDay: Record<string, number> = {};
-  users.forEach((u) => {
-    const day = new Date(u.createdAt).toISOString().slice(0, 10);
-    registrationByDay[day] = (registrationByDay[day] || 0) + 1;
-  });
+    // Registration time distribution (by day)
+    const registrationByDay: Record<string, number> = {};
+    users.forEach((u) => {
+      const day = new Date(u.createdAt).toISOString().slice(0, 10);
+      registrationByDay[day] = (registrationByDay[day] || 0) + 1;
+    });
 
-  res.json({
-    totalUsers,
-    totalAddresses,
-    registrationByDay,
-  });
+    res.json({
+      totalUsers,
+      totalAddresses,
+      registrationByDay,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 export default router;

@@ -1,0 +1,9 @@
+<svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- AVAX - Avalanche -->
+  <rect x="4" y="4" width="16" height="16" rx="4" fill="#e84142" opacity="0.2"/>
+  <path d="M12 4v4l4 4h6l6-2h6m2-6 4 6h2l-4-4m6" stroke="#e84142" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  <path d="M8 8c0 1.5 1.5s2.5 1.5 3l3.5 3.5h-3m-3.5" stroke="#e84142" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  <circle cx="8" cy="13" r="2" fill="#fff"/>
+  <text x="12" y="21" font-size="7" fill="#e84142" text-anchor="middle" font-weight="bold">A</text>
+  <text x="12" y="16" font-size="4" fill="#fff" text-anchor="middle">X</text>
+</svg>

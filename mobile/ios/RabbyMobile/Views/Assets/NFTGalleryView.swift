@@ -43,7 +43,7 @@ struct NFTGalleryView: View {
             // Search bar
             HStack {
                 Image(systemName: "magnifyingglass").foregroundColor(.gray)
-                TextField("Search NFTs", text: $searchText)
+                TextField(L("Search NFTs"), text: $searchText)
                     .textFieldStyle(.plain)
                     .autocapitalization(.none)
             }
@@ -55,7 +55,7 @@ struct NFTGalleryView: View {
             if isLoading {
                 VStack(spacing: 16) {
                     ProgressView()
-                    Text("Loading NFTs...")
+                    Text(L("Loading NFTs..."))
                         .font(.caption).foregroundColor(.secondary)
                 }
                 .frame(maxWidth: .infinity)
@@ -66,10 +66,10 @@ struct NFTGalleryView: View {
                     Image(systemName: "photo.on.rectangle.angled")
                         .font(.system(size: 48))
                         .foregroundColor(.gray)
-                    Text("No NFTs Found")
+                    Text(L("No NFTs Found"))
                         .font(.headline)
                         .foregroundColor(.secondary)
-                    Text("NFTs you own will appear here")
+                    Text(L("NFTs you own will appear here"))
                         .font(.caption)
                         .foregroundColor(.gray)
                 }
@@ -231,7 +231,7 @@ struct NFTDetailSheet: View {
                     // Collection info
                     if let collection = detailInfo?.collection {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Collection")
+                            Text(L("Collection"))
                                 .font(.headline)
                             
                             HStack(spacing: 10) {
@@ -262,7 +262,7 @@ struct NFTDetailSheet: View {
                     // Attributes / Traits
                     if let attributes = detailInfo?.attributes, !attributes.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Attributes")
+                            Text(L("Attributes"))
                                 .font(.headline)
                             
                             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
@@ -285,7 +285,7 @@ struct NFTDetailSheet: View {
                     
                     // Contract info
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Contract")
+                        Text(L("Contract"))
                             .font(.headline)
                         Text(nft.contract_id)
                             .font(.system(.caption, design: .monospaced))
@@ -296,11 +296,11 @@ struct NFTDetailSheet: View {
                 }
                 .padding()
             }
-            .navigationTitle("NFT Detail")
+            .navigationTitle(L("NFT Detail"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") { dismiss() }
+                    Button(L("Done")) { dismiss() }
                 }
             }
             .task { await loadDetail() }

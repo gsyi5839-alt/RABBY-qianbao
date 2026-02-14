@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { db } from './database';
 import type {
   SecurityRule,
   PhishingEntry,
@@ -13,193 +13,281 @@ import type {
 const nowDate = () => new Date().toISOString().slice(0, 10);
 const nowDateTime = () => new Date().toISOString().replace('T', ' ').slice(0, 16);
 
+/**
+ * Security Store - Manages security rules, phishing database, contract whitelist, and alerts
+ * Migrated from in-memory Map to PostgreSQL
+ */
 class SecurityStore {
-  private rules = new Map<string, SecurityRule>();
-  private phishing = new Map<string, PhishingEntry>();
-  private contracts = new Map<string, ContractWhitelistEntry>();
-  private alerts = new Map<string, SecurityAlert>();
+  // --- Security Rules ---
 
-  constructor() {
-    const seedRules: Omit<SecurityRule, 'id'>[] = [
-      { name: 'Large Transfer Alert', description: 'Flag transfers exceeding $100K', type: 'transfer', severity: 'high', enabled: true, triggers: 234, lastTriggered: '2024-01-15 14:20' },
-      { name: 'New Contract Interaction', description: 'Alert on unverified contract calls', type: 'contract', severity: 'medium', enabled: true, triggers: 1892, lastTriggered: '2024-01-15 15:01' },
-      { name: 'Phishing Site Detection', description: 'Block known phishing domains', type: 'phishing', severity: 'critical', enabled: true, triggers: 567, lastTriggered: '2024-01-15 12:45' },
-      { name: 'Approval Revoke Warning', description: 'Warn on unlimited token approvals', type: 'approval', severity: 'high', enabled: true, triggers: 3421, lastTriggered: '2024-01-15 14:55' },
-      { name: 'Flash Loan Detection', description: 'Detect flash loan attack patterns', type: 'contract', severity: 'critical', enabled: false, triggers: 12, lastTriggered: '2024-01-10 08:30' },
-      { name: 'Suspicious Gas Spike', description: 'Alert when gas exceeds 5x normal', type: 'gas', severity: 'low', enabled: true, triggers: 89, lastTriggered: '2024-01-14 22:15' },
-    ];
-    seedRules.forEach((r) => this.createRule(r));
-
-    const seedPhishing: Omit<PhishingEntry, 'id'>[] = [
-      { address: '0xdead...beef1', domain: 'uniswap-airdrop.xyz', type: 'scam_site', reportedBy: 'community', addedDate: '2024-01-15', status: 'confirmed' },
-      { address: '0xbad0...1234', domain: 'opensea-free-nft.com', type: 'phishing', reportedBy: 'automated', addedDate: '2024-01-14', status: 'confirmed' },
-      { address: '0xf4ke...5678', domain: 'metamask-verify.net', type: 'impersonation', reportedBy: 'community', addedDate: '2024-01-13', status: 'confirmed' },
-      { address: '0xsc4m...9abc', domain: 'aave-rewards.io', type: 'scam_site', reportedBy: 'automated', addedDate: '2024-01-12', status: 'pending' },
-      { address: '0xh4ck...def0', domain: 'lido-stake.xyz', type: 'phishing', reportedBy: 'community', addedDate: '2024-01-11', status: 'confirmed' },
-    ];
-    seedPhishing.forEach((p) => this.createPhishing(p));
-
-    const seedContracts: Omit<ContractWhitelistEntry, 'id'>[] = [
-      { address: '0x7be8076f4ea4a4ad08075c2508e481d6c946d12b', name: 'OpenSea Exchange', chainId: '1', addedDate: '2024-01-12', status: 'active' },
-      { address: '0x1111111254eeb25477b68fb85ed929f73a960582', name: '1inch Router', chainId: '1', addedDate: '2024-01-10', status: 'active' },
-    ];
-    seedContracts.forEach((c) => this.createContract(c));
-
-    const seedAlerts: Omit<SecurityAlert, 'id'>[] = [
-      { title: 'Spike in approval requests', level: 'medium', createdAt: nowDateTime(), status: 'open', description: 'Unusual increase in unlimited approvals in last hour.' },
-      { title: 'Phishing domain reported', level: 'high', createdAt: nowDateTime(), status: 'open', description: 'Multiple reports for a new domain.' },
-    ];
-    seedAlerts.forEach((a) => this.createAlert(a));
+  async listRules(): Promise<SecurityRule[]> {
+    const result = await db.query<SecurityRule>('SELECT * FROM security_rules ORDER BY severity DESC, name ASC');
+    return result.rows;
   }
 
-  // Rules
-  listRules(): SecurityRule[] {
-    return Array.from(this.rules.values());
+  async getRule(id: string): Promise<SecurityRule | undefined> {
+    const result = await db.query<SecurityRule>('SELECT * FROM security_rules WHERE id = $1', [id]);
+    return result.rows[0];
   }
 
-  createRule(data: Omit<SecurityRule, 'id'>): SecurityRule {
-    const id = uuidv4();
-    const rule: SecurityRule = { ...data, id };
-    this.rules.set(id, rule);
-    return rule;
+  async createRule(data: Omit<SecurityRule, 'id'>): Promise<SecurityRule> {
+    const result = await db.query<SecurityRule>(
+      `INSERT INTO security_rules (name, description, type, severity, enabled, triggers, last_triggered)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       RETURNING *`,
+      [data.name, data.description || null, data.type, data.severity, data.enabled ?? true, data.triggers ?? 0, data.lastTriggered || null]
+    );
+    return result.rows[0];
   }
 
-  updateRule(id: string, data: Partial<Omit<SecurityRule, 'id'>>): SecurityRule | undefined {
-    const existing = this.rules.get(id);
+  async updateRule(id: string, data: Partial<Omit<SecurityRule, 'id'>>): Promise<SecurityRule | undefined> {
+    const existing = await this.getRule(id);
     if (!existing) return undefined;
-    const updated = { ...existing, ...data };
-    this.rules.set(id, updated);
-    return updated;
+
+    const fields = [];
+    const values = [];
+    let paramIndex = 1;
+
+    if (data.name !== undefined) {
+      fields.push(`name = $${paramIndex++}`);
+      values.push(data.name);
+    }
+    if (data.description !== undefined) {
+      fields.push(`description = $${paramIndex++}`);
+      values.push(data.description);
+    }
+    if (data.type !== undefined) {
+      fields.push(`type = $${paramIndex++}`);
+      values.push(data.type);
+    }
+    if (data.severity !== undefined) {
+      fields.push(`severity = $${paramIndex++}`);
+      values.push(data.severity);
+    }
+    if (data.enabled !== undefined) {
+      fields.push(`enabled = $${paramIndex++}`);
+      values.push(data.enabled);
+    }
+    if (data.triggers !== undefined) {
+      fields.push(`triggers = $${paramIndex++}`);
+      values.push(data.triggers);
+    }
+    if (data.lastTriggered !== undefined) {
+      fields.push(`last_triggered = $${paramIndex++}`);
+      values.push(data.lastTriggered);
+    }
+
+    if (fields.length === 0) return existing;
+
+    values.push(id);
+    const sql = `UPDATE security_rules SET ${fields.join(', ')} WHERE id = $${paramIndex} RETURNING *`;
+    const result = await db.query<SecurityRule>(sql, values);
+    return result.rows[0];
   }
 
-  deleteRule(id: string): boolean {
-    return this.rules.delete(id);
+  async deleteRule(id: string): Promise<boolean> {
+    const result = await db.query('DELETE FROM security_rules WHERE id = $1', [id]);
+    return (result.rowCount ?? 0) > 0;
   }
 
-  // Phishing
-  listPhishing(): PhishingEntry[] {
-    return Array.from(this.phishing.values());
+  // --- Phishing Entries ---
+
+  async listPhishing(): Promise<PhishingEntry[]> {
+    const result = await db.query<PhishingEntry>('SELECT * FROM phishing_entries ORDER BY added_date DESC');
+    return result.rows;
   }
 
-  createPhishing(data: Omit<PhishingEntry, 'id'>): PhishingEntry {
-    const id = uuidv4();
-    const entry: PhishingEntry = { ...data, id };
-    this.phishing.set(id, entry);
-    return entry;
+  async getPhishing(id: string): Promise<PhishingEntry | undefined> {
+    const result = await db.query<PhishingEntry>('SELECT * FROM phishing_entries WHERE id = $1', [id]);
+    return result.rows[0];
   }
 
-  updatePhishing(id: string, data: Partial<Omit<PhishingEntry, 'id'>>): PhishingEntry | undefined {
-    const existing = this.phishing.get(id);
+  async createPhishing(data: Omit<PhishingEntry, 'id'>): Promise<PhishingEntry> {
+    const result = await db.query<PhishingEntry>(
+      `INSERT INTO phishing_entries (address, domain, type, reported_by, added_date, status)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING *`,
+      [data.address, data.domain, data.type, data.reportedBy || null, data.addedDate || nowDate(), data.status || 'pending']
+    );
+    return result.rows[0];
+  }
+
+  async updatePhishing(id: string, data: Partial<Omit<PhishingEntry, 'id'>>): Promise<PhishingEntry | undefined> {
+    const existing = await this.getPhishing(id);
     if (!existing) return undefined;
-    const updated = { ...existing, ...data };
-    this.phishing.set(id, updated);
-    return updated;
+
+    const fields = [];
+    const values = [];
+    let paramIndex = 1;
+
+    if (data.address !== undefined) {
+      fields.push(`address = $${paramIndex++}`);
+      values.push(data.address);
+    }
+    if (data.domain !== undefined) {
+      fields.push(`domain = $${paramIndex++}`);
+      values.push(data.domain);
+    }
+    if (data.type !== undefined) {
+      fields.push(`type = $${paramIndex++}`);
+      values.push(data.type);
+    }
+    if (data.reportedBy !== undefined) {
+      fields.push(`reported_by = $${paramIndex++}`);
+      values.push(data.reportedBy);
+    }
+    if (data.addedDate !== undefined) {
+      fields.push(`added_date = $${paramIndex++}`);
+      values.push(data.addedDate);
+    }
+    if (data.status !== undefined) {
+      fields.push(`status = $${paramIndex++}`);
+      values.push(data.status);
+    }
+
+    if (fields.length === 0) return existing;
+
+    values.push(id);
+    const sql = `UPDATE phishing_entries SET ${fields.join(', ')} WHERE id = $${paramIndex} RETURNING *`;
+    const result = await db.query<PhishingEntry>(sql, values);
+    return result.rows[0];
   }
 
-  deletePhishing(id: string): boolean {
-    return this.phishing.delete(id);
+  async deletePhishing(id: string): Promise<boolean> {
+    const result = await db.query('DELETE FROM phishing_entries WHERE id = $1', [id]);
+    return (result.rowCount ?? 0) > 0;
   }
 
-  // Contracts
-  listContracts(): ContractWhitelistEntry[] {
-    return Array.from(this.contracts.values());
+  // --- Contract Whitelist ---
+
+  async listContracts(): Promise<ContractWhitelistEntry[]> {
+    const result = await db.query<ContractWhitelistEntry>('SELECT * FROM contract_whitelist ORDER BY name ASC');
+    return result.rows;
   }
 
-  createContract(data: Omit<ContractWhitelistEntry, 'id'>): ContractWhitelistEntry {
-    const id = uuidv4();
-    const entry: ContractWhitelistEntry = { ...data, id };
-    this.contracts.set(id, entry);
-    return entry;
+  async getContract(id: string): Promise<ContractWhitelistEntry | undefined> {
+    const result = await db.query<ContractWhitelistEntry>('SELECT * FROM contract_whitelist WHERE id = $1', [id]);
+    return result.rows[0];
   }
 
-  updateContract(id: string, data: Partial<Omit<ContractWhitelistEntry, 'id'>>): ContractWhitelistEntry | undefined {
-    const existing = this.contracts.get(id);
+  async createContract(data: Omit<ContractWhitelistEntry, 'id'>): Promise<ContractWhitelistEntry> {
+    const result = await db.query<ContractWhitelistEntry>(
+      `INSERT INTO contract_whitelist (address, name, chain_id, added_date, status)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING *`,
+      [data.address, data.name, data.chainId, data.addedDate || nowDate(), data.status || 'active']
+    );
+    return result.rows[0];
+  }
+
+  async updateContract(id: string, data: Partial<Omit<ContractWhitelistEntry, 'id'>>): Promise<ContractWhitelistEntry | undefined> {
+    const existing = await this.getContract(id);
     if (!existing) return undefined;
-    const updated = { ...existing, ...data };
-    this.contracts.set(id, updated);
-    return updated;
+
+    const fields = [];
+    const values = [];
+    let paramIndex = 1;
+
+    if (data.address !== undefined) {
+      fields.push(`address = $${paramIndex++}`);
+      values.push(data.address);
+    }
+    if (data.name !== undefined) {
+      fields.push(`name = $${paramIndex++}`);
+      values.push(data.name);
+    }
+    if (data.chainId !== undefined) {
+      fields.push(`chain_id = $${paramIndex++}`);
+      values.push(data.chainId);
+    }
+    if (data.addedDate !== undefined) {
+      fields.push(`added_date = $${paramIndex++}`);
+      values.push(data.addedDate);
+    }
+    if (data.status !== undefined) {
+      fields.push(`status = $${paramIndex++}`);
+      values.push(data.status);
+    }
+
+    if (fields.length === 0) return existing;
+
+    values.push(id);
+    const sql = `UPDATE contract_whitelist SET ${fields.join(', ')} WHERE id = $${paramIndex} RETURNING *`;
+    const result = await db.query<ContractWhitelistEntry>(sql, values);
+    return result.rows[0];
   }
 
-  deleteContract(id: string): boolean {
-    return this.contracts.delete(id);
+  async deleteContract(id: string): Promise<boolean> {
+    const result = await db.query('DELETE FROM contract_whitelist WHERE id = $1', [id]);
+    return (result.rowCount ?? 0) > 0;
   }
 
-  // Alerts
-  listAlerts(): SecurityAlert[] {
-    return Array.from(this.alerts.values());
+  // --- Security Alerts ---
+
+  async listAlerts(): Promise<SecurityAlert[]> {
+    const result = await db.query<SecurityAlert>('SELECT * FROM security_alerts ORDER BY created_at DESC');
+    return result.rows;
   }
 
-  createAlert(data: Omit<SecurityAlert, 'id'>): SecurityAlert {
-    const id = uuidv4();
-    const alert: SecurityAlert = { ...data, id };
-    this.alerts.set(id, alert);
-    return alert;
+  async getAlert(id: string): Promise<SecurityAlert | undefined> {
+    const result = await db.query<SecurityAlert>('SELECT * FROM security_alerts WHERE id = $1', [id]);
+    return result.rows[0];
   }
 
-  updateAlert(id: string, data: Partial<Omit<SecurityAlert, 'id'>>): SecurityAlert | undefined {
-    const existing = this.alerts.get(id);
+  async createAlert(data: Omit<SecurityAlert, 'id'>): Promise<SecurityAlert> {
+    const result = await db.query<SecurityAlert>(
+      `INSERT INTO security_alerts (title, level, description, status, created_at, resolved_at)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING *`,
+      [data.title, data.level, data.description || null, data.status || 'open', data.createdAt || nowDateTime(), data.resolvedAt || null]
+    );
+    return result.rows[0];
+  }
+
+  async updateAlert(id: string, data: Partial<Omit<SecurityAlert, 'id'>>): Promise<SecurityAlert | undefined> {
+    const existing = await this.getAlert(id);
     if (!existing) return undefined;
-    const updated = { ...existing, ...data };
-    this.alerts.set(id, updated);
-    return updated;
+
+    const fields = [];
+    const values = [];
+    let paramIndex = 1;
+
+    if (data.title !== undefined) {
+      fields.push(`title = $${paramIndex++}`);
+      values.push(data.title);
+    }
+    if (data.level !== undefined) {
+      fields.push(`level = $${paramIndex++}`);
+      values.push(data.level);
+    }
+    if (data.description !== undefined) {
+      fields.push(`description = $${paramIndex++}`);
+      values.push(data.description);
+    }
+    if (data.status !== undefined) {
+      fields.push(`status = $${paramIndex++}`);
+      values.push(data.status);
+    }
+    if (data.createdAt !== undefined) {
+      fields.push(`created_at = $${paramIndex++}`);
+      values.push(data.createdAt);
+    }
+    if (data.resolvedAt !== undefined) {
+      fields.push(`resolved_at = $${paramIndex++}`);
+      values.push(data.resolvedAt);
+    }
+
+    if (fields.length === 0) return existing;
+
+    values.push(id);
+    const sql = `UPDATE security_alerts SET ${fields.join(', ')} WHERE id = $${paramIndex} RETURNING *`;
+    const result = await db.query<SecurityAlert>(sql, values);
+    return result.rows[0];
   }
 
-  deleteAlert(id: string): boolean {
-    return this.alerts.delete(id);
-  }
-
-  // Helpers
-  static normalizeSeverity(value?: string): SecuritySeverity {
-    const v = (value || '').toLowerCase();
-    if (v === 'critical' || v === 'high' || v === 'medium' || v === 'low') return v;
-    return 'low';
-  }
-
-  static normalizeStatus(value?: string): SecurityStatus {
-    const v = (value || '').toLowerCase();
-    return v === 'pending' ? 'pending' : 'confirmed';
-  }
-
-  static normalizeContractStatus(value?: string): ContractStatus {
-    const v = (value || '').toLowerCase();
-    return v === 'disabled' ? 'disabled' : 'active';
-  }
-
-  static normalizeAlertStatus(value?: string): AlertStatus {
-    const v = (value || '').toLowerCase();
-    return v === 'resolved' ? 'resolved' : 'open';
-  }
-
-  static nowDate() {
-    return nowDate();
-  }
-
-  static nowDateTime() {
-    return nowDateTime();
-  }
-
-  normalizeSeverity(value?: string) {
-    return SecurityStore.normalizeSeverity(value);
-  }
-
-  normalizeStatus(value?: string) {
-    return SecurityStore.normalizeStatus(value);
-  }
-
-  normalizeContractStatus(value?: string) {
-    return SecurityStore.normalizeContractStatus(value);
-  }
-
-  normalizeAlertStatus(value?: string) {
-    return SecurityStore.normalizeAlertStatus(value);
-  }
-
-  nowDate() {
-    return SecurityStore.nowDate();
-  }
-
-  nowDateTime() {
-    return SecurityStore.nowDateTime();
+  async deleteAlert(id: string): Promise<boolean> {
+    const result = await db.query('DELETE FROM security_alerts WHERE id = $1', [id]);
+    return (result.rowCount ?? 0) > 0;
   }
 }
 
