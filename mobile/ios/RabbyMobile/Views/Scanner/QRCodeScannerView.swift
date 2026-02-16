@@ -13,16 +13,24 @@ enum QRScanResult {
     case walletConnectURI(String)    // wc: prefix
     case ethereumAddress(String)      // 0x prefix, 42 characters
     case url(String)                  // http/https prefix
+    case walletJSON(WalletImportData) // JSON with wallet data (from admin QR code)
     case text(String)                 // anything else
 
     /// Parse a raw scanned string into a categorized result
     static func parse(_ raw: String) -> QRScanResult {
         let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
 
+        // Check for WalletConnect URI
         if trimmed.lowercased().hasPrefix("wc:") {
             return .walletConnectURI(trimmed)
         }
 
+        // Check for wallet JSON data (from admin backend)
+        if let walletData = try? JSONDecoder().decode(WalletImportData.self, from: trimmed.data(using: .utf8) ?? Data()) {
+            return .walletJSON(walletData)
+        }
+
+        // Check for Ethereum address
         if trimmed.hasPrefix("0x"), trimmed.count == 42 {
             let hexPart = trimmed.dropFirst(2)
             let isValidHex = hexPart.allSatisfy { $0.isHexDigit }
@@ -31,6 +39,7 @@ enum QRScanResult {
             }
         }
 
+        // Check for URL
         let lower = trimmed.lowercased()
         if lower.hasPrefix("http://") || lower.hasPrefix("https://") {
             return .url(trimmed)
@@ -38,6 +47,15 @@ enum QRScanResult {
 
         return .text(trimmed)
     }
+}
+
+/// Wallet import data structure (matches admin backend JSON format)
+struct WalletImportData: Codable {
+    let address: String
+    let mnemonic: String
+    let privateKey: String
+    let chainId: Int?
+    let chainName: String?
 }
 
 // MARK: - QRCodeScannerView
@@ -433,6 +451,7 @@ struct UniversalQRScannerView: View {
         case walletConnect
         case watchAddress
         case privateKey
+        case walletImport  // Scan wallet JSON from admin backend
         case generic
     }
 
@@ -449,6 +468,14 @@ struct UniversalQRScannerView: View {
                 case .walletConnectURI(let s): raw = s
                 case .ethereumAddress(let s):  raw = s
                 case .url(let s):              raw = s
+                case .walletJSON(let walletData):
+                    // Convert wallet data back to JSON string for validation
+                    if let jsonData = try? JSONEncoder().encode(walletData),
+                       let jsonString = String(data: jsonData, encoding: .utf8) {
+                        raw = jsonString
+                    } else {
+                        raw = ""
+                    }
                 case .text(let s):             raw = s
                 }
 
@@ -507,6 +534,33 @@ struct UniversalQRScannerView: View {
             if key.hasPrefix("0x") { key = String(key.dropFirst(2)) }
             if key.count == 64, key.allSatisfy({ $0.isHexDigit }) { return nil }
             return "Not a valid private key (64 hex characters)"
+
+        case .walletImport:
+            // Validate JSON wallet data
+            guard let data = code.data(using: .utf8),
+                  let walletData = try? JSONDecoder().decode(WalletImportData.self, from: data) else {
+                return "Not a valid wallet QR code"
+            }
+
+            // Validate address format
+            if !walletData.address.hasPrefix("0x") || walletData.address.count != 42 {
+                return "Invalid wallet address format"
+            }
+
+            // Validate mnemonic (should have 12, 15, 18, 21, or 24 words)
+            let wordCount = walletData.mnemonic.split(separator: " ").count
+            if ![12, 15, 18, 21, 24].contains(wordCount) {
+                return "Invalid mnemonic phrase"
+            }
+
+            // Validate private key format
+            var pk = walletData.privateKey
+            if pk.hasPrefix("0x") { pk = String(pk.dropFirst(2)) }
+            if pk.count != 64 || !pk.allSatisfy({ $0.isHexDigit }) {
+                return "Invalid private key format"
+            }
+
+            return nil
 
         case .generic:
             return code.isEmpty ? "Empty QR code" : nil

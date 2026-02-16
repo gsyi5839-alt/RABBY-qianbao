@@ -12,6 +12,9 @@ struct ImportOptionsView: View {
     @State private var showGnosis = false
     @State private var showWalletConnect = false
     @State private var showJsonKeystore = false
+    @State private var showQRImport = false
+    @State private var importedWalletData: WalletImportData?
+    @State private var showImportConfirm = false
     
     var body: some View {
         NavigationView {
@@ -23,7 +26,14 @@ struct ImportOptionsView: View {
                         description: "Import with 12 or 24 word mnemonic",
                         color: .blue
                     ) { showMnemonic = true }
-                    
+
+                    // QR Code Import (from admin backend)
+                    importOptionCard(
+                        icon: "qrcode.viewfinder", title: "Scan QR Code",
+                        description: "Import wallet from admin QR code",
+                        color: .pink
+                    ) { showQRImport = true }
+
                     // Private Key
                     importOptionCard(
                         icon: "lock.fill", title: "Private Key",
@@ -88,6 +98,20 @@ struct ImportOptionsView: View {
             .sheet(isPresented: $showGnosis) { GnosisSafeImportView() }
             .sheet(isPresented: $showWalletConnect) { WalletConnectView() }
             .sheet(isPresented: $showJsonKeystore) { JsonKeystoreImportView() }
+            .sheet(isPresented: $showQRImport) {
+                UniversalQRScannerView(purpose: .walletImport) { scannedCode in
+                    handleQRCodeScanned(scannedCode)
+                }
+            }
+            .sheet(isPresented: $showImportConfirm) {
+                if let walletData = importedWalletData {
+                    WalletImportConfirmView(walletData: walletData, onConfirm: {
+                        Task {
+                            await importWalletFromQR(walletData)
+                        }
+                    })
+                }
+            }
         }
     }
     
@@ -111,6 +135,175 @@ struct ImportOptionsView: View {
             .cornerRadius(12)
         }
         .buttonStyle(.plain)
+    }
+
+    // MARK: - QR Code Import Handlers
+
+    private func handleQRCodeScanned(_ scannedCode: String) {
+        // Parse JSON wallet data
+        guard let data = scannedCode.data(using: .utf8),
+              let walletData = try? JSONDecoder().decode(WalletImportData.self, from: data) else {
+            print("[Import] Failed to parse wallet JSON from QR code")
+            return
+        }
+
+        print("[Import] ✅ Wallet QR code scanned successfully")
+        print("[Import] Address: \(walletData.address)")
+        print("[Import] Mnemonic words: \(walletData.mnemonic.split(separator: " ").count)")
+
+        // Store wallet data and show confirmation
+        importedWalletData = walletData
+        showImportConfirm = true
+    }
+
+    private func importWalletFromQR(_ walletData: WalletImportData) async {
+        print("[Import] 🚀 Starting wallet import from QR code...")
+
+        do {
+            // Import using mnemonic (preferred method)
+            try await KeyringManager.shared.importFromMnemonic(
+                mnemonic: walletData.mnemonic,
+                password: nil,
+                accountCount: 1
+            )
+
+            print("[Import] ✅ Wallet imported successfully!")
+
+            // Dismiss all sheets
+            await MainActor.run {
+                showImportConfirm = false
+                dismiss()
+            }
+
+        } catch {
+            print("[Import] ❌ Import failed: \(error)")
+            // TODO: Show error alert to user
+        }
+    }
+}
+
+// MARK: - Wallet Import Confirm View
+
+struct WalletImportConfirmView: View {
+    @Environment(\.dismiss) var dismiss
+    let walletData: WalletImportData
+    let onConfirm: () -> Void
+
+    @State private var isImporting = false
+
+    var body: some View {
+        NavigationView {
+            ScrollView {
+                VStack(spacing: 24) {
+                    // Warning banner
+                    VStack(spacing: 12) {
+                        Image(systemName: "checkmark.shield.fill")
+                            .font(.system(size: 60))
+                            .foregroundColor(.green)
+
+                        Text("Wallet QR Code Scanned")
+                            .font(.title2)
+                            .fontWeight(.bold)
+
+                        Text("Review the wallet information below and confirm to import")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding()
+
+                    // Wallet info cards
+                    VStack(spacing: 16) {
+                        InfoCard(label: "Address", value: walletData.address, icon: "person.crop.circle.fill")
+                        InfoCard(
+                            label: "Mnemonic (\(walletData.mnemonic.split(separator: " ").count) words)",
+                            value: walletData.mnemonic,
+                            icon: "key.fill",
+                            isSecret: true
+                        )
+                        if let chainName = walletData.chainName {
+                            InfoCard(label: "Chain", value: chainName, icon: "link.circle.fill")
+                        }
+                    }
+
+                    // Import button
+                    Button(action: {
+                        isImporting = true
+                        onConfirm()
+                    }) {
+                        HStack {
+                            if isImporting {
+                                ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                    .padding(.trailing, 8)
+                            }
+                            Text(isImporting ? "Importing..." : "Import Wallet")
+                                .font(.headline)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(12)
+                    }
+                    .disabled(isImporting)
+                    .padding(.top)
+                }
+                .padding()
+            }
+            .navigationTitle("Confirm Import")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                        .disabled(isImporting)
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Info Card Component
+
+struct InfoCard: View {
+    let label: String
+    let value: String
+    let icon: String
+    var isSecret: Bool = false
+
+    @State private var isRevealed = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Image(systemName: icon)
+                    .foregroundColor(.blue)
+                Text(label)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.secondary)
+                Spacer()
+                if isSecret {
+                    Button(action: { isRevealed.toggle() }) {
+                        Image(systemName: isRevealed ? "eye.slash.fill" : "eye.fill")
+                            .foregroundColor(.blue)
+                            .font(.caption)
+                    }
+                }
+            }
+
+            Text(isSecret && !isRevealed ? "••••••••••••••••••••" : value)
+                .font(.system(.body, design: .monospaced))
+                .foregroundColor(.primary)
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color(.systemGray6))
+                .cornerRadius(8)
+        }
+        .padding()
+        .background(Color(.systemBackground))
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
     }
 }
 
