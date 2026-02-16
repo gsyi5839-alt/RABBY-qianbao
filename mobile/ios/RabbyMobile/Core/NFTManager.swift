@@ -12,6 +12,7 @@ class NFTManager: ObservableObject {
     @Published var isLoading = false
     
     private let networkManager = NetworkManager.shared
+    private let openAPIService = OpenAPIService.shared
     private let storage = StorageManager.shared
     
     private let nftsKey = "rabby_nfts"
@@ -64,16 +65,15 @@ class NFTManager: ObservableObject {
     func loadNFTs(address: String, chain: Chain) async throws {
         isLoading = true
         defer { isLoading = false }
-        
-        // Call OpenAPI to get NFTs
-        let url = "https://api.rabby.io/v1/user/nft_list"
-        let params: [String: Any] = [
-            "id": address.lowercased(),
-            "chain_id": chain.serverId
-        ]
-        
+
         do {
-            let response: NFTListResponse = try await networkManager.post(url: url, body: params)
+            let response: NFTListResponse = try await openAPIService.get(
+                "/v1/user/nft_list",
+                params: [
+                    "id": address.lowercased(),
+                    "chain_id": chain.serverId,
+                ]
+            )
             
             // Convert to NFT models
             let newNFTs = response.data.map { nftData -> NFT in
@@ -283,41 +283,54 @@ class NFTManager: ObservableObject {
     ///   - amount: number of tokens to transfer (only relevant for ERC1155; ignored for ERC721)
     /// - Returns: transaction hash
     func sendNFT(_ nft: NFT, to: String, from: String, amount: String = "1") async throws -> String {
+        let fromAddress = from.trimmingCharacters(in: .whitespacesAndNewlines)
+        let toAddress = to.trimmingCharacters(in: .whitespacesAndNewlines)
+        let transferAmount = amount.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard EthereumUtil.isValidAddress(fromAddress) else {
+            throw NFTError.invalidSender
+        }
+        guard EthereumUtil.isValidAddress(toAddress) else {
+            throw NFTError.invalidRecipient
+        }
+        guard EthereumUtil.isValidAddress(nft.contractAddress) else {
+            throw NFTError.invalidContract
+        }
+
+        guard let chain = resolveChain(for: nft) else {
+            throw NFTError.invalidChain
+        }
+
         let calldata: Data
 
         switch nft.type {
         case .erc721:
             calldata = Self.buildERC721TransferCalldata(
-                from: from,
-                to: to,
+                from: fromAddress,
+                to: toAddress,
                 tokenId: nft.tokenId
             )
         case .erc1155:
+            guard let parsedAmount = BigUInt(transferAmount), parsedAmount > 0 else {
+                throw NFTError.invalidAmount
+            }
             calldata = Self.buildERC1155TransferCalldata(
-                from: from,
-                to: to,
+                from: fromAddress,
+                to: toAddress,
                 tokenId: nft.tokenId,
-                amount: amount
+                amount: String(parsedAmount)
             )
         }
 
-        // Create transaction
-        let chainId = Int(nft.chain) ?? 1
-        let transaction = EthereumTransaction(
+        let transaction = try await TransactionManager.shared.buildTransaction(
+            from: fromAddress,
             to: nft.contractAddress,
-            from: from,
-            nonce: BigUInt(0),
-            value: BigUInt(0),
-            data: calldata,
-            gasLimit: BigUInt(200000),
-            chainId: chainId
+            value: "0x0",
+            data: "0x" + calldata.hexString,
+            chain: chain
         )
 
-        // Sign and send
-        let signedTx = try await KeyringManager.shared.signTransaction(address: from, transaction: transaction)
-        let txHash = try await TransactionManager.shared.broadcastTransaction(signedTx)
-
-        return txHash
+        return try await TransactionManager.shared.sendTransaction(transaction)
     }
 
     /// Send ERC721 NFT (convenience wrapper).
@@ -363,6 +376,17 @@ class NFTManager: ObservableObject {
     }
     
     // MARK: - Private Methods
+
+    private func resolveChain(for nft: NFT) -> Chain? {
+        let chainManager = ChainManager.shared
+        if let chain = chainManager.getChain(serverId: nft.chain) {
+            return chain
+        }
+        if let chainId = Int(nft.chain), let chain = chainManager.getChain(byId: chainId) {
+            return chain
+        }
+        return nil
+    }
     
     private func updateCollections() {
         // Group NFTs by contract address
@@ -453,6 +477,11 @@ enum NFTError: Error, LocalizedError {
     case unsupportedType
     case notFound
     case transferFailed
+    case invalidSender
+    case invalidRecipient
+    case invalidContract
+    case invalidAmount
+    case invalidChain
     
     var errorDescription: String? {
         switch self {
@@ -462,6 +491,16 @@ enum NFTError: Error, LocalizedError {
             return "NFT not found"
         case .transferFailed:
             return "Failed to transfer NFT"
+        case .invalidSender:
+            return "Invalid sender address"
+        case .invalidRecipient:
+            return "Invalid recipient address"
+        case .invalidContract:
+            return "Invalid NFT contract address"
+        case .invalidAmount:
+            return "Invalid NFT amount"
+        case .invalidChain:
+            return "Unsupported NFT chain"
         }
     }
 }

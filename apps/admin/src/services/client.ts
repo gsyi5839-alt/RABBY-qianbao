@@ -1,4 +1,5 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+// 使用相对路径，通过Nginx代理访问API
+const API_URL = import.meta.env.VITE_API_URL || '';
 const TOKEN_KEY = 'rabby_admin_token';
 
 function getToken(): string | null {

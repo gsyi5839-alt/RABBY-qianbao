@@ -18,6 +18,7 @@ struct SwapView: View {
     @State private var showResult = false
     @State private var txHash: String?
     @State private var errorMessage: String?
+    @State private var quoteTask: Task<Void, Never>?
     
     var body: some View {
         NavigationView {
@@ -100,7 +101,14 @@ struct SwapView: View {
             .navigationTitle(L("Swap"))
             .navigationBarTitleDisplayMode(.inline)
         }
-        .onChange(of: fromAmount) { _ in fetchQuotes() }
+        .onChange(of: fromAmount) { _ in scheduleFetchQuotes() }
+        .onChange(of: fromToken?.id) { _ in scheduleFetchQuotes() }
+        .onChange(of: toToken?.id) { _ in scheduleFetchQuotes() }
+        .onChange(of: slippageValue) { _ in scheduleFetchQuotes() }
+        .onChange(of: isAutoSlippage) { _ in scheduleFetchQuotes() }
+        .onDisappear {
+            quoteTask?.cancel()
+        }
         .sheet(isPresented: $showSlippageSheet) {
             SlippageSettingsSheet(
                 slippage: $slippageValue,
@@ -115,6 +123,7 @@ struct SwapView: View {
                     fromToken = token
                     fromAmount = ""
                     selectedQuote = nil
+                    scheduleFetchQuotes()
                 }
             )
             .modifier(SheetPresentationModifier(detents: [.large]))
@@ -125,7 +134,7 @@ struct SwapView: View {
                 onSelect: { token in
                     toToken = token
                     selectedQuote = nil
-                    fetchQuotes()
+                    scheduleFetchQuotes()
                 }
             )
             .modifier(SheetPresentationModifier(detents: [.large]))
@@ -217,18 +226,46 @@ struct SwapView: View {
         fromAmount = ""; selectedQuote = nil
     }
     
-    private func fetchQuotes() {
+    private func scheduleFetchQuotes() {
+        quoteTask?.cancel()
         guard let from = fromToken, let to = toToken, !fromAmount.isEmpty,
-              let chain = chainManager.getChain(serverId: from.chain) else { return }
-        Task {
+              let chain = chainManager.getChain(serverId: from.chain) else {
+            selectedQuote = nil
+            swapManager.quotes = []
+            return
+        }
+        guard let address = PreferenceManager.shared.currentAccount?.address, !address.isEmpty else {
+            errorMessage = "No wallet address selected"
+            selectedQuote = nil
+            swapManager.quotes = []
+            return
+        }
+
+        quoteTask = Task {
             do {
-                let quotes = try await swapManager.getQuotes(fromToken: from, toToken: to, amount: fromAmount, chain: chain)
+                try await Task.sleep(nanoseconds: 350_000_000)
+                guard !Task.isCancelled else { return }
+                let quotes = try await swapManager.getQuotes(
+                    fromToken: from,
+                    toToken: to,
+                    amount: fromAmount,
+                    chain: chain,
+                    userAddress: address
+                )
+                guard !Task.isCancelled else { return }
                 selectedQuote = quotes.first
-            } catch { errorMessage = error.localizedDescription }
+                errorMessage = quotes.isEmpty ? "No quote available" : nil
+            } catch is CancellationError {
+                return
+            } catch {
+                guard !Task.isCancelled else { return }
+                errorMessage = error.localizedDescription
+            }
         }
     }
-    
+
     private func executeSwap() {
+        quoteTask?.cancel()
         guard let quote = selectedQuote, let from = fromToken,
               let chain = chainManager.getChain(serverId: from.chain),
               let address = PreferenceManager.shared.currentAccount?.address else { return }

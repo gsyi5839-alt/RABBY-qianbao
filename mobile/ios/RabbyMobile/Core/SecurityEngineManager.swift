@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import BigInt
 
 /// Security Engine Manager - Transaction risk analysis and security checks
 /// Equivalent to Web version's securityEngine service (385 lines)
@@ -11,7 +12,10 @@ class SecurityEngineManager: ObservableObject {
     @Published var userData: UserSecurityData = UserSecurityData()
     
     private let storage = StorageManager.shared
+    private let openAPIService = OpenAPIService.shared
     private let securityKey = "rabby_security_engine"
+
+    private let cache = WalletSecurityCache()
     
     // MARK: - Models
     
@@ -78,6 +82,59 @@ class SecurityEngineManager: ObservableObject {
         let message: String
         let enable: Bool
     }
+
+    /// In-memory cache to avoid repeated `/v1/wallet/*` checks when the same approval re-renders.
+    actor WalletSecurityCache {
+        struct Entry<T> {
+            let value: T
+            let expiresAt: Date
+        }
+
+        private var checkTxCache: [String: Entry<OpenAPIService.WalletSecurityCheckResponse>] = [:]
+        private var preExecCache: [String: Entry<OpenAPIService.WalletExplainTxResponse>] = [:]
+        private var checkTextCache: [String: Entry<OpenAPIService.WalletSecurityCheckResponse>] = [:]
+        private var checkOriginCache: [String: Entry<OpenAPIService.WalletSecurityCheckResponse>] = [:]
+
+        func getCheckTx(key: String) -> OpenAPIService.WalletSecurityCheckResponse? {
+            if let e = checkTxCache[key], e.expiresAt > Date() { return e.value }
+            checkTxCache[key] = nil
+            return nil
+        }
+
+        func setCheckTx(key: String, value: OpenAPIService.WalletSecurityCheckResponse, ttl: TimeInterval) {
+            checkTxCache[key] = Entry(value: value, expiresAt: Date().addingTimeInterval(ttl))
+        }
+
+        func getPreExec(key: String) -> OpenAPIService.WalletExplainTxResponse? {
+            if let e = preExecCache[key], e.expiresAt > Date() { return e.value }
+            preExecCache[key] = nil
+            return nil
+        }
+
+        func setPreExec(key: String, value: OpenAPIService.WalletExplainTxResponse, ttl: TimeInterval) {
+            preExecCache[key] = Entry(value: value, expiresAt: Date().addingTimeInterval(ttl))
+        }
+
+        func getCheckText(key: String) -> OpenAPIService.WalletSecurityCheckResponse? {
+            if let e = checkTextCache[key], e.expiresAt > Date() { return e.value }
+            checkTextCache[key] = nil
+            return nil
+        }
+
+        func setCheckText(key: String, value: OpenAPIService.WalletSecurityCheckResponse, ttl: TimeInterval) {
+            checkTextCache[key] = Entry(value: value, expiresAt: Date().addingTimeInterval(ttl))
+        }
+
+        func getCheckOrigin(key: String) -> OpenAPIService.WalletSecurityCheckResponse? {
+            if let e = checkOriginCache[key], e.expiresAt > Date() { return e.value }
+            checkOriginCache[key] = nil
+            return nil
+        }
+
+        func setCheckOrigin(key: String, value: OpenAPIService.WalletSecurityCheckResponse, ttl: TimeInterval) {
+            checkOriginCache[key] = Entry(value: value, expiresAt: Date().addingTimeInterval(ttl))
+        }
+    }
     
     // MARK: - Initialization
     
@@ -90,59 +147,114 @@ class SecurityEngineManager: ObservableObject {
     
     /// Execute security check on transaction
     func checkTransaction(
-        from: String, to: String, value: String, data: String, chain: Chain
+        from: String,
+        to: String,
+        value: String,
+        data: String,
+        chain: Chain,
+        origin: String? = nil,
+        nonce: String? = nil,
+        gas: String? = nil,
+        gasLimit: String? = nil,
+        gasPrice: String? = nil,
+        maxFeePerGas: String? = nil,
+        maxPriorityFeePerGas: String? = nil
     ) async -> [SecurityCheckResult] {
         var results: [SecurityCheckResult] = []
         
-        // Rule 1: Check if recipient is in blacklist
+        // 0) Local allow/deny lists (always enforced)
         if userData.addressBlacklist.contains(where: { $0.lowercased() == to.lowercased() }) {
             results.append(SecurityCheckResult(
-                ruleId: "address_blacklist", level: .forbidden,
-                message: "Recipient address is in your blacklist", enable: true
+                ruleId: "address_blacklist",
+                level: .forbidden,
+                message: "Recipient address is in your blacklist",
+                enable: true
             ))
         }
-        
-        // Rule 2: Check if contract is in blacklist
+
         if userData.contractBlacklist.contains(where: {
             $0.address.lowercased() == to.lowercased() && $0.chainId == chain.serverId
         }) {
             results.append(SecurityCheckResult(
-                ruleId: "contract_blacklist", level: .forbidden,
-                message: "Contract is in your blacklist", enable: true
+                ruleId: "contract_blacklist",
+                level: .forbidden,
+                message: "Contract is in your blacklist",
+                enable: true
             ))
         }
-        
-        // Rule 3: Check if sending to new address (never interacted before)
+
+        // 1) Extension-compatible server-side security checks (best effort)
+        let normalizedOrigin = normalizeOrigin(origin)
+        let tx = OpenAPIService.WalletTx(
+            chainId: chain.id,
+            data: data.isEmpty ? "0x" : data,
+            from: from,
+            gas: gas,
+            gasLimit: gasLimit,
+            maxFeePerGas: maxFeePerGas,
+            maxPriorityFeePerGas: maxPriorityFeePerGas,
+            gasPrice: gasPrice,
+            nonce: nonce?.isEmpty == false ? nonce! : "0x0",
+            to: to,
+            value: value.isEmpty ? "0x0" : value
+        )
+
+        // Cache key: chain + from + to + value + data + origin (nonce/gas are optional and often missing)
+        let checkTxKey = "checkTx|\(chain.id)|\(from.lowercased())|\(to.lowercased())|\(value)|\(data)|\(normalizedOrigin)"
+        if let cached = await cache.getCheckTx(key: checkTxKey) {
+            results.append(contentsOf: mapWalletSecurityResponse(cached))
+        } else if !normalizedOrigin.isEmpty {
+            do {
+                let resp = try await openAPIService.walletCheckTx(
+                    tx: tx,
+                    origin: normalizedOrigin,
+                    address: from,
+                    updateNonce: nonce == nil || nonce?.isEmpty == true
+                )
+                await cache.setCheckTx(key: checkTxKey, value: resp, ttl: 20)
+                results.append(contentsOf: mapWalletSecurityResponse(resp))
+            } catch {
+                // Non-blocking: fall back to local heuristics below.
+            }
+        }
+
+        // 2) Local heuristics fallback (also useful when API is rate-limited)
         let isNewAddress = !ContactBookManager.shared.hasContact(address: to)
             && !WhitelistManager.shared.isWhitelisted(to)
+            && !userData.addressWhitelist.contains(where: { $0.lowercased() == to.lowercased() })
         if isNewAddress {
             results.append(SecurityCheckResult(
-                ruleId: "new_address", level: .warning,
-                message: "You have never interacted with this address", enable: true
+                ruleId: "new_address",
+                level: .warning,
+                message: "You have never interacted with this address",
+                enable: true
             ))
         }
-        
-        // Rule 4: Check high value transaction
-        if let valueDouble = Double(value), valueDouble > 1.0 {
+
+        if let eth = tryParseNativeValueETH(valueHex: value), eth >= 1.0 {
             results.append(SecurityCheckResult(
-                ruleId: "high_value", level: .warning,
-                message: "High value transaction detected", enable: true
+                ruleId: "high_value",
+                level: .warning,
+                message: "High value transfer detected (\(String(format: "%.4f", eth)) \(chain.nativeTokenSymbol))",
+                enable: true
             ))
         }
-        
-        // Rule 5: Check if contract is verified (via API)
+
         if data != "0x" && data.count > 2 {
             do {
                 let isVerified = try await checkContractVerified(address: to, chain: chain)
                 if !isVerified {
                     results.append(SecurityCheckResult(
-                        ruleId: "unverified_contract", level: .warning,
-                        message: "Interacting with an unverified contract", enable: true
+                        ruleId: "unverified_contract",
+                        level: .warning,
+                        message: "Interacting with an unverified contract",
+                        enable: true
                     ))
                 }
-            } catch { /* Skip if check fails */ }
+            } catch { }
         }
-        
+
+        // 3) Apply rule enable flags for locally-defined rules only.
         return results.filter { result in
             guard let rule = rules.first(where: { $0.id == result.ruleId }) else { return true }
             return rule.enable
@@ -150,17 +262,106 @@ class SecurityEngineManager: ObservableObject {
     }
     
     /// Check message signing security
-    func checkSignMessage(from: String, message: String, origin: String?) -> [SecurityCheckResult] {
+    func checkSignMessage(from: String, message: String, origin: String?) async -> [SecurityCheckResult] {
         var results: [SecurityCheckResult] = []
-        
-        if let origin = origin, userData.originBlacklist.contains(origin.lowercased()) {
+
+        let normalizedOrigin = normalizeOrigin(origin)
+        if !normalizedOrigin.isEmpty,
+           userData.originBlacklist.contains(normalizedOrigin.lowercased()) {
             results.append(SecurityCheckResult(
-                ruleId: "origin_blacklist", level: .forbidden,
-                message: "This DApp origin is in your blacklist", enable: true
+                ruleId: "origin_blacklist",
+                level: .forbidden,
+                message: "This DApp origin is in your blacklist",
+                enable: true
             ))
         }
-        
-        return results
+
+        if !normalizedOrigin.isEmpty {
+            let key = "checkText|\(from.lowercased())|\(normalizedOrigin)|\(message)"
+            if let cached = await cache.getCheckText(key: key) {
+                results.append(contentsOf: mapWalletSecurityResponse(cached))
+            } else {
+                do {
+                    let resp = try await openAPIService.walletCheckText(
+                        address: from,
+                        origin: normalizedOrigin,
+                        text: message
+                    )
+                    await cache.setCheckText(key: key, value: resp, ttl: 20)
+                    results.append(contentsOf: mapWalletSecurityResponse(resp))
+                } catch {
+                    // Best effort only.
+                }
+            }
+        }
+
+        return results.filter { result in
+            guard let rule = rules.first(where: { $0.id == result.ruleId }) else { return true }
+            return rule.enable
+        }
+    }
+
+    /// Pre-execute simulation used for accurate balance change and risk preview.
+    func preExecTransaction(
+        from: String,
+        to: String,
+        value: String,
+        data: String,
+        chain: Chain,
+        origin: String? = nil,
+        nonce: String? = nil,
+        gas: String? = nil,
+        gasLimit: String? = nil,
+        gasPrice: String? = nil,
+        maxFeePerGas: String? = nil,
+        maxPriorityFeePerGas: String? = nil
+    ) async -> OpenAPIService.WalletExplainTxResponse? {
+        let normalizedOrigin = normalizeOrigin(origin)
+        guard !normalizedOrigin.isEmpty else { return nil }
+
+        let tx = OpenAPIService.WalletTx(
+            chainId: chain.id,
+            data: data.isEmpty ? "0x" : data,
+            from: from,
+            gas: gas,
+            gasLimit: gasLimit,
+            maxFeePerGas: maxFeePerGas,
+            maxPriorityFeePerGas: maxPriorityFeePerGas,
+            gasPrice: gasPrice,
+            nonce: nonce?.isEmpty == false ? nonce! : "0x0",
+            to: to,
+            value: value.isEmpty ? "0x0" : value
+        )
+        let key = "preExec|\(chain.id)|\(from.lowercased())|\(to.lowercased())|\(value)|\(data)|\(normalizedOrigin)"
+        if let cached = await cache.getPreExec(key: key) { return cached }
+
+        do {
+            let resp = try await openAPIService.walletPreExecTx(
+                tx: tx,
+                origin: normalizedOrigin,
+                address: from,
+                updateNonce: nonce == nil || nonce?.isEmpty == true
+            )
+            await cache.setPreExec(key: key, value: resp, ttl: 20)
+            return resp
+        } catch {
+            return nil
+        }
+    }
+
+    /// Extension-compatible origin checks for DApp connection prompts (best effort).
+    func checkOrigin(address: String, origin: String) async -> OpenAPIService.WalletSecurityCheckResponse? {
+        let normalizedOrigin = normalizeOrigin(origin)
+        guard !normalizedOrigin.isEmpty else { return nil }
+        let key = "checkOrigin|\(address.lowercased())|\(normalizedOrigin)"
+        if let cached = await cache.getCheckOrigin(key: key) { return cached }
+        do {
+            let resp = try await openAPIService.walletCheckOrigin(address: address, origin: normalizedOrigin)
+            await cache.setCheckOrigin(key: key, value: resp, ttl: 60)
+            return resp
+        } catch {
+            return nil
+        }
     }
     
     // MARK: - Blacklist/Whitelist Management
@@ -231,13 +432,80 @@ class SecurityEngineManager: ObservableObject {
     // MARK: - Private Methods
     
     private func checkContractVerified(address: String, chain: Chain) async throws -> Bool {
-        struct ContractCheckResponse: Codable {
-            let is_verified: Bool?
-        }
-        let url = "https://api.rabby.io/v1/contract/check"
-        let params: [String: Any] = ["address": address, "chain_id": chain.serverId]
-        let response: ContractCheckResponse = try await NetworkManager.shared.get(url: url, parameters: params)
+        let response = try await openAPIService.checkContract(
+            address: address,
+            chainId: chain.serverId
+        )
         return response.is_verified ?? false
+    }
+
+    private func mapWalletSecurityResponse(_ resp: OpenAPIService.WalletSecurityCheckResponse) -> [SecurityCheckResult] {
+        func mapItem(_ item: OpenAPIService.WalletSecurityCheckItem) -> SecurityCheckResult {
+            let msg: String
+            if !item.alert.isEmpty {
+                msg = item.alert
+            } else if !item.description.isEmpty {
+                msg = item.description
+            } else {
+                msg = "Security check triggered (#\(item.id))"
+            }
+
+            return SecurityCheckResult(
+                ruleId: "wallet_rule_\(item.id)",
+                level: mapDecision(item.decision),
+                message: msg,
+                enable: true
+            )
+        }
+
+        // Keep ordering: forbidden -> danger -> warning.
+        var results: [SecurityCheckResult] = []
+        results.append(contentsOf: resp.forbidden_list.map(mapItem))
+        results.append(contentsOf: resp.danger_list.map(mapItem))
+        results.append(contentsOf: resp.warning_list.map(mapItem))
+        return results
+    }
+
+    private func mapDecision(_ decision: OpenAPIService.WalletSecurityDecision) -> RiskLevel {
+        switch decision {
+        case .forbidden: return .forbidden
+        case .danger: return .danger
+        case .warning: return .warning
+        case .pass, .loading, .pending: return .safe
+        }
+    }
+
+    private func normalizeOrigin(_ origin: String?) -> String {
+        guard var s = origin?.trimmingCharacters(in: .whitespacesAndNewlines), !s.isEmpty else { return "" }
+        // When we receive a full URL, normalize to origin (scheme+host+port) to match extension behavior.
+        if !s.hasPrefix("http://") && !s.hasPrefix("https://") {
+            s = "https://\(s)"
+        }
+        guard let components = URLComponents(string: s),
+              let scheme = components.scheme?.lowercased(),
+              let host = components.host?.lowercased() else {
+            return s.lowercased()
+        }
+        var originStr = "\(scheme)://\(host)"
+        if let port = components.port {
+            let isDefaultPort = (scheme == "https" && port == 443) || (scheme == "http" && port == 80)
+            if !isDefaultPort { originStr += ":\(port)" }
+        }
+        return originStr
+    }
+
+    private func tryParseNativeValueETH(valueHex: String) -> Double? {
+        let trimmed = valueHex.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmed.hasPrefix("0x") else { return nil }
+        let hexBody = trimmed.dropFirst(2)
+        if hexBody.isEmpty { return 0 }
+        // BigInt is available in the project; use BigUInt for correctness.
+        if let big = BigUInt(String(hexBody), radix: 16) {
+            // NOTE: for native token it's always 18 decimals in EVM chains.
+            let denom = pow(10.0, 18.0)
+            return Double(big) / denom
+        }
+        return nil
     }
     
     private func loadRules() {

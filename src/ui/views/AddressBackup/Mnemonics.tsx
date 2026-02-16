@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import './style.less';
 import { InfoCircleOutlined } from '@ant-design/icons';
@@ -26,26 +26,31 @@ const AddressBackupMnemonics: React.FC<{
   const { t } = useTranslation();
 
   const history = useHistory();
-  const { state } = useLocation<{
+  const location = useLocation<{
     data: string;
     goBack?: boolean;
   }>();
+  const { state } = location;
 
-  const data = state?.data;
+  // Keep secret out of history state (and thus out of back/forward cache) once page is mounted.
+  const [mnemonics] = useState<string | null>(() => state?.data ?? null);
   const [masked, setMasked] = useState(true);
   const { getContainer } = usePopupContainer();
+  const sanitizedLocationStateRef = useRef(false);
 
   const onCopyMnemonics = React.useCallback(() => {
-    copyTextToClipboard(data).then(() => {
+    if (!mnemonics) return;
+    copyTextToClipboard(mnemonics).then(() => {
       message.success({
         icon: <img src={IconSuccess} className="icon icon-success" />,
         content: t('global.copied'),
         duration: 0.5,
       });
     });
-  }, [data]);
+  }, [mnemonics, t]);
 
   const handleShowQrCode = () => {
+    if (!mnemonics) return;
     Popup.open({
       title: t('page.backupSeedPhrase.qrCodePopupTitle'),
       height: 476,
@@ -61,7 +66,7 @@ const AddressBackupMnemonics: React.FC<{
           </div>
           <div className="flex justify-center">
             <div className="p-[12px] rounded-[16px] border-rabby-neutral-line border-[1px] bg-white">
-              <QRCode value={data} size={240} />
+              <QRCode value={mnemonics} size={240} />
             </div>
           </div>
         </div>
@@ -70,20 +75,43 @@ const AddressBackupMnemonics: React.FC<{
   };
 
   const isSlip39 = React.useMemo(() => {
-    return data?.split('\n').length > 1;
-  }, [data]);
+    return (mnemonics || '').split('\n').length > 1;
+  }, [mnemonics]);
 
   useEffect(() => {
-    if (!data) {
+    if (!mnemonics) {
       if (isInModal) {
         onClose?.();
       } else {
         history.goBack();
       }
     }
-  }, [data, history, isInModal]);
+  }, [mnemonics, history, isInModal]);
 
-  if (!data) {
+  useEffect(() => {
+    // Sanitize history state to avoid leaving the secret in memory across navigation.
+    if (sanitizedLocationStateRef.current) return;
+    if (!state?.data) return;
+    sanitizedLocationStateRef.current = true;
+    const nextState = { ...(state as any) };
+    delete nextState.data;
+    history.replace({ ...location, state: nextState });
+  }, [history, location, state]);
+
+  useEffect(() => {
+    const remask = () => setMasked(true);
+    const onVisibilityChange = () => {
+      if (document.visibilityState !== 'visible') remask();
+    };
+    window.addEventListener('blur', remask);
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    return () => {
+      window.removeEventListener('blur', remask);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+    };
+  }, []);
+
+  if (!mnemonics) {
     return null;
   }
 
@@ -95,7 +123,7 @@ const AddressBackupMnemonics: React.FC<{
       )}
     >
       <header className="relative">
-        {!!state.goBack && (
+        {!!state?.goBack && (
           <img
             src={IconBack}
             className={clsx('absolute icon icon-back filter invert')}
@@ -149,16 +177,20 @@ const AddressBackupMnemonics: React.FC<{
           </div>
           <div
             className="rounded-[6px] flex items-center w-full"
-            style={masked ? { filter: 'blur(3px)' } : {}}
           >
-            {isSlip39 ? (
-              <Slip39TextareaContainer data={data} />
+            {masked ? (
+              // Do not render sensitive words into DOM until user explicitly reveals.
+              <div className="w-full bg-r-neutral-card-2 rounded-[6px] py-[48px] text-center text-r-neutral-foot text-[14px]">
+                {t('page.backupSeedPhrase.clickToShow')}
+              </div>
+            ) : isSlip39 ? (
+              <Slip39TextareaContainer data={mnemonics} />
             ) : (
               <WordsMatrix
                 className="w-full bg-r-neutral-card-2"
                 focusable={false}
                 closable={false}
-                words={data.split(' ')}
+                words={mnemonics.split(' ')}
               />
             )}
           </div>

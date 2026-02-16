@@ -16,7 +16,6 @@ import HdKeyring from '@rabby-wallet/eth-hd-keyring';
 import WatchKeyring from '@rabby-wallet/eth-watch-keyring';
 import BitBox02Keyring from './eth-bitbox02-keyring/eth-bitbox02-keyring';
 import LedgerBridgeKeyring from './eth-ledger-keyring';
-import { WalletConnectKeyring } from '@rabby-wallet/eth-walletconnect-keyring';
 import CoinbaseKeyring from '@rabby-wallet/eth-coinbase-keyring';
 import TrezorKeyring from '@rabby-wallet/eth-trezor-keyring';
 import OnekeyKeyring from './eth-onekey-keyring/eth-onekey-keyring';
@@ -54,6 +53,18 @@ import {
 import uninstalledMetricService from '../uninstalled';
 import { isEmpty } from 'lodash';
 
+// WalletConnect's server-side storage adapter depends on "lokijs". In unit tests (Node),
+// importing the keyring can throw. We lazily require it and exclude it when unavailable.
+let WalletConnectKeyring: any = null;
+try {
+  if (process.env.NODE_ENV !== 'test') {
+    WalletConnectKeyring =
+      require('@rabby-wallet/eth-walletconnect-keyring').WalletConnectKeyring;
+  }
+} catch (e) {
+  WalletConnectKeyring = null;
+}
+
 const UNENCRYPTED_IGNORE_KEYRING = [
   KEYRING_TYPE.SimpleKeyring,
   KEYRING_TYPE.HdKeyring,
@@ -67,7 +78,7 @@ export const KEYRING_SDK_TYPES = {
   LedgerBridgeKeyring,
   OnekeyKeyring,
   WatchKeyring,
-  WalletConnectKeyring,
+  ...(WalletConnectKeyring ? { WalletConnectKeyring } : {}),
   GnosisKeyring,
   LatticeKeyring,
   KeystoneKeyring,
@@ -983,13 +994,13 @@ export class KeyringService extends EventEmitter {
         if (type !== KEYRING_CLASS.WALLETCONNECT) {
           return;
         }
-        (keyring as WalletConnectKeyring).init(
+        (keyring as any).init(
           address,
           brandName,
           getChainList('mainnet').map((item) => item.id)
         );
       });
-      (keyring as WalletConnectKeyring).on('inited', (uri) => {
+      (keyring as any).on('inited', (uri) => {
         eventBus.emit(EVENTS.broadcastToUI, {
           method: EVENTS.WALLETCONNECT.INITED,
           params: { uri },

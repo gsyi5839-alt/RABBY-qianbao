@@ -35,6 +35,7 @@ class DatabaseMigration {
             try await migrateTransactionHistory()
             try await migrateConnectedSites()
             try await migrateAddressBook()
+            try await migrateKVStoreBackfill()
 
             markMigrationCompleted()
             print("✅ [DatabaseMigration] Migration completed successfully")
@@ -102,13 +103,20 @@ class DatabaseMigration {
 
         var migratedCount = 0
         for (_, site) in sites {
-            let sql = """
-            INSERT OR REPLACE INTO connected_sites (origin, name, icon, is_connected, connected_at, last_used_at)
-            VALUES (?, ?, ?, ?, ?, ?);
-            """
-
-            // Execute directly (simplified for migration)
-            // In production, you'd use database.insertConnectedSite() method
+            let row = DatabaseManager.ConnectedSiteRecord(
+                origin: site.origin,
+                url: site.origin,
+                name: site.name,
+                icon: site.icon,
+                chainId: nil,
+                permissionsJSON: nil,
+                connectionType: nil,
+                connectedAddress: nil,
+                isConnected: site.isConnected,
+                connectedAt: site.connectedAt,
+                lastUsedAt: nil
+            )
+            try database.upsertConnectedSite(row)
             migratedCount += 1
         }
 
@@ -126,16 +134,47 @@ class DatabaseMigration {
         }
 
         var migratedCount = 0
-        for (address, contact) in addressBook {
-            let sql = """
-            INSERT OR REPLACE INTO contacts (address, name, note, added_at, updated_at)
-            VALUES (?, ?, ?, ?, ?);
-            """
-
+        for (_, contact) in addressBook {
+            let row = DatabaseManager.ContactRecord(
+                id: UUID().uuidString,
+                address: contact.address.lowercased(),
+                name: contact.name,
+                isAlias: false,
+                isContact: true,
+                cexId: nil,
+                note: contact.note,
+                addedAt: contact.addedAt,
+                updatedAt: contact.addedAt
+            )
+            try database.upsertContact(row)
             migratedCount += 1
         }
 
         print("✅ [DatabaseMigration] Migrated \(migratedCount) contacts")
+    }
+
+    // MARK: - KV Store Backfill
+
+    private func migrateKVStoreBackfill() async throws {
+        let kvKeys = [
+            "rabby_dapp_permissions",
+            "rabby_connected_sites_unified",
+            "rabby_contacts",
+            "rabby_tx_history",
+            "rabby_swap_history",
+            "rabby_bridge_history",
+            "pendingTransactions",
+            "completedTransactions"
+        ]
+
+        var backfilledCount = 0
+        for key in kvKeys {
+            guard let data = storage.getData(forKey: key) else { continue }
+            try database.setValueData(data, forKey: key)
+            backfilledCount += 1
+        }
+
+        print("✅ [DatabaseMigration] Backfilled \(backfilledCount) kv entries")
     }
 
     // MARK: - Legacy Data Models (for migration)

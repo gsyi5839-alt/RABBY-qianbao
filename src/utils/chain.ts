@@ -16,18 +16,26 @@ import { toHex } from 'viem';
 import browser from 'webextension-polyfill';
 
 export const getMainnetListFromLocal = () => {
-  return browser.storage.local.get('rabbyMainnetChainList').then((res) => {
-    return res?.rabbyMainnetChainList || [];
-  });
+  const local = (browser as any)?.storage?.local;
+  if (typeof local?.get !== 'function') return Promise.resolve([]);
+  const res = local.get('rabbyMainnetChainList');
+  if (!res || typeof res.then !== 'function') return Promise.resolve([]);
+  return res
+    .then((r) => r?.rabbyMainnetChainList || [])
+    .catch(() => []);
 };
 
-getMainnetListFromLocal().then((list) => {
-  if (list.length) {
-    updateChainStore({
-      mainnetList: list,
-    });
-  }
-});
+const hasStorageGet =
+  typeof (browser as any)?.storage?.local?.get === 'function';
+if (hasStorageGet) {
+  getMainnetListFromLocal().then((list) => {
+    if (list.length) {
+      updateChainStore({
+        mainnetList: list,
+      });
+    }
+  });
+}
 
 const store = {
   mainnetList: defaultSuppordChain

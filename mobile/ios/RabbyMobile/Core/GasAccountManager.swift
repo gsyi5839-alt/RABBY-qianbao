@@ -31,6 +31,7 @@ class GasAccountManager: ObservableObject {
     @Published var transactions: [GasTransaction] = []
     
     private let storage = StorageManager.shared
+    private let openAPIService = OpenAPIService.shared
     private let gasAccountKey = "rabby_gas_account"
     
     // MARK: - Models
@@ -68,14 +69,8 @@ class GasAccountManager: ObservableObject {
     /// Login to gas account
     func login(address: String, signature: String) async throws {
         // Verify signature with backend
-        let url = "https://api.rabby.io/v1/gas_account/login"
-        let params: [String: Any] = [
-            "address": address,
-            "signature": signature
-        ]
-        
         do {
-            let _: LoginResponse = try await NetworkManager.shared.post(url: url, body: params)
+            _ = try await openAPIService.gasAccountLogin(address: address, signature: signature)
             
             self.accountId = address
             self.signature = signature
@@ -115,15 +110,12 @@ class GasAccountManager: ObservableObject {
         guard let accountId = accountId, let signature = signature else {
             throw GasAccountError.notLoggedIn
         }
-        
-        let url = "https://api.rabby.io/v1/gas_account/balance"
-        let params: [String: Any] = [
-            "address": accountId,
-            "signature": signature
-        ]
-        
+
         do {
-            let response: BalanceResponse = try await NetworkManager.shared.get(url: url, parameters: params)
+            let response = try await openAPIService.getGasAccountBalance(
+                address: accountId,
+                signature: signature
+            )
             
             self.gasBalance = response.data.map { item in
                 GasBalance(
@@ -165,21 +157,20 @@ class GasAccountManager: ObservableObject {
         guard let accountId = accountId, let signature = signature else {
             throw GasAccountError.notLoggedIn
         }
-        
-        // Request gasless transaction from backend
-        let url = "https://api.rabby.io/v1/gas_account/build_tx"
-        let params: [String: Any] = [
-            "address": accountId,
-            "signature": signature,
-            "chain_id": chain.serverId,
-            "from": fromAddress,
-            "to": transaction.to as Any,
-            "value": transaction.value,
-            "data": transaction.data,
-        ]
-        
+
+        let valueHex = "0x" + String(transaction.value, radix: 16)
+        let dataHex = "0x" + transaction.data.hexString
+
         do {
-            let response: GaslessTxResponse = try await NetworkManager.shared.post(url: url, body: params)
+            let response = try await openAPIService.buildGasAccountTx(
+                address: accountId,
+                signature: signature,
+                chainId: chain.serverId,
+                from: fromAddress,
+                to: transaction.to,
+                value: valueHex,
+                data: dataHex
+            )
             
             // Return modified transaction with sponsor info
             var gaslessTransaction = transaction
@@ -199,18 +190,12 @@ class GasAccountManager: ObservableObject {
         guard let accountId = accountId, let signature = signature else {
             throw GasAccountError.notLoggedIn
         }
-        
-        let url = "https://api.rabby.io/v1/gas_account/claim_gift"
-        let params: [String: Any] = [
-            "address": accountId,
-            "signature": signature
-        ]
-        
+
         do {
-            struct ClaimGiftResponse: Codable {
-                let success: Bool?
-            }
-            let _: ClaimGiftResponse = try await NetworkManager.shared.post(url: url, body: params)
+            _ = try await openAPIService.claimGasAccountGift(
+                address: accountId,
+                signature: signature
+            )
             
             // Mark as claimed
             markGiftAsClaimed()
@@ -282,30 +267,6 @@ class GasAccountManager: ObservableObject {
             }
         }
     }
-}
-
-// MARK: - API Response Models
-
-private struct LoginResponse: Codable {
-    let success: Bool
-    let message: String?
-}
-
-private struct BalanceResponse: Codable {
-    let data: [BalanceItem]
-    
-    struct BalanceItem: Codable {
-        let chain_id: String
-        let token_id: String
-        let amount: Double
-        let symbol: String
-        let logo: String?
-    }
-}
-
-private struct GaslessTxResponse: Codable {
-    let gas_limit: String
-    let sponsor: String
 }
 
 // MARK: - Errors

@@ -22,18 +22,18 @@ export default function LoginPage() {
         body: JSON.stringify({ username, password }),
       });
       if (!res.ok) {
-        setError('Invalid credentials. Try admin/admin');
+        setError('账号或密码错误');
         return;
       }
       const data = await res.json();
       if (!data?.accessToken) {
-        setError('Login failed. Missing token.');
+        setError('登录失败,未获取到令牌。');
         return;
       }
       login(data.accessToken);
       navigate('/dashboard');
     } catch {
-      setError('Login failed. Please ensure the API server is running.');
+      setError('登录失败，请确认 API 服务可用。');
     } finally {
       setLoading(false);
     }
@@ -50,7 +50,7 @@ export default function LoginPage() {
         background: 'var(--r-neutral-card-1, #fff)',
         borderRadius: 16,
         boxShadow: 'var(--rabby-shadow-lg, 0 20px 60px rgba(0,0,0,0.15))',
-        border: '1px solid var(--r-neutral-line, #f0f0f0)',
+        border: '1px solid var(--r-neutral-line, var(--r-neutral-line))',
       }}>
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <div style={{
@@ -59,8 +59,8 @@ export default function LoginPage() {
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
             color: '#fff', fontSize: 24, fontWeight: 700, marginBottom: 16,
           }}>R</div>
-          <h2 style={{ margin: 0, fontSize: 22, color: 'var(--r-neutral-title-1, #192945)' }}>Rabby Admin</h2>
-          <p style={{ margin: '8px 0 0', color: 'var(--r-neutral-foot, #6a7587)', fontSize: 14 }}>Sign in to manage your platform</p>
+          <h2 style={{ margin: 0, fontSize: 22, color: 'var(--r-neutral-title-1, var(--r-neutral-title-1))' }}>Rabby 管理后台</h2>
+          <p style={{ margin: '8px 0 0', color: 'var(--r-neutral-foot, var(--r-neutral-foot))', fontSize: 14 }}>登录以管理平台</p>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -69,45 +69,45 @@ export default function LoginPage() {
               padding: '10px 14px', borderRadius: 8, marginBottom: 16,
               background: 'var(--r-red-light, #fff2f0)',
               border: '1px solid rgba(234, 57, 67, 0.35)',
-              color: 'var(--r-red-default, #cf1322)',
+              color: 'var(--r-red-default, var(--r-red-default))',
               fontSize: 13,
             }}>
               {error}
             </div>
           )}
           <div style={{ marginBottom: 16 }}>
-            <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: 'var(--r-neutral-title-1, #192945)', marginBottom: 6 }}>
-              Username
+            <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: 'var(--r-neutral-title-1, var(--r-neutral-title-1))', marginBottom: 6 }}>
+              用户名
             </label>
             <input
               value={username} onChange={(e) => setUsername(e.target.value)}
-              placeholder="admin"
+              placeholder="请输入用户名"
               style={{
                 width: '100%', padding: '10px 14px', borderRadius: 8,
-                border: '1px solid var(--r-neutral-line, #d9d9d9)',
+                border: '1px solid var(--r-neutral-line, var(--r-neutral-line))',
                 fontSize: 14,
                 outline: 'none',
                 boxSizing: 'border-box',
-                background: 'var(--r-neutral-bg-3, #f2f4f7)',
-                color: 'var(--r-neutral-title-1, #192945)',
+                background: 'var(--r-neutral-bg-3, var(--r-neutral-bg-2))',
+                color: 'var(--r-neutral-title-1, var(--r-neutral-title-1))',
               }}
             />
           </div>
           <div style={{ marginBottom: 24 }}>
-            <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: 'var(--r-neutral-title-1, #192945)', marginBottom: 6 }}>
-              Password
+            <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: 'var(--r-neutral-title-1, var(--r-neutral-title-1))', marginBottom: 6 }}>
+              密码
             </label>
             <input
               type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-              placeholder="\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022"
+              placeholder="请输入密码"
               style={{
                 width: '100%', padding: '10px 14px', borderRadius: 8,
-                border: '1px solid var(--r-neutral-line, #d9d9d9)',
+                border: '1px solid var(--r-neutral-line, var(--r-neutral-line))',
                 fontSize: 14,
                 outline: 'none',
                 boxSizing: 'border-box',
-                background: 'var(--r-neutral-bg-3, #f2f4f7)',
-                color: 'var(--r-neutral-title-1, #192945)',
+                background: 'var(--r-neutral-bg-3, var(--r-neutral-bg-2))',
+                color: 'var(--r-neutral-title-1, var(--r-neutral-title-1))',
               }}
             />
           </div>
@@ -115,11 +115,11 @@ export default function LoginPage() {
             type="submit" disabled={loading}
             style={{
               width: '100%', padding: '12px 0', borderRadius: 8, border: 'none',
-              background: 'var(--r-blue-default, #4c65ff)', color: '#fff', fontSize: 15, fontWeight: 600,
+              background: 'var(--r-blue-default, var(--r-blue-default))', color: '#fff', fontSize: 15, fontWeight: 600,
               cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1,
             }}
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? '登录中...' : '登录'}
           </button>
         </form>
       </div>

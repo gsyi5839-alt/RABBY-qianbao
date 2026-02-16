@@ -91,6 +91,7 @@ class ConnectedSitesManager: ObservableObject {
     // MARK: - Dependencies
 
     private let storage = StorageManager.shared
+    private let database = DatabaseManager.shared
     private let wcManager = WalletConnectManager.shared
     private let permManager = DAppPermissionManager.shared
 
@@ -127,9 +128,11 @@ class ConnectedSitesManager: ObservableObject {
         address: String?,
         permissions: [ConnectedSiteEntry.SitePermission] = ConnectedSiteEntry.SitePermission.allCases
     ) {
+        // Align with DAppPermissionManager storage keying: use normalized origin as the stable id.
+        let origin = normalizedOrigin(url)
         let site = ConnectedSiteEntry(
-            id: hostFromURL(url),
-            url: url,
+            id: origin,
+            url: origin,
             name: name,
             iconURL: iconURL,
             chainId: chainId,
@@ -205,6 +208,19 @@ class ConnectedSitesManager: ObservableObject {
     func switchAddress(siteId: String, newAddress: String) {
         guard let index = connectedSites.firstIndex(where: { $0.id == siteId }) else { return }
         connectedSites[index].connectedAddress = newAddress
+
+        // Keep the underlying permission store in sync for browser-origin connections.
+        if connectedSites[index].connectionType == .dappBrowser {
+            let origin = connectedSites[index].url
+            let account = DAppPermissionManager.ConnectedSite.AccountInfo(
+                address: newAddress,
+                type: "private-key", // best-effort default; UI can update later if needed
+                brandName: "Rabby"
+            )
+            permManager.setSiteAccount(origin: origin, account: account)
+            permManager.setSiteAccount(origin: hostFromURL(origin), account: account)
+        }
+
         persist()
     }
 
@@ -355,6 +371,27 @@ class ConnectedSitesManager: ObservableObject {
     // MARK: - Persistence
 
     private func loadFromStorage() {
+        if let rows = try? database.getConnectedSites(includeDisconnected: true) {
+            let mapped = rows.compactMap { row -> ConnectedSiteEntry? in
+                let permissions = parsePermissions(row.permissionsJSON)
+                return ConnectedSiteEntry(
+                    id: row.origin,
+                    url: row.url,
+                    name: row.name,
+                    iconURL: row.icon,
+                    chainId: row.chainId ?? "1",
+                    connectedAt: row.connectedAt,
+                    permissions: permissions,
+                    connectionType: parseConnectionType(row.connectionType),
+                    connectedAddress: row.connectedAddress
+                )
+            }
+            if !mapped.isEmpty {
+                connectedSites = mapped
+                return
+            }
+        }
+
         if let data = storage.getData(forKey: storageKey),
            let decoded = try? JSONDecoder().decode([ConnectedSiteEntry].self, from: data) {
             connectedSites = decoded
@@ -362,6 +399,23 @@ class ConnectedSitesManager: ObservableObject {
     }
 
     private func persist() {
+        let rows = connectedSites.map { site in
+            DatabaseManager.ConnectedSiteRecord(
+                origin: site.id,
+                url: site.url,
+                name: site.name,
+                icon: site.iconURL,
+                chainId: site.chainId,
+                permissionsJSON: serializePermissions(site.permissions),
+                connectionType: site.connectionType.rawValue,
+                connectedAddress: site.connectedAddress,
+                isConnected: true,
+                connectedAt: site.connectedAt,
+                lastUsedAt: Date()
+            )
+        }
+        try? database.replaceConnectedSites(rows)
+
         if let data = try? JSONEncoder().encode(connectedSites) {
             storage.setData(data, forKey: storageKey)
         }
@@ -380,5 +434,50 @@ class ConnectedSitesManager: ObservableObject {
             cleaned = String(cleaned[..<slashIdx])
         }
         return cleaned
+    }
+
+    private func normalizedOrigin(_ raw: String) -> String {
+        var value = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !value.hasPrefix("http://") && !value.hasPrefix("https://") {
+            value = "https://\(value)"
+        }
+
+        guard let components = URLComponents(string: value),
+              let scheme = components.scheme?.lowercased(),
+              let host = components.host?.lowercased() else {
+            return raw.lowercased()
+        }
+
+        var origin = "\(scheme)://\(host)"
+        if let port = components.port {
+            let isDefaultPort = (scheme == "https" && port == 443) || (scheme == "http" && port == 80)
+            if !isDefaultPort {
+                origin += ":\(port)"
+            }
+        }
+        return origin
+    }
+
+    private func serializePermissions(_ permissions: [ConnectedSiteEntry.SitePermission]) -> String? {
+        guard let data = try? JSONEncoder().encode(permissions) else { return nil }
+        return String(data: data, encoding: .utf8)
+    }
+
+    private func parsePermissions(_ json: String?) -> [ConnectedSiteEntry.SitePermission] {
+        guard let json,
+              let data = json.data(using: .utf8),
+              let decoded = try? JSONDecoder().decode([ConnectedSiteEntry.SitePermission].self, from: data),
+              !decoded.isEmpty else {
+            return ConnectedSiteEntry.SitePermission.allCases
+        }
+        return decoded
+    }
+
+    private func parseConnectionType(_ rawValue: String?) -> ConnectedSiteEntry.ConnectionType {
+        guard let rawValue,
+              let type = ConnectedSiteEntry.ConnectionType(rawValue: rawValue) else {
+            return .dappBrowser
+        }
+        return type
     }
 }

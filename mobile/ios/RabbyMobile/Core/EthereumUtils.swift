@@ -659,6 +659,7 @@ struct EthereumTransaction {
     }
 
     private func encodeEIP2930() throws -> Data {
+        let accessListItems = rlpAccessListItems()
         let items: [Any] = [
             chainId,
             nonce.toData(),
@@ -667,7 +668,7 @@ struct EthereumTransaction {
             to?.hexToData() ?? Data(),
             value.toData(),
             data,
-            accessList ?? [] as [Any] // access list
+            accessListItems
         ]
 
         let encoded = try RLP.encode(items)
@@ -731,6 +732,7 @@ struct EthereumTransaction {
     }
 
     private func encodeSignedEIP2930(v: BigUInt, r: BigUInt, s: BigUInt) throws -> Data {
+        let accessListItems = rlpAccessListItems()
         let items: [Any] = [
             chainId,
             nonce.toData(),
@@ -739,7 +741,7 @@ struct EthereumTransaction {
             to?.hexToData() ?? Data(),
             value.toData(),
             data,
-            accessList ?? [] as [Any], // access list
+            accessListItems,
             v.toData(),
             r.toData(),
             s.toData()
@@ -750,6 +752,21 @@ struct EthereumTransaction {
         result.append(encoded)
 
         return result
+    }
+
+    private func rlpAccessListItems() -> [Any] {
+        guard let accessList else { return [] }
+
+        return accessList.compactMap { entry in
+            guard let address = entry["address"] as? String,
+                  let addressData = address.hexToData() else {
+                return nil
+            }
+
+            let rawStorageKeys = (entry["storageKeys"] as? [String]) ?? (entry["storage_keys"] as? [String]) ?? []
+            let storageKeys = rawStorageKeys.compactMap { $0.hexToData() }
+            return [addressData, storageKeys] as [Any]
+        }
     }
 }
 

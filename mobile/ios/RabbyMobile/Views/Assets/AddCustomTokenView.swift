@@ -62,7 +62,6 @@ struct AddCustomTokenView: View {
                             }
                         }
                         
-                        // Paste button
                         Button(action: pasteAddress) {
                             Image(systemName: "doc.on.clipboard")
                                 .foregroundColor(.blue)

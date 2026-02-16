@@ -2,6 +2,12 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 export const fetchLocale = async (locale) => {
+  // In unit tests / non-browser contexts, `fetch` (and the relative URL) may not exist.
+  // Return an empty bundle so importing modules won't crash.
+  if (typeof fetch !== 'function') {
+    return {};
+  }
+
   const res = await fetch(`./locales/${locale}/messages.json`);
   const data = await res.json();
   return data;
@@ -37,11 +43,14 @@ export const addResourceBundle = async (locale: string) => {
   i18n.addResourceBundle(locale, I18N_NS, bundle);
 };
 
-addResourceBundle('en');
-
-i18n.on('languageChanged', function (lng) {
-  addResourceBundle(lng);
-});
+// Only auto-load bundles in a browser context. Tests import background code in Node/JSdom
+// and should not perform network fetches at module import time.
+if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+  addResourceBundle('en');
+  i18n.on('languageChanged', function (lng) {
+    addResourceBundle(lng);
+  });
+}
 
 export const changeLanguage = (locale: string) => {
   i18n.changeLanguage(locale);

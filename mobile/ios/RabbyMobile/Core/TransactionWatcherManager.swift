@@ -112,8 +112,12 @@ class TransactionWatcherManager: ObservableObject {
     }
     
     private func getRPCUrl(chain: String) -> String {
-        if let customRPC = CustomRPCManager.shared.getRPC(chain: chain), customRPC.enable {
-            return customRPC.url
+        // 通过 serverId 获取 Chain 对象
+        if let chainObj = ChainManager.shared.getChain(serverId: chain) {
+            // 优先使用自定义 RPC
+            if let effectiveRPC = RPCManager.shared.getEffectiveRPC(chainId: chainObj.id) {
+                return effectiveRPC
+            }
         }
         return ChainManager.shared.getRPCUrl(chain: chain)
     }
@@ -128,6 +132,7 @@ class DAppPermissionManager: ObservableObject {
     @Published var connectedSites: [ConnectedSite] = []
     
     private let storage = StorageManager.shared
+    private let database = DatabaseManager.shared
     private let permKey = "rabby_dapp_permissions"
     
     struct ConnectedSite: Codable, Identifiable {
@@ -150,16 +155,58 @@ class DAppPermissionManager: ObservableObject {
     }
     
     private init() { loadSites() }
-    
+
+    private func normalizedOrigin(_ raw: String) -> String {
+        var value = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !value.hasPrefix("http://") && !value.hasPrefix("https://") {
+            value = "https://\(value)"
+        }
+
+        guard let components = URLComponents(string: value),
+              let scheme = components.scheme?.lowercased(),
+              let host = components.host?.lowercased() else {
+            return raw.lowercased()
+        }
+
+        var origin = "\(scheme)://\(host)"
+        if let port = components.port {
+            let isDefaultPort = (scheme == "https" && port == 443) || (scheme == "http" && port == 80)
+            if !isDefaultPort {
+                origin += ":\(port)"
+            }
+        }
+        return origin
+    }
+
+    private func legacyHost(_ raw: String) -> String? {
+        guard let components = URLComponents(string: raw), let host = components.host else {
+            if raw.contains("://") { return nil }
+            return raw.lowercased()
+        }
+        return host.lowercased()
+    }
+
+    private func findSiteIndex(origin: String) -> Int? {
+        let normalized = normalizedOrigin(origin)
+        if let index = connectedSites.firstIndex(where: { normalizedOrigin($0.origin) == normalized }) {
+            return index
+        }
+        if let host = legacyHost(normalized) {
+            return connectedSites.firstIndex(where: { $0.origin.lowercased() == host })
+        }
+        return nil
+    }
+
     /// Add connected site
     func addSite(origin: String, name: String, icon: String?, chain: String, account: ConnectedSite.AccountInfo?) {
+        let normalized = normalizedOrigin(origin)
         let site = ConnectedSite(
-            id: origin, origin: origin, name: name, icon: icon,
+            id: normalized, origin: normalized, name: name, icon: icon,
             chain: chain, isConnected: true, isFavorite: false,
             isTop: false, account: account, connectedAt: Date()
         )
-        
-        if let index = connectedSites.firstIndex(where: { $0.origin == origin }) {
+
+        if let index = findSiteIndex(origin: normalized) {
             connectedSites[index] = site
         } else {
             connectedSites.append(site)
@@ -169,26 +216,29 @@ class DAppPermissionManager: ObservableObject {
     
     /// Remove site
     func removeSite(origin: String) {
-        connectedSites.removeAll { $0.origin == origin }
+        guard let index = findSiteIndex(origin: origin) else { return }
+        connectedSites.remove(at: index)
         saveSites()
     }
-    
+
     /// Disconnect site
     func disconnectSite(origin: String) {
-        if let index = connectedSites.firstIndex(where: { $0.origin == origin }) {
+        if let index = findSiteIndex(origin: origin) {
             connectedSites[index].isConnected = false
         }
         saveSites()
     }
-    
+
     /// Check if site is connected
     func isConnected(origin: String) -> Bool {
-        return connectedSites.first(where: { $0.origin == origin })?.isConnected ?? false
+        guard let index = findSiteIndex(origin: origin) else { return false }
+        return connectedSites[index].isConnected
     }
-    
+
     /// Get connected site
     func getSite(origin: String) -> ConnectedSite? {
-        return connectedSites.first(where: { $0.origin == origin })
+        guard let index = findSiteIndex(origin: origin) else { return nil }
+        return connectedSites[index]
     }
     
     /// Get all connected sites
@@ -198,7 +248,7 @@ class DAppPermissionManager: ObservableObject {
     
     /// Toggle favorite
     func toggleFavorite(origin: String) {
-        if let index = connectedSites.firstIndex(where: { $0.origin == origin }) {
+        if let index = findSiteIndex(origin: origin) {
             connectedSites[index].isFavorite.toggle()
             saveSites()
         }
@@ -206,7 +256,7 @@ class DAppPermissionManager: ObservableObject {
     
     /// Toggle top/pin
     func toggleTop(origin: String) {
-        if let index = connectedSites.firstIndex(where: { $0.origin == origin }) {
+        if let index = findSiteIndex(origin: origin) {
             connectedSites[index].isTop.toggle()
             saveSites()
         }
@@ -214,8 +264,16 @@ class DAppPermissionManager: ObservableObject {
     
     /// Change chain for site
     func setSiteChain(origin: String, chain: String) {
-        if let index = connectedSites.firstIndex(where: { $0.origin == origin }) {
+        if let index = findSiteIndex(origin: origin) {
             connectedSites[index].chain = chain
+            saveSites()
+        }
+    }
+
+    /// Update connected account for a site (aligns with extension: per-site selected account).
+    func setSiteAccount(origin: String, account: ConnectedSite.AccountInfo?) {
+        if let index = findSiteIndex(origin: origin) {
+            connectedSites[index].account = account
             saveSites()
         }
     }
@@ -229,6 +287,12 @@ class DAppPermissionManager: ObservableObject {
     }
     
     private func loadSites() {
+        if let data = try? database.getValueData(forKey: permKey),
+           let sites = try? JSONDecoder().decode([ConnectedSite].self, from: data) {
+            self.connectedSites = sites
+            return
+        }
+
         if let d = storage.getData(forKey: permKey),
            let s = try? JSONDecoder().decode([ConnectedSite].self, from: d) {
             self.connectedSites = s
@@ -236,6 +300,9 @@ class DAppPermissionManager: ObservableObject {
     }
     
     private func saveSites() {
-        if let d = try? JSONEncoder().encode(connectedSites) { storage.setData(d, forKey: permKey) }
+        if let d = try? JSONEncoder().encode(connectedSites) {
+            try? database.setValueData(d, forKey: permKey)
+            storage.setData(d, forKey: permKey)
+        }
     }
 }

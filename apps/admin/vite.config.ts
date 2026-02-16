@@ -4,7 +4,8 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
-  server: { port: 3001 },
+  base: '/admin/',  // 设置base路径为/admin/
+  server: { port: 5174 },
   resolve: {
     alias: {
       '@rabby/shared': path.resolve(__dirname, '../../packages/shared'),

@@ -63,7 +63,20 @@ struct RootView: View {
         }
         .onAppear {
             checkBiometricAuth()
-            setupScreenshotProtection()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.userDidTakeScreenshotNotification)) { _ in
+            // Show warning when screenshot is taken
+            withAnimation { showScreenshotProtection = true }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                withAnimation { showScreenshotProtection = false }
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
+            // Hide content only when app really enters background
+            withAnimation { showScreenshotProtection = true }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+            withAnimation { showScreenshotProtection = false }
         }
     }
     
@@ -75,11 +88,10 @@ struct RootView: View {
         if biometricManager.isBiometricEnabled && biometricManager.canUseBiometric {
             Task {
                 do {
-                    let success = try await biometricManager.authenticate(
-                        reason: localization.t("unlock_wallet", defaultValue: "Unlock Wallet")
-                    )
-                    if success, let password = biometricManager.getBiometricPassword() {
-                        try await keyringManager.submitPassword(password)
+                    try await biometricManager.unlockWallet()
+                    await MainActor.run {
+                        autoLock.isLocked = false
+                        autoLock.updateActivity()
                     }
                 } catch {
                     print("Biometric auth failed: \(error)")
@@ -88,32 +100,6 @@ struct RootView: View {
         }
     }
     
-    private func setupScreenshotProtection() {
-        NotificationCenter.default.addObserver(
-            forName: UIApplication.userDidTakeScreenshotNotification,
-            object: nil, queue: .main
-        ) { _ in
-            // Show warning when screenshot is taken
-            withAnimation { showScreenshotProtection = true }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                withAnimation { showScreenshotProtection = false }
-            }
-        }
-        
-        // Hide content when entering app switcher
-        NotificationCenter.default.addObserver(
-            forName: UIApplication.willResignActiveNotification,
-            object: nil, queue: .main
-        ) { _ in
-            withAnimation { showScreenshotProtection = true }
-        }
-        NotificationCenter.default.addObserver(
-            forName: UIApplication.didBecomeActiveNotification,
-            object: nil, queue: .main
-        ) { _ in
-            withAnimation { showScreenshotProtection = false }
-        }
-    }
 }
 
 /// Onboarding view for new users
@@ -228,10 +214,12 @@ struct UnlockView: View {
     @EnvironmentObject private var localization: LocalizationManager
     @StateObject private var keyringManager = KeyringManager.shared
     @StateObject private var biometricManager = BiometricAuthManager.shared
+    @StateObject private var autoLock = AutoLockManager.shared
     @State private var password = ""
     @State private var errorMessage = ""
     @State private var showForgotPassword = false
     @State private var isUnlocking = false
+    @State private var failedAttempts = 0
     
     var body: some View {
         VStack(spacing: 30) {
@@ -311,26 +299,52 @@ struct UnlockView: View {
         guard !isUnlocking else { return }
         isUnlocking = true
         errorMessage = ""
+        let inputPassword = password
 
         Task {
             do {
-                try await keyringManager.submitPassword(password)
-                // Success - UI will update automatically via keyringManager.isUnlocked
-                await MainActor.run {
-                    isUnlocking = false
-                    password = "" // Clear password on success
+                try await keyringManager.submitPassword(inputPassword)
+                if biometricManager.isBiometricEnabled {
+                    try? biometricManager.saveBiometricPassword(inputPassword)
                 }
-            } catch {
+                // Success — MUST also reset autoLock state, otherwise
+                // RootView's condition `isUnlocked && !autoLock.isLocked`
+                // remains false and the user is stuck on this screen forever.
                 await MainActor.run {
+                    autoLock.isLocked = false
+                    autoLock.updateActivity()
+                    isUnlocking = false
+                    failedAttempts = 0
+                    password = ""
+                }
+            } catch let error as KeyringError where error == .invalidPassword {
+                await MainActor.run {
+                    failedAttempts += 1
                     withAnimation {
-                        errorMessage = localization.t("incorrect_password", defaultValue: "Incorrect password")
+                        if failedAttempts >= 5 {
+                            errorMessage = localization.t("too_many_attempts",
+                                defaultValue: "Too many failed attempts. Use \"Forgot Password\" to reset with your recovery phrase.")
+                        } else {
+                            errorMessage = localization.t("incorrect_password",
+                                defaultValue: "Incorrect password")
+                        }
                         isUnlocking = false
                     }
-                    // Haptic feedback for error
                     let generator = UINotificationFeedbackGenerator()
                     generator.notificationOccurred(.error)
-
-                    // Optional: shake animation for password field
+                    password = ""
+                }
+            } catch {
+                // Non-password error (vault corrupted, deserialization failure, etc.)
+                NSLog("[UnlockView] Unlock error (not password): %@", "\(error)")
+                await MainActor.run {
+                    withAnimation {
+                        errorMessage = localization.t("unlock_error",
+                            defaultValue: "Unlock failed: \(error.localizedDescription)")
+                        isUnlocking = false
+                    }
+                    let generator = UINotificationFeedbackGenerator()
+                    generator.notificationOccurred(.error)
                     password = ""
                 }
             }
@@ -340,14 +354,18 @@ struct UnlockView: View {
     private func unlockWithBiometric() {
         Task {
             do {
-                let success = try await biometricManager.authenticate(
-                    reason: localization.t("unlock_wallet", defaultValue: "Unlock Wallet")
-                )
-                if success, let savedPassword = biometricManager.getBiometricPassword() {
-                    try await keyringManager.submitPassword(savedPassword)
+                try await biometricManager.unlockWallet()
+                // Also reset autoLock — same fix as password unlock
+                await MainActor.run {
+                    autoLock.isLocked = false
+                    autoLock.updateActivity()
+                    failedAttempts = 0
+                    errorMessage = ""
                 }
             } catch {
-                errorMessage = error.localizedDescription
+                await MainActor.run {
+                    errorMessage = error.localizedDescription
+                }
             }
         }
     }

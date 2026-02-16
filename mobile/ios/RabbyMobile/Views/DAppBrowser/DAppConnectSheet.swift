@@ -521,7 +521,7 @@ struct DAppConnectSheet: View {
         guard !selectedAddress.isEmpty else { return }
 
         // Save to connected sites via DAppPermissionManager
-        let origin = hostFromUrl(dappUrl)
+        let origin = normalizedOrigin(from: dappUrl)
         let accountInfo = DAppPermissionManager.ConnectedSite.AccountInfo(
             address: selectedAddress,
             type: keyringManager.currentAccount?.type.rawValue ?? "Unknown",
@@ -539,7 +539,7 @@ struct DAppConnectSheet: View {
 
         // If rememberChoice is true, add to origin whitelist for auto-connect
         if rememberChoice {
-            securityEngine.addOriginToWhitelist(origin)
+            securityEngine.addOriginToWhitelist(origin.lowercased())
             // Persist the auto-connect preference
             StorageManager.shared.setBool(true, forKey: "autoConnect_\(origin)")
             StorageManager.shared.setString(selectedAddress, forKey: "autoConnectAddr_\(origin)")
@@ -584,16 +584,19 @@ struct DAppConnectSheet: View {
                 }
 
                 // Check if this is a first-time connection
-                let origin = hostFromUrl(dappUrl)
+                let origin = normalizedOrigin(from: dappUrl)
                 isFirstConnection = !permManager.isConnected(origin: origin)
                     && permManager.getSite(origin: origin) == nil
 
                 // Check auto-connect preference
                 if !isFirstConnection {
+                    let host = hostFromUrl(dappUrl)
                     let autoConnect = StorageManager.shared.getBool(forKey: "autoConnect_\(origin)")
+                        || StorageManager.shared.getBool(forKey: "autoConnect_\(host)")
                     if autoConnect {
                         // Retrieve the previously selected address
-                        if let savedAddr = StorageManager.shared.getString(forKey: "autoConnectAddr_\(origin)") {
+                        if let savedAddr = StorageManager.shared.getString(forKey: "autoConnectAddr_\(origin)")
+                            ?? StorageManager.shared.getString(forKey: "autoConnectAddr_\(host)") {
                             selectedAddress = savedAddr
                         }
                         rememberChoice = true
@@ -608,31 +611,59 @@ struct DAppConnectSheet: View {
 
     private func performSecurityCheck() {
         Task {
-            let origin = hostFromUrl(dappUrl)
+            let origin = normalizedOrigin(from: dappUrl)
+            let host = hostFromUrl(dappUrl)
             var messages: [String] = []
             var level: SecurityLevel = .safe
 
             // Check 1: Is the origin in the blacklist?
-            if securityEngine.userData.originBlacklist.contains(origin.lowercased()) {
+            if securityEngine.userData.originBlacklist.contains(origin.lowercased())
+                || securityEngine.userData.originBlacklist.contains(host.lowercased()) {
                 level = .danger
                 messages.append(LocalizationManager.shared.t("This site is in your blacklist."))
             }
 
             // Check 2: Is this origin whitelisted?
             let isWhitelisted = securityEngine.userData.originWhitelist.contains(origin.lowercased())
+                || securityEngine.userData.originWhitelist.contains(host.lowercased())
             if isWhitelisted {
                 messages.append(LocalizationManager.shared.t("This site is in your whitelist."))
             }
 
             // Check 3: Known phishing check via API (best effort)
             do {
-                let isPhishing = try await checkPhishingSite(origin: origin)
+                let isPhishing = try await checkPhishingSite(origin: host)
                 if isPhishing {
                     level = .danger
                     messages.append(LocalizationManager.shared.t("WARNING: This site has been flagged as a phishing site."))
                 }
             } catch {
                 // API unavailable - not a blocking issue
+            }
+
+            // Check 3.5: Extension-compatible origin rule set (best effort)
+            if !selectedAddress.isEmpty {
+                if let resp = await securityEngine.checkOrigin(address: selectedAddress, origin: origin) {
+                    if !resp.alert.isEmpty {
+                        messages.append(resp.alert)
+                    }
+                    // Escalate level based on decision.
+                    switch resp.decision {
+                    case .forbidden, .danger:
+                        level = .danger
+                    case .warning:
+                        if level == .safe { level = .warning }
+                    case .pass, .loading, .pending:
+                        break
+                    }
+                    // Append rule item alerts (keep short, avoid duplicates).
+                    let items = resp.forbidden_list + resp.danger_list + resp.warning_list
+                    for item in items.prefix(5) {
+                        if !item.alert.isEmpty, !messages.contains(item.alert) {
+                            messages.append(item.alert)
+                        }
+                    }
+                }
             }
 
             // Check 4: First-time connection warning
@@ -645,7 +676,7 @@ struct DAppConnectSheet: View {
 
             // Check 5: Domain age / reputation (if available)
             do {
-                let reputation = try await checkDomainReputation(origin: origin)
+                let reputation = try await checkDomainReputation(origin: host)
                 if let rep = reputation {
                     messages.append(rep)
                 }
@@ -670,24 +701,13 @@ struct DAppConnectSheet: View {
 
     /// Check if the origin is a known phishing site via Rabby API
     private func checkPhishingSite(origin: String) async throws -> Bool {
-        struct PhishingResponse: Codable {
-            let is_phishing: Bool?
-        }
-        let url = "https://api.rabby.io/v1/security/check_origin"
-        let params: [String: Any] = ["origin": origin]
-        let response: PhishingResponse = try await NetworkManager.shared.get(url: url, parameters: params)
+        let response = try await OpenAPIService.shared.checkOrigin(origin: origin)
         return response.is_phishing ?? false
     }
 
     /// Fetch domain reputation/age information from Rabby API
     private func checkDomainReputation(origin: String) async throws -> String? {
-        struct DomainInfo: Codable {
-            let age_days: Int?
-            let reputation_score: Double?
-        }
-        let url = "https://api.rabby.io/v1/security/domain_info"
-        let params: [String: Any] = ["origin": origin]
-        let response: DomainInfo = try await NetworkManager.shared.get(url: url, parameters: params)
+        let response = try await OpenAPIService.shared.getDomainInfo(origin: origin)
 
         var info: [String] = []
         if let ageDays = response.age_days {
@@ -705,6 +725,28 @@ struct DAppConnectSheet: View {
     }
 
     // MARK: - Helpers
+
+    private func normalizedOrigin(from urlString: String) -> String {
+        var candidate = urlString.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !candidate.hasPrefix("http://") && !candidate.hasPrefix("https://") {
+            candidate = "https://\(candidate)"
+        }
+
+        guard let components = URLComponents(string: candidate),
+              let scheme = components.scheme?.lowercased(),
+              let host = components.host?.lowercased() else {
+            return hostFromUrl(urlString).lowercased()
+        }
+
+        var origin = "\(scheme)://\(host)"
+        if let port = components.port {
+            let isDefaultPort = (scheme == "https" && port == 443) || (scheme == "http" && port == 80)
+            if !isDefaultPort {
+                origin += ":\(port)"
+            }
+        }
+        return origin
+    }
 
     private func hostFromUrl(_ urlString: String) -> String {
         if let url = URL(string: urlString), let host = url.host {
@@ -738,14 +780,38 @@ extension DAppConnectSheet {
     /// - Returns: The saved address if auto-connect is enabled, nil otherwise
     @MainActor
     static func autoConnectAddress(for dappUrl: String) async -> String? {
-        let origin = extractHost(from: dappUrl)
+        let origin = extractOrigin(from: dappUrl)
+        let host = extractHost(from: dappUrl)
         let autoConnect = StorageManager.shared.getBool(forKey: "autoConnect_\(origin)")
+            || StorageManager.shared.getBool(forKey: "autoConnect_\(host)")
         guard autoConnect else { return nil }
 
         // Access Main Actor isolated property safely
         let permManager = DAppPermissionManager.shared
-        guard permManager.isConnected(origin: origin) else { return nil }
+        guard permManager.isConnected(origin: origin) || permManager.isConnected(origin: host) else { return nil }
         return StorageManager.shared.getString(forKey: "autoConnectAddr_\(origin)")
+            ?? StorageManager.shared.getString(forKey: "autoConnectAddr_\(host)")
+    }
+
+    private static func extractOrigin(from urlString: String) -> String {
+        var candidate = urlString
+        if !candidate.hasPrefix("http://") && !candidate.hasPrefix("https://") {
+            candidate = "https://\(candidate)"
+        }
+        guard let components = URLComponents(string: candidate),
+              let scheme = components.scheme?.lowercased(),
+              let host = components.host?.lowercased() else {
+            return extractHost(from: urlString).lowercased()
+        }
+
+        var origin = "\(scheme)://\(host)"
+        if let port = components.port {
+            let isDefaultPort = (scheme == "https" && port == 443) || (scheme == "http" && port == 80)
+            if !isDefaultPort {
+                origin += ":\(port)"
+            }
+        }
+        return origin
     }
 
     private static func extractHost(from urlString: String) -> String {

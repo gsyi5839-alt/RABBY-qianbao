@@ -25,14 +25,17 @@ class BridgeManager: ObservableObject {
     @Published var activeBridges: [String: BridgeWatchState] = [:]
 
     private let networkManager = NetworkManager.shared
+    private let openAPIService = OpenAPIService.shared
     private let storage = StorageManager.shared
     private let transactionManager = TransactionManager.shared
-    private let keyringManager = KeyringManager.shared
+    private let chainManager = ChainManager.shared
 
     private let bridgeKey = "rabby_bridge_settings"
+    private var latestQuoteRequestId: Int = 0
 
     /// MaxUint256 for unlimited approval
     private static let maxUint256Hex = String(repeating: "f", count: 64)
+    private static let ethUsdtAddress = "0xdac17f958d2ee523a2206206994597c13d831ec7"
 
     // MARK: - Models
 
@@ -56,6 +59,7 @@ class BridgeManager: ObservableObject {
         let to: String
         let needApprove: Bool
         let spender: String?
+        let shouldTwoStepApprove: Bool
     }
 
     struct BridgeSettings: Codable {
@@ -148,24 +152,41 @@ class BridgeManager: ObservableObject {
         amount: String,
         fromChain: Chain,
         toChain: Chain,
-        userAddress: String
+        userAddress: String,
+        slippage: Double
     ) async throws -> [BridgeQuote] {
-        isLoading = true
-        defer { isLoading = false }
+        guard !userAddress.isEmpty else {
+            throw BridgeError.invalidUserAddress
+        }
+        guard isPositiveNumber(amount) else {
+            throw BridgeError.invalidAmount
+        }
 
-        // Call Rabby API to get bridge quotes
-        let url = "https://api.rabby.io/v1/bridge/quote"
-        let params: [String: Any] = [
+        latestQuoteRequestId += 1
+        let requestId = latestQuoteRequestId
+        isLoading = true
+        defer {
+            if requestId == latestQuoteRequestId {
+                isLoading = false
+            }
+        }
+
+        let fromRawAmount = decimalToUnitAmount(amount, decimals: fromToken.decimals)
+        let slippageValue = max(0, slippage)
+        let params: [String: String] = [
             "from_chain_id": fromChain.serverId,
             "to_chain_id": toChain.serverId,
             "from_token_id": fromToken.id,
             "to_token_id": toToken.id,
+            "from_token_raw_amount": fromRawAmount.description,
             "amount": amount,
+            "slippage": String(slippageValue),
+            "user_addr": userAddress,
             "user_address": userAddress,
         ]
 
         do {
-            let response: BridgeQuoteResponse = try await networkManager.get(url: url, parameters: params)
+            let response: BridgeQuoteResponse = try await openAPIService.get("/v1/bridge/quote", params: params)
 
             // Filter by selected aggregators if any
             var filteredData = response.data
@@ -174,35 +195,120 @@ class BridgeManager: ObservableObject {
             }
 
             // Convert to BridgeQuote models
-            let quotes = filteredData.map { quoteData -> BridgeQuote in
-                BridgeQuote(
-                    id: "\(quoteData.aggregator_id)_\(quoteData.bridge_id)",
-                    aggregatorId: quoteData.aggregator_id,
-                    aggregatorName: quoteData.aggregator_name,
-                    aggregatorLogo: quoteData.aggregator_logo,
-                    bridgeId: quoteData.bridge_id,
-                    fromChainId: fromChain.serverId,
-                    toChainId: toChain.serverId,
-                    fromToken: fromToken,
-                    toToken: toToken,
-                    fromAmount: amount,
-                    toAmount: quoteData.to_token_amount,
-                    estimatedTime: quoteData.estimated_time,
-                    gasFee: quoteData.gas_fee,
-                    bridgeFee: quoteData.bridge_fee,
-                    rabbyFee: quoteData.rabby_fee,
-                    data: quoteData.data,
-                    to: quoteData.to,
-                    needApprove: quoteData.need_approve,
-                    spender: quoteData.spender
+            var quotes: [BridgeQuote] = []
+            for quoteData in filteredData {
+                var shouldApproveToken = quoteData.need_approve
+                var shouldTwoStepApprove = false
+
+                if let spender = quoteData.spender, quoteData.need_approve {
+                    do {
+                        let allowance = try await checkAllowance(
+                            tokenAddress: fromToken.address,
+                            ownerAddress: userAddress,
+                            spenderAddress: spender,
+                            chain: fromChain
+                        )
+                        shouldApproveToken = allowance < fromRawAmount
+                        shouldTwoStepApprove =
+                            shouldApproveToken &&
+                            allowance > 0 &&
+                            fromChain.serverId == "eth" &&
+                            fromToken.address.lowercased() == Self.ethUsdtAddress
+                    } catch {
+                        // Keep API fallback behavior if allowance check fails.
+                        shouldApproveToken = quoteData.need_approve
+                    }
+                }
+
+                quotes.append(
+                    BridgeQuote(
+                        id: "\(quoteData.aggregator_id)_\(quoteData.bridge_id)",
+                        aggregatorId: quoteData.aggregator_id,
+                        aggregatorName: quoteData.aggregator_name,
+                        aggregatorLogo: quoteData.aggregator_logo,
+                        bridgeId: quoteData.bridge_id,
+                        fromChainId: fromChain.serverId,
+                        toChainId: toChain.serverId,
+                        fromToken: fromToken,
+                        toToken: toToken,
+                        fromAmount: amount,
+                        toAmount: quoteData.to_token_amount,
+                        estimatedTime: quoteData.estimated_time,
+                        gasFee: quoteData.gas_fee,
+                        bridgeFee: quoteData.bridge_fee,
+                        rabbyFee: quoteData.rabby_fee,
+                        data: quoteData.data,
+                        to: quoteData.to,
+                        needApprove: shouldApproveToken,
+                        spender: quoteData.spender,
+                        shouldTwoStepApprove: shouldTwoStepApprove
+                    )
                 )
             }
 
-            self.quotes = quotes
+            quotes.sort { lhs, rhs in
+                decimalNumber(lhs.toAmount) > decimalNumber(rhs.toAmount)
+            }
+
+            if requestId == latestQuoteRequestId {
+                self.quotes = quotes
+            }
             return quotes
         } catch {
             print("[BridgeManager] Failed to get bridge quotes: \(error)")
             throw error
+        }
+    }
+
+    // MARK: - Same Token (Auto Slippage)
+
+    private struct SameTokenItem: Decodable {
+        let is_same: Bool
+    }
+
+    /// API: `GET /v2/bridge/same_token`
+    /// The backend may return either:
+    /// - `[{"is_same": true}]`
+    /// - `{"data":[{"is_same":true}]}`
+    private struct SameTokenResponse: Decodable {
+        let data: [SameTokenItem]
+
+        init(from decoder: Decoder) throws {
+            // Try array root first
+            if let arr = try? [SameTokenItem](from: decoder) {
+                self.data = arr
+                return
+            }
+            // Then object with `data`
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            self.data = try container.decode([SameTokenItem].self, forKey: .data)
+        }
+
+        private enum CodingKeys: String, CodingKey {
+            case data
+        }
+    }
+
+    /// Matches extension behavior: used to decide auto slippage (0.5% vs 1%).
+    /// Returns `nil` on errors / rate limits so caller can apply local fallback logic.
+    func isSameBridgeToken(
+        fromChainId: String,
+        fromTokenId: String,
+        toChainId: String,
+        toTokenId: String
+    ) async -> Bool? {
+        let params: [String: String] = [
+            "from_chain_id": fromChainId,
+            "from_token_id": fromTokenId,
+            "to_chain_id": toChainId,
+            "to_token_id": toTokenId,
+        ]
+        do {
+            let resp: SameTokenResponse = try await openAPIService.get("/v2/bridge/same_token", params: params)
+            guard !resp.data.isEmpty else { return nil }
+            return resp.data.allSatisfy { $0.is_same }
+        } catch {
+            return nil
         }
     }
 
@@ -218,9 +324,7 @@ class BridgeManager: ObservableObject {
         chain: Chain
     ) async throws -> BigUInt {
         // Native token never needs approval
-        let isNativeToken = tokenAddress.lowercased() == chain.nativeTokenAddress.lowercased()
-            || tokenAddress.lowercased() == "0x0000000000000000000000000000000000000000"
-            || tokenAddress.lowercased() == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        let isNativeToken = isNativeTokenAddress(tokenAddress, chain: chain)
 
         if isNativeToken {
             // Return max value -> no approval needed
@@ -255,16 +359,18 @@ class BridgeManager: ObservableObject {
         tokenAddress: String,
         spenderAddress: String,
         fromAddress: String,
-        chain: Chain
+        chain: Chain,
+        amountHex: String? = nil
     ) async throws -> String {
         executionStep = .approving
+        let approveAmount = amountHex ?? Self.maxUint256Hex
 
         // Build approval tx via TransactionManager (handles nonce, gas, EIP-1559)
         let approveTx = try await transactionManager.buildTokenApproval(
             from: fromAddress,
             tokenAddress: tokenAddress,
             spender: spenderAddress,
-            amount: Self.maxUint256Hex,
+            amount: approveAmount,
             chain: chain
         )
 
@@ -288,26 +394,30 @@ class BridgeManager: ObservableObject {
     func buildBridgeTx(
         quote: BridgeQuote,
         fromAddress: String,
-        fromChain: Chain
+        fromChain: Chain,
+        slippage: Double
     ) async throws -> EthereumTransaction {
         executionStep = .buildingTransaction
 
         // Call Rabby API to get the actual bridge transaction data
-        let url = "https://api.rabby.io/v1/bridge/build_tx"
-        let params: [String: Any] = [
+        let fromRawAmount = decimalToUnitAmount(quote.fromAmount, decimals: quote.fromToken.decimals)
+        let params: [String: String] = [
             "aggregator_id": quote.aggregatorId,
             "bridge_id": quote.bridgeId,
             "from_chain_id": quote.fromChainId,
             "to_chain_id": quote.toChainId,
             "from_token_id": quote.fromToken.id,
             "to_token_id": quote.toToken.id,
+            "from_token_raw_amount": fromRawAmount.description,
             "amount": quote.fromAmount,
+            "slippage": String(max(0, slippage)),
+            "user_addr": fromAddress,
             "user_address": fromAddress,
         ]
 
         let buildResponse: BridgeBuildTxResponse
         do {
-            buildResponse = try await networkManager.get(url: url, parameters: params)
+            buildResponse = try await openAPIService.get("/v1/bridge/build_tx", params: params)
         } catch {
             // If build_tx endpoint fails, fall back to quote data
             print("[BridgeManager] build_tx API failed, using quote data: \(error)")
@@ -322,13 +432,23 @@ class BridgeManager: ObservableObject {
         // Determine value: use API response or calculate from quote
         let valueHex: String
         if let apiValue = buildResponse.value, !apiValue.isEmpty {
-            valueHex = apiValue
+            if apiValue.hasPrefix("0x") {
+                valueHex = apiValue
+            } else if apiValue.allSatisfy({ $0.isNumber }), let wei = BigUInt(apiValue) {
+                valueHex = "0x" + String(wei, radix: 16)
+            } else {
+                valueHex = resolveNativeBridgeValueHex(
+                    fromAmount: quote.fromAmount,
+                    token: quote.fromToken,
+                    chain: fromChain
+                )
+            }
         } else {
-            // For native token sends, value = fromAmount; for ERC20, value = 0
-            let isNative = quote.fromToken.address.lowercased() == fromChain.nativeTokenAddress.lowercased()
-                || quote.fromToken.address.lowercased() == "0x0000000000000000000000000000000000000000"
-                || quote.fromToken.address.lowercased() == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-            valueHex = isNative ? quote.fromAmount : "0x0"
+            valueHex = resolveNativeBridgeValueHex(
+                fromAmount: quote.fromAmount,
+                token: quote.fromToken,
+                chain: fromChain
+            )
         }
 
         // Use TransactionManager.buildTransaction to get proper nonce, gas, fees
@@ -360,10 +480,11 @@ class BridgeManager: ObservableObject {
         fromAddress: String,
         fromChain: Chain
     ) async throws -> EthereumTransaction {
-        let isNative = quote.fromToken.address.lowercased() == fromChain.nativeTokenAddress.lowercased()
-            || quote.fromToken.address.lowercased() == "0x0000000000000000000000000000000000000000"
-            || quote.fromToken.address.lowercased() == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-        let valueHex = isNative ? quote.fromAmount : "0x0"
+        let valueHex = resolveNativeBridgeValueHex(
+            fromAmount: quote.fromAmount,
+            token: quote.fromToken,
+            chain: fromChain
+        )
 
         let txData = quote.data.hexToData() ?? Data()
 
@@ -447,6 +568,7 @@ class BridgeManager: ObservableObject {
                 case "success", "completed", "done":
                     updatedState.status = .completed
                     activeBridges[txHash] = updatedState
+                    TransactionHistoryManager.shared.updateBridgeStatus(hash: txHash, status: "allSuccess")
                     executionStep = .completed(txHash: txHash)
                     print("[BridgeManager] Bridge completed: \(txHash) -> \(status.toTxHash ?? "?")")
                     return
@@ -454,6 +576,7 @@ class BridgeManager: ObservableObject {
                 case "failed", "error", "refunded":
                     updatedState.status = .failed
                     activeBridges[txHash] = updatedState
+                    TransactionHistoryManager.shared.updateBridgeStatus(hash: txHash, status: "failed")
                     executionStep = .failed(message: "Bridge transaction failed")
                     print("[BridgeManager] Bridge failed: \(txHash)")
                     return
@@ -461,6 +584,7 @@ class BridgeManager: ObservableObject {
                 case "bridging", "in_progress":
                     updatedState.status = .bridging
                     activeBridges[txHash] = updatedState
+                    TransactionHistoryManager.shared.updateBridgeStatus(hash: txHash, status: "fromSuccess")
 
                 default:
                     // Still pending
@@ -500,7 +624,8 @@ class BridgeManager: ObservableObject {
     func executeBridge(
         quote: BridgeQuote,
         fromAddress: String,
-        fromChain: Chain
+        fromChain: Chain,
+        slippage: Double
     ) async throws -> String {
         executionStep = .idle
 
@@ -508,14 +633,13 @@ class BridgeManager: ObservableObject {
             // Step 1: Check allowance (for ERC20 tokens only)
             executionStep = .checkingAllowance
 
-            let isNativeToken = quote.fromToken.address.lowercased() == fromChain.nativeTokenAddress.lowercased()
-                || quote.fromToken.address.lowercased() == "0x0000000000000000000000000000000000000000"
-                || quote.fromToken.address.lowercased() == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+            let isNativeToken = isNativeTokenAddress(quote.fromToken.address, chain: fromChain)
 
             if !isNativeToken, quote.needApprove, let spender = quote.spender {
                 // Parse the required amount
-                let requiredAmount = TransactionManager.parseBigUIntFromHex(
-                    quote.fromAmount.hasPrefix("0x") ? quote.fromAmount : "0x" + quote.fromAmount
+                let requiredAmount = decimalToUnitAmount(
+                    quote.fromAmount,
+                    decimals: quote.fromToken.decimals
                 )
 
                 // Check current allowance
@@ -530,6 +654,16 @@ class BridgeManager: ObservableObject {
 
                 // Step 2: Approve if insufficient
                 if currentAllowance < requiredAmount {
+                    if quote.shouldTwoStepApprove {
+                        let zeroApproveHash = try await approveForBridge(
+                            tokenAddress: quote.fromToken.address,
+                            spenderAddress: spender,
+                            fromAddress: fromAddress,
+                            chain: fromChain,
+                            amountHex: String(repeating: "0", count: 64)
+                        )
+                        print("[BridgeManager] Zero approval completed: \(zeroApproveHash)")
+                    }
                     let approveTxHash = try await approveForBridge(
                         tokenAddress: quote.fromToken.address,
                         spenderAddress: spender,
@@ -548,7 +682,8 @@ class BridgeManager: ObservableObject {
             let transaction = try await buildBridgeTx(
                 quote: quote,
                 fromAddress: fromAddress,
-                fromChain: fromChain
+                fromChain: fromChain,
+                slippage: slippage
             )
 
             // Step 4: Sign and send
@@ -556,6 +691,29 @@ class BridgeManager: ObservableObject {
                 transaction: transaction,
                 fromAddress: fromAddress,
                 fromChain: fromChain
+            )
+
+            TransactionHistoryManager.shared.addBridgeHistory(
+                address: fromAddress,
+                fromChainId: quote.fromChainId,
+                toChainId: quote.toChainId,
+                fromToken: .init(
+                    id: quote.fromToken.id,
+                    symbol: quote.fromToken.symbol,
+                    decimals: quote.fromToken.decimals,
+                    logo: quote.fromToken.logo
+                ),
+                toToken: .init(
+                    id: quote.toToken.id,
+                    symbol: quote.toToken.symbol,
+                    decimals: quote.toToken.decimals,
+                    logo: quote.toToken.logo
+                ),
+                fromAmount: quote.fromAmount,
+                toAmount: quote.toAmount,
+                bridgeId: quote.bridgeId,
+                hash: txHash,
+                estimatedDuration: parseEstimatedDuration(quote.estimatedTime)
             )
 
             // Post bridge analytics
@@ -582,8 +740,19 @@ class BridgeManager: ObservableObject {
 
     /// Check and confirm bridge transaction (called from TransactionBroadcastWatcher)
     func checkAndConfirmBridge(txHash: String, chainId: Int) {
-        // Track bridge confirmation for analytics
-        print("[BridgeManager] Bridge confirmed - txHash: \(txHash), chainId: \(chainId)")
+        Task {
+            guard let chain = chainManager.getChain(id: chainId) else { return }
+            do {
+                if let receipt = try await networkManager.getTransactionReceipt(hash: txHash, chain: chain) {
+                    TransactionHistoryManager.shared.updateBridgeStatus(
+                        hash: txHash,
+                        status: receipt.isSuccess ? "fromSuccess" : "failed"
+                    )
+                }
+            } catch {
+                print("[BridgeManager] Failed to confirm bridge tx \(txHash): \(error)")
+            }
+        }
     }
 
     /// Set selected aggregators
@@ -599,13 +768,12 @@ class BridgeManager: ObservableObject {
 
     /// Get bridge status from API
     func getBridgeStatus(txHash: String, fromChain: Chain) async throws -> BridgeStatus {
-        let url = "https://api.rabby.io/v1/bridge/status"
-        let params: [String: Any] = [
+        let params: [String: String] = [
             "tx_id": txHash,
             "chain_id": fromChain.serverId,
         ]
 
-        let response: BridgeStatusResponse = try await networkManager.get(url: url, parameters: params)
+        let response: BridgeStatusResponse = try await openAPIService.get("/v1/bridge/status", params: params)
 
         return BridgeStatus(
             status: response.status,
@@ -645,6 +813,71 @@ class BridgeManager: ObservableObject {
         throw BridgeError.approvalTimeout
     }
 
+    private func isPositiveNumber(_ value: String) -> Bool {
+        guard let decimal = Decimal(string: value), decimal > 0 else {
+            return false
+        }
+        return true
+    }
+
+    private func decimalToUnitAmount(_ value: String, decimals: Int) -> BigUInt {
+        let parts = value.split(separator: ".", omittingEmptySubsequences: false)
+        let integerPart = parts.first.map(String.init) ?? "0"
+        let fractionRaw = parts.count > 1 ? String(parts[1]) : ""
+        let fraction = String(fractionRaw.prefix(decimals)).padding(
+            toLength: decimals,
+            withPad: "0",
+            startingAt: 0
+        )
+        let joined = (integerPart + fraction).trimmingCharacters(in: .whitespacesAndNewlines)
+        let normalized = joined.drop(while: { $0 == "0" })
+        if normalized.isEmpty {
+            return 0
+        }
+        return BigUInt(String(normalized)) ?? 0
+    }
+
+    private func parseEstimatedDuration(_ text: String) -> TimeInterval {
+        let lower = text.lowercased()
+        let values = lower
+            .split(whereSeparator: { !($0.isNumber || $0 == ".") })
+            .compactMap { Double($0) }
+        guard let base = values.max() ?? values.first else {
+            return 0
+        }
+        if lower.contains("hour") || lower.contains("hr") {
+            return base * 3600
+        }
+        if lower.contains("sec") {
+            return base
+        }
+        // Default minutes for strings like "3-5 minutes".
+        return base * 60
+    }
+
+    private func decimalNumber(_ value: String) -> Decimal {
+        Decimal(string: value) ?? 0
+    }
+
+    private func isNativeTokenAddress(_ tokenAddress: String, chain: Chain) -> Bool {
+        let normalized = tokenAddress.lowercased()
+        return normalized == chain.nativeTokenAddress.lowercased()
+            || normalized == "0x0000000000000000000000000000000000000000"
+            || normalized == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    }
+
+    private func resolveNativeBridgeValueHex(
+        fromAmount: String,
+        token: SwapManager.Token,
+        chain: Chain
+    ) -> String {
+        guard isNativeTokenAddress(token.address, chain: chain) else {
+            return "0x0"
+        }
+        let wei = decimalToUnitAmount(fromAmount, decimals: token.decimals)
+        return "0x" + String(wei, radix: 16)
+    }
+
     private func loadSettings() {
         if let data = storage.getData(forKey: bridgeKey),
            let settings = try? JSONDecoder().decode(BridgeSettings.self, from: data) {
@@ -667,7 +900,6 @@ class BridgeManager: ObservableObject {
 
     private func postBridge(fromChain: Chain, txHash: String, quote: BridgeQuote) async {
         // Report bridge to backend for analytics
-        let url = "https://api.rabby.io/v1/bridge/post"
         let params: [String: Any] = [
             "tx_id": txHash,
             "aggregator_id": quote.aggregatorId,
@@ -682,7 +914,7 @@ class BridgeManager: ObservableObject {
         ]
 
         do {
-            let _: BridgePostResponse = try await networkManager.post(url: url, body: params)
+            let _: BridgePostResponse = try await openAPIService.post("/v1/bridge/post", body: params)
         } catch {
             print("[BridgeManager] Failed to post bridge: \(error)")
         }
@@ -749,6 +981,8 @@ enum BridgeError: Error, LocalizedError {
     case approvalFailed(txHash: String)
     case approvalTimeout
     case insufficientBalance
+    case invalidAmount
+    case invalidUserAddress
     case quoteNotFound
     case bridgeNotSupported
     case invalidChain
@@ -767,6 +1001,10 @@ enum BridgeError: Error, LocalizedError {
             return "Approval transaction timed out waiting for confirmation"
         case .insufficientBalance:
             return "Insufficient balance"
+        case .invalidAmount:
+            return "Invalid bridge amount"
+        case .invalidUserAddress:
+            return "No wallet address selected"
         case .quoteNotFound:
             return "No bridge quote found"
         case .bridgeNotSupported:

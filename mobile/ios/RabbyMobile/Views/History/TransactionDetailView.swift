@@ -451,6 +451,7 @@ struct TransactionDetailView: View {
             } catch {
                 await MainActor.run {
                     isProcessing = false
+                    if error is CancellationError { return }
                     errorMessage = "Speed up failed: \(error.localizedDescription)"
                     showError = true
                 }
@@ -473,6 +474,7 @@ struct TransactionDetailView: View {
             } catch {
                 await MainActor.run {
                     isProcessing = false
+                    if error is CancellationError { return }
                     errorMessage = "Cancel failed: \(error.localizedDescription)"
                     showError = true
                 }

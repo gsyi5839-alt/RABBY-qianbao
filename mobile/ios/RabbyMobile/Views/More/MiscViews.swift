@@ -1,5 +1,7 @@
 import SwiftUI
+import UIKit
 import CoreImage.CIFilterBuiltins
+import UniformTypeIdentifiers
 
 /// Forgot Password View
 /// Corresponds to: src/ui/views/ForgotPassword/
@@ -10,6 +12,7 @@ struct ForgotPasswordView: View {
     @State private var confirmPassword = ""
     @State private var isRestoring = false
     @State private var errorMessage: String?
+    @State private var pasteHintMessage: String?
     @State private var showSuccess = false
     @Environment(\.dismiss) var dismiss
     
@@ -27,15 +30,37 @@ struct ForgotPasswordView: View {
                     
                     // Seed phrase
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(L("Enter Seed Phrase")).font(.headline)
-                        TextEditor(text: $seedPhrase)
+                        HStack {
+                            Text(L("Enter Seed Phrase")).font(.headline)
+                            Spacer()
+                            if #available(iOS 16.0, *) {
+                                PasteButton(payloadType: String.self) { values in
+                                    applyPastedSeedPhrase(values.joined(separator: " "))
+                                }
+                                .font(.caption)
+                            } else {
+                                Button(action: pasteSeedPhraseFromClipboard) {
+                                    HStack(spacing: 4) {
+                                        Image(systemName: "doc.on.clipboard")
+                                        Text(L("Paste"))
+                                    }
+                                    .font(.caption)
+                                }
+                            }
+                        }
+                        NoSuggestionSeedTextEditor(text: $seedPhrase)
                             .frame(minHeight: 120)
                             .padding(8)
                             .background(Color(.systemGray6))
                             .cornerRadius(8)
-                            .autocapitalization(.none)
                         Text(L("Enter your 12 or 24 word seed phrase, separated by spaces"))
                             .font(.caption).foregroundColor(.secondary)
+
+                        if let pasteHintMessage, !pasteHintMessage.isEmpty {
+                            Text(pasteHintMessage)
+                                .font(.caption)
+                                .foregroundColor(.orange)
+                        }
                     }
                     
                     // New password
@@ -87,7 +112,28 @@ struct ForgotPasswordView: View {
     }
     
     private var isValid: Bool {
-        !seedPhrase.isEmpty && newPassword.count >= 8 && newPassword == confirmPassword
+        !normalizeMnemonic(seedPhrase).isEmpty && newPassword.count >= 8 && newPassword == confirmPassword
+    }
+
+    private func pasteSeedPhraseFromClipboard() {
+        Task { @MainActor in
+            switch await readMnemonicClipboardWithRetry() {
+            case .success(let text):
+                applyPastedSeedPhrase(text)
+            case .empty:
+                pasteHintMessage = clipboardEmptyHint()
+            case .permissionDenied:
+                pasteHintMessage = clipboardPermissionDeniedHint()
+            }
+        }
+    }
+
+    private func applyPastedSeedPhrase(_ raw: String) {
+        let normalized = normalizeMnemonic(raw)
+        seedPhrase = normalized
+        pasteHintMessage = mnemonicWordCount(normalized) > 1
+            ? nil
+            : "Clipboard currently has only one word. In Simulator use Edit > Paste, then tap Paste again."
     }
     
     private func restoreWallet() {
@@ -95,12 +141,272 @@ struct ForgotPasswordView: View {
         Task {
             do {
                 try await keyringManager.restoreFromMnemonic(
-                    mnemonic: seedPhrase.trimmingCharacters(in: .whitespacesAndNewlines),
+                    mnemonic: normalizeMnemonic(seedPhrase),
                     password: newPassword
                 )
                 showSuccess = true
             } catch { errorMessage = error.localizedDescription }
             isRestoring = false
+        }
+    }
+
+    private func normalizeMnemonic(_ raw: String) -> String {
+        raw
+            .replacingOccurrences(of: ",", with: " ")
+            .replacingOccurrences(of: "，", with: " ")
+            .replacingOccurrences(of: "\u{00A0}", with: " ")
+            .replacingOccurrences(of: "\u{3000}", with: " ")
+            .components(separatedBy: .whitespacesAndNewlines)
+            .filter { !$0.isEmpty }
+            .joined(separator: " ")
+    }
+
+    private enum ClipboardReadResult {
+        case success(String)
+        case empty
+        case permissionDenied
+    }
+
+    private struct ClipboardSnapshot {
+        let candidates: [String]
+        let itemFragments: [String]
+    }
+
+    private func readClipboardString(joinMultipleItems: Bool) async -> ClipboardReadResult {
+        let snapshot = await clipboardSnapshot()
+        let candidates = snapshot.candidates
+
+        if joinMultipleItems {
+            if let bestPhrase = candidates.max(by: { mnemonicScore($0) < mnemonicScore($1) }),
+               mnemonicWordCount(bestPhrase) > 1 {
+                return .success(bestPhrase)
+            }
+
+            if snapshot.itemFragments.count > 1 {
+                return .success(snapshot.itemFragments.joined(separator: " "))
+            }
+            if let first = candidates.first {
+                return .success(first)
+            }
+        } else if let best = candidates.max(by: { $0.count < $1.count }) {
+            return .success(best)
+        }
+
+        if UIPasteboard.general.hasStrings || !UIPasteboard.general.itemProviders.isEmpty {
+            return .permissionDenied
+        }
+        return .empty
+    }
+
+    private func readMnemonicClipboardWithRetry() async -> ClipboardReadResult {
+        var lastResult: ClipboardReadResult = .empty
+        for attempt in 0..<8 {
+            let result = await readClipboardString(joinMultipleItems: true)
+            lastResult = result
+            if case .success(let text) = result, mnemonicWordCount(text) > 1 {
+                return result
+            }
+            if attempt < 7 {
+                try? await Task.sleep(nanoseconds: 200_000_000)
+            }
+        }
+        return lastResult
+    }
+
+    private func clipboardSnapshot() async -> ClipboardSnapshot {
+        let pasteboard = UIPasteboard.general
+        var candidates: [String] = []
+        var itemFragments: [String] = []
+
+        if let strings = pasteboard.strings {
+            candidates.append(contentsOf: strings)
+        }
+        if let string = pasteboard.string {
+            candidates.append(string)
+        }
+        for item in pasteboard.items {
+            var firstTextInItem: String?
+            for value in item.values {
+                guard let parsed = parseClipboardValue(value) else { continue }
+                candidates.append(parsed)
+                if firstTextInItem == nil {
+                    firstTextInItem = parsed
+                }
+            }
+            if let firstTextInItem {
+                itemFragments.append(firstTextInItem)
+            }
+        }
+
+        for typeIdentifier in preferredTextTypeIdentifiers() {
+            if let value = pasteboard.value(forPasteboardType: typeIdentifier),
+               let parsed = parseClipboardValue(value) {
+                candidates.append(parsed)
+            }
+            if let data = pasteboard.data(forPasteboardType: typeIdentifier),
+               let parsed = parseClipboardValue(data) {
+                candidates.append(parsed)
+            }
+        }
+
+        let providerTexts = await clipboardTextFromItemProviders(pasteboard.itemProviders)
+        candidates.append(contentsOf: providerTexts)
+
+        let normalizedCandidates = candidates
+            .map(normalizeClipboardText)
+            .filter { !$0.isEmpty }
+        let normalizedFragments = itemFragments
+            .map(normalizeClipboardText)
+            .filter { !$0.isEmpty }
+
+        return ClipboardSnapshot(candidates: normalizedCandidates, itemFragments: normalizedFragments)
+    }
+
+    private func clipboardTextFromItemProviders(_ itemProviders: [NSItemProvider]) async -> [String] {
+        var texts: [String] = []
+        let typeIdentifiers = preferredTextTypeIdentifiers()
+        for provider in itemProviders {
+            for typeIdentifier in typeIdentifiers where provider.hasItemConformingToTypeIdentifier(typeIdentifier) {
+                if let item = await loadItem(from: provider, typeIdentifier: typeIdentifier),
+                   let parsed = parseClipboardValue(item) {
+                    texts.append(parsed)
+                    break
+                }
+            }
+        }
+        return texts
+    }
+
+    private func loadItem(from provider: NSItemProvider, typeIdentifier: String) async -> NSSecureCoding? {
+        await withCheckedContinuation { continuation in
+            provider.loadItem(forTypeIdentifier: typeIdentifier, options: nil) { item, _ in
+                continuation.resume(returning: item)
+            }
+        }
+    }
+
+    private func preferredTextTypeIdentifiers() -> [String] {
+        [
+            UTType.utf8PlainText.identifier,
+            UTType.plainText.identifier,
+            UTType.text.identifier,
+            "public.utf8-plain-text",
+            "public.plain-text",
+            "public.text"
+        ]
+    }
+
+    private func parseClipboardValue(_ value: Any) -> String? {
+        if let text = value as? String {
+            return text
+        }
+        if let attributed = value as? NSAttributedString {
+            return attributed.string
+        }
+        if let data = value as? Data {
+            if let utf8 = String(data: data, encoding: .utf8) {
+                return utf8
+            }
+            if let utf16 = String(data: data, encoding: .utf16) {
+                return utf16
+            }
+            if let unicode = String(data: data, encoding: .unicode) {
+                return unicode
+            }
+        }
+        if let url = value as? URL {
+            return url.absoluteString
+        }
+        return nil
+    }
+
+    private func normalizeClipboardText(_ raw: String) -> String {
+        raw
+            .replacingOccurrences(of: "\u{00A0}", with: " ")
+            .replacingOccurrences(of: "\u{3000}", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private func mnemonicWordCount(_ value: String) -> Int {
+        value
+            .components(separatedBy: .whitespacesAndNewlines)
+            .filter { !$0.isEmpty }
+            .count
+    }
+
+    private func mnemonicScore(_ value: String) -> Int {
+        let wordCount = mnemonicWordCount(value)
+        return wordCount * 10_000 + value.count
+    }
+
+    private func clipboardPermissionDeniedHint() -> String {
+        "Paste was blocked by iOS. Open Settings > Rabby Wallet > Paste from Other Apps and set it to Allow."
+    }
+
+    private func clipboardEmptyHint() -> String {
+        #if targetEnvironment(simulator)
+        return "Clipboard is empty in this simulator. In Simulator use Edit > Paste to sync from Mac, then tap Paste again."
+        #else
+        return "Clipboard is empty. Copy your seed phrase again and retry."
+        #endif
+    }
+}
+
+private struct NoSuggestionSeedTextEditor: UIViewRepresentable {
+    @Binding var text: String
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(text: $text)
+    }
+
+    func makeUIView(context: Context) -> UITextView {
+        let textView = UITextView()
+        textView.delegate = context.coordinator
+        textView.font = UIFont.preferredFont(forTextStyle: .body)
+        textView.backgroundColor = .clear
+        textView.autocorrectionType = .no
+        textView.spellCheckingType = .no
+        textView.autocapitalizationType = .none
+        textView.smartQuotesType = .no
+        textView.smartDashesType = .no
+        textView.smartInsertDeleteType = .no
+        textView.keyboardType = .asciiCapable
+        textView.textContentType = .none
+        textView.textContainerInset = .zero
+        textView.textContainer.lineFragmentPadding = 0
+        textView.inputAssistantItem.leadingBarButtonGroups = []
+        textView.inputAssistantItem.trailingBarButtonGroups = []
+        return textView
+    }
+
+    func updateUIView(_ uiView: UITextView, context: Context) {
+        if uiView.text != text {
+            let selectedRange = uiView.selectedRange
+            context.coordinator.isProgrammaticUpdate = true
+            uiView.delegate = nil
+            uiView.text = text
+            uiView.selectedRange = selectedRange
+            uiView.delegate = context.coordinator
+            context.coordinator.isProgrammaticUpdate = false
+        }
+    }
+
+    final class Coordinator: NSObject, UITextViewDelegate {
+        @Binding var text: String
+        var isProgrammaticUpdate = false
+
+        init(text: Binding<String>) {
+            self._text = text
+        }
+
+        func textViewDidChange(_ textView: UITextView) {
+            guard !isProgrammaticUpdate else { return }
+            let next = textView.text ?? ""
+            guard text != next else { return }
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                self.text = next
+            }
         }
     }
 }
@@ -177,4 +483,3 @@ struct SignedTextHistoryView: View {
         signHistory.clearHistory(for: address)
     }
 }
-

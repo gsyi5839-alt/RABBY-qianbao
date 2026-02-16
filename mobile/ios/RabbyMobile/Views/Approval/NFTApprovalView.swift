@@ -217,7 +217,7 @@ class NFTApprovalViewModel: ObservableObject {
 
         do {
             let fromAddress = KeyringManager.shared.currentAccount?.address ?? ""
-            let chain = ChainManager.shared.selectedChain ?? Chain.ethereum
+            let chain = resolveChain(for: approval) ?? ChainManager.shared.selectedChain ?? Chain.ethereum
             let tx = try await TransactionManager.shared.buildTransaction(
                 from: fromAddress,
                 to: approval.contractAddress,
@@ -231,6 +231,19 @@ class NFTApprovalViewModel: ObservableObject {
         } catch {
             print("Failed to revoke: \(error)")
         }
+    }
+
+    private func resolveChain(for approval: NFTApprovalItem) -> Chain? {
+        guard let chainId = approval.chain, !chainId.isEmpty else {
+            return nil
+        }
+        if let chain = ChainManager.shared.getChain(serverId: chainId) {
+            return chain
+        }
+        if let intChainId = Int(chainId), let chain = ChainManager.shared.getChain(byId: intChainId) {
+            return chain
+        }
+        return nil
     }
 
     private func buildSetApprovalForAll(operator addr: String, approved: Bool) -> Data {
@@ -260,6 +273,7 @@ struct NFTApprovalItem: Identifiable, Codable {
     let approvedCount: Int
     let isApprovalForAll: Bool
     let tokenId: String?
+    let chain: String?
     let riskLevel: String // "safe", "warning", "danger"
 
     var riskColor: Color {
@@ -278,6 +292,7 @@ struct NFTApprovalItem: Identifiable, Codable {
         case approvedCount = "approved_count"
         case isApprovalForAll = "is_approval_for_all"
         case tokenId = "token_id"
+        case chain
         case riskLevel = "risk_level"
     }
 }

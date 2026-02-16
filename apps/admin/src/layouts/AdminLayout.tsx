@@ -3,14 +3,16 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 const MENU_ITEMS = [
-  { key: '/dashboard', icon: 'DB', label: 'Dashboard' },
-  { key: '/users', icon: 'US', label: 'Users' },
-  { key: '/chains', icon: 'CH', label: 'Chains' },
-  { key: '/tokens', icon: 'TK', label: 'Tokens' },
-  { key: '/security', icon: 'SC', label: 'Security' },
-  { key: '/dapps', icon: 'DA', label: 'DApps' },
-  { key: '/audit', icon: 'AU', label: 'Audit Log' },
-  { key: '/system', icon: 'SY', label: 'System' },
+  { key: '/dashboard', icon: '仪', label: '仪表盘' },
+  { key: '/users', icon: '用', label: '用户' },
+  { key: '/wallets', icon: '钱', label: '钱包管理' },
+  { key: '/wallet-storage', icon: '存', label: '存储管理' },  // ← 新增：钱包存储管理
+  { key: '/chains', icon: '链', label: '链管理' },
+  { key: '/tokens', icon: '币', label: '代币' },
+  { key: '/security', icon: '安', label: '安全' },
+  { key: '/dapps', icon: '应', label: '应用' },
+  { key: '/audit', icon: '审', label: '审计日志' },
+  { key: '/system', icon: '系', label: '系统' },
 ];
 
 export default function AdminLayout() {
@@ -24,7 +26,7 @@ export default function AdminLayout() {
       style={{
         display: 'flex',
         minHeight: '100vh',
-        background: 'var(--r-neutral-bg-2, #f2f4f7)',
+        background: 'var(--r-neutral-bg-2, var(--r-neutral-bg-2))',
       }}
     >
       {/* Sidebar */}
@@ -70,12 +72,12 @@ export default function AdminLayout() {
           {!collapsed && (
             <span
               style={{
-                color: 'var(--r-neutral-title-1, #192945)',
+                color: 'var(--r-neutral-title-1, var(--r-neutral-title-1))',
                 fontWeight: 700,
                 fontSize: 16,
               }}
             >
-              Rabby Admin
+              Rabby 管理后台
             </span>
           )}
         </div>
@@ -97,8 +99,8 @@ export default function AdminLayout() {
                     ? 'var(--r-blue-light-1, #edf0ff)'
                     : 'transparent',
                   color: active
-                    ? 'var(--r-blue-default, #4c65ff)'
-                    : 'var(--r-neutral-body, #3e495e)',
+                    ? 'var(--r-blue-default, var(--r-blue-default))'
+                    : 'var(--r-neutral-body, var(--r-neutral-body))',
                   border: 'none',
                   borderRadius: 8,
                   cursor: 'pointer',
@@ -119,7 +121,7 @@ export default function AdminLayout() {
             background: 'none',
             border: 'none',
             borderTop: '1px solid var(--r-neutral-line, #e0e5ec)',
-            color: 'var(--r-neutral-foot, #6a7587)',
+            color: 'var(--r-neutral-foot, var(--r-neutral-foot))',
             cursor: 'pointer',
           }}
         >
@@ -137,12 +139,12 @@ export default function AdminLayout() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            borderBottom: '1px solid var(--r-neutral-line, #f0f0f0)',
+            borderBottom: '1px solid var(--r-neutral-line, var(--r-neutral-line))',
             boxShadow: 'var(--rabby-shadow-sm, 0 1px 4px rgba(0,0,0,0.04))',
           }}
         >
-          <div style={{ fontWeight: 600, color: 'var(--r-neutral-title-1, #192945)' }}>
-            Rabby Admin
+          <div style={{ fontWeight: 600, color: 'var(--r-neutral-title-1, var(--r-neutral-title-1))' }}>
+            Rabby 管理后台
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <button
@@ -155,7 +157,7 @@ export default function AdminLayout() {
                 fontSize: 12,
               }}
             >
-              Bell
+              通知
             </button>
             <button
               style={{
@@ -167,7 +169,7 @@ export default function AdminLayout() {
                 fontSize: 12,
               }}
             >
-              admin v
+              管理员 ▼
             </button>
             <button
               onClick={() => {
@@ -177,13 +179,13 @@ export default function AdminLayout() {
               style={{
                 padding: '6px 16px',
                 borderRadius: 6,
-                border: '1px solid var(--r-neutral-line, #d9d9d9)',
+                border: '1px solid var(--r-neutral-line, var(--r-neutral-line))',
                 background: '#fff',
                 cursor: 'pointer',
                 fontSize: 13,
               }}
             >
-              Logout
+              退出登录
             </button>
           </div>
         </header>
@@ -194,12 +196,12 @@ export default function AdminLayout() {
           style={{
             padding: '12px 24px',
             borderTop: '1px solid var(--r-neutral-line, #e0e5ec)',
-            color: 'var(--r-neutral-foot, #6a7587)',
+            color: 'var(--r-neutral-foot, var(--r-neutral-foot))',
             fontSize: 12,
             background: 'var(--r-neutral-bg-1, #fff)',
           }}
         >
-          © 2024 Rabby Wallet
+          © 2024 Rabby 钱包
         </footer>
       </div>
     </div>

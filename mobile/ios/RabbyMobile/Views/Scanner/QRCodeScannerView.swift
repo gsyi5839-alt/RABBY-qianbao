@@ -422,6 +422,98 @@ struct ScanCorners: Shape {
     }
 }
 
+// MARK: - UniversalQRScannerView
+
+/// Purpose-specific scanner that validates scanned content before returning.
+/// Wraps the existing QRCodeScannerView with validation per use-case.
+struct UniversalQRScannerView: View {
+    @Environment(\.dismiss) private var dismiss
+
+    enum ScanPurpose {
+        case walletConnect
+        case watchAddress
+        case privateKey
+        case generic
+    }
+
+    let purpose: ScanPurpose
+    let onResult: (String) -> Void
+
+    @State private var validationError: String?
+
+    var body: some View {
+        ZStack {
+            QRCodeScannerView { scanResult in
+                let raw: String
+                switch scanResult {
+                case .walletConnectURI(let s): raw = s
+                case .ethereumAddress(let s):  raw = s
+                case .url(let s):              raw = s
+                case .text(let s):             raw = s
+                }
+
+                if let error = validate(raw) {
+                    validationError = error
+                } else {
+                    onResult(raw)
+                    // QRCodeScannerView already dismisses itself
+                }
+            }
+
+            // Validation error toast
+            if let error = validationError {
+                VStack {
+                    Spacer()
+                    HStack(spacing: 8) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundColor(.white)
+                        Text(error)
+                            .font(.subheadline)
+                            .foregroundColor(.white)
+                    }
+                    .padding()
+                    .background(Color.red.opacity(0.9))
+                    .cornerRadius(12)
+                    .padding(.horizontal)
+                    .padding(.bottom, 100)
+                }
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                        withAnimation { validationError = nil }
+                    }
+                }
+            }
+        }
+    }
+
+    /// Returns an error message if the scanned string doesn't match the expected purpose, or nil if valid.
+    private func validate(_ code: String) -> String? {
+        switch purpose {
+        case .walletConnect:
+            if code.lowercased().hasPrefix("wc:") { return nil }
+            return "Not a valid WalletConnect URI"
+
+        case .watchAddress:
+            let trimmed = code.trimmingCharacters(in: .whitespacesAndNewlines)
+            if trimmed.hasPrefix("0x"), trimmed.count == 42,
+               trimmed.dropFirst(2).allSatisfy({ $0.isHexDigit }) {
+                return nil
+            }
+            return "Not a valid Ethereum address (0x + 40 hex)"
+
+        case .privateKey:
+            var key = code.trimmingCharacters(in: .whitespacesAndNewlines)
+            if key.hasPrefix("0x") { key = String(key.dropFirst(2)) }
+            if key.count == 64, key.allSatisfy({ $0.isHexDigit }) { return nil }
+            return "Not a valid private key (64 hex characters)"
+
+        case .generic:
+            return code.isEmpty ? "Empty QR code" : nil
+        }
+    }
+}
+
 // MARK: - Preview
 
 struct QRCodeScannerView_Previews: PreviewProvider {

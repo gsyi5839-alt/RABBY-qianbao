@@ -1,6 +1,8 @@
 import Foundation
 import SQLite3
 
+private let SQLITE_TRANSIENT = unsafeBitCast(-1, to: sqlite3_destructor_type.self)
+
 /// SQLite Database Manager for structured data storage
 /// Handles transaction history, tokens, NFTs, and other relational data
 /// Uses iOS built-in SQLite3 (no external dependencies)
@@ -193,8 +195,13 @@ class DatabaseManager {
         let createConnectedSitesTable = """
         CREATE TABLE IF NOT EXISTS connected_sites (
             origin TEXT PRIMARY KEY,
+            url TEXT,
             name TEXT NOT NULL,
             icon TEXT,
+            chain_id TEXT,
+            permissions_json TEXT,
+            connection_type TEXT,
+            connected_address TEXT,
             is_connected INTEGER DEFAULT 1,
             connected_at INTEGER NOT NULL,
             last_used_at INTEGER
@@ -204,10 +211,23 @@ class DatabaseManager {
         // Address Book / Contacts Table
         let createContactsTable = """
         CREATE TABLE IF NOT EXISTS contacts (
+            id TEXT,
             address TEXT PRIMARY KEY,
             name TEXT NOT NULL,
+            is_alias INTEGER DEFAULT 0,
+            is_contact INTEGER DEFAULT 1,
+            cex_id TEXT,
             note TEXT,
             added_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL
+        );
+        """
+
+        // Extension-style key-value store for JSON/blob payloads.
+        let createKVStoreTable = """
+        CREATE TABLE IF NOT EXISTS kv_store (
+            key TEXT PRIMARY KEY,
+            value BLOB NOT NULL,
             updated_at INTEGER NOT NULL
         );
         """
@@ -225,7 +245,8 @@ class DatabaseManager {
             createBridgeHistoryTable,
             createBridgeIndexes,
             createConnectedSitesTable,
-            createContactsTable
+            createContactsTable,
+            createKVStoreTable
         ]
 
         for statement in statements {
@@ -235,7 +256,50 @@ class DatabaseManager {
             }
         }
 
+        applySchemaMigrations()
+
         print("✅ [DatabaseManager] All tables created successfully")
+    }
+
+    private func applySchemaMigrations() {
+        ensureColumn(table: "connected_sites", column: "url", definition: "TEXT")
+        ensureColumn(table: "connected_sites", column: "chain_id", definition: "TEXT")
+        ensureColumn(table: "connected_sites", column: "permissions_json", definition: "TEXT")
+        ensureColumn(table: "connected_sites", column: "connection_type", definition: "TEXT")
+        ensureColumn(table: "connected_sites", column: "connected_address", definition: "TEXT")
+
+        ensureColumn(table: "contacts", column: "id", definition: "TEXT")
+        ensureColumn(table: "contacts", column: "is_alias", definition: "INTEGER DEFAULT 0")
+        ensureColumn(table: "contacts", column: "is_contact", definition: "INTEGER DEFAULT 1")
+        ensureColumn(table: "contacts", column: "cex_id", definition: "TEXT")
+    }
+
+    private func ensureColumn(table: String, column: String, definition: String) {
+        guard !columnExists(table: table, column: column) else { return }
+        let sql = "ALTER TABLE \(table) ADD COLUMN \(column) \(definition);"
+        if sqlite3_exec(db, sql, nil, nil, nil) != SQLITE_OK {
+            let errorMessage = String(cString: sqlite3_errmsg(db))
+            print("❌ [DatabaseManager] Failed to migrate \(table).\(column): \(errorMessage)")
+        }
+    }
+
+    private func columnExists(table: String, column: String) -> Bool {
+        let sql = "PRAGMA table_info(\(table));"
+        var statement: OpaquePointer?
+        defer { sqlite3_finalize(statement) }
+
+        guard sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK else {
+            return false
+        }
+
+        while sqlite3_step(statement) == SQLITE_ROW {
+            guard let cString = sqlite3_column_text(statement, 1) else { continue }
+            if String(cString: cString) == column {
+                return true
+            }
+        }
+
+        return false
     }
 
     // MARK: - Transaction Operations
@@ -311,7 +375,7 @@ class DatabaseManager {
 
     func getTransactions(address: String, chainId: String? = nil, limit: Int = 100) throws -> [Transaction] {
         var sql = "SELECT * FROM transactions WHERE address = ?"
-        if let chainId = chainId {
+        if chainId != nil {
             sql += " AND chain_id = ?"
         }
         sql += " ORDER BY created_at DESC LIMIT ?;"
@@ -525,9 +589,278 @@ class DatabaseManager {
         return tokens
     }
 
+    // MARK: - Connected Site Operations
+
+    struct ConnectedSiteRecord {
+        let origin: String
+        let url: String
+        let name: String
+        let icon: String?
+        let chainId: String?
+        let permissionsJSON: String?
+        let connectionType: String?
+        let connectedAddress: String?
+        let isConnected: Bool
+        let connectedAt: Date
+        let lastUsedAt: Date?
+    }
+
+    func upsertConnectedSite(_ site: ConnectedSiteRecord) throws {
+        let sql = """
+        INSERT OR REPLACE INTO connected_sites
+        (origin, url, name, icon, chain_id, permissions_json, connection_type, connected_address, is_connected, connected_at, last_used_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        """
+
+        var statement: OpaquePointer?
+        defer { sqlite3_finalize(statement) }
+
+        guard sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK else {
+            throw DatabaseError.prepareFailed(String(cString: sqlite3_errmsg(db)))
+        }
+
+        sqlite3_bind_text(statement, 1, (site.origin as NSString).utf8String, -1, nil)
+        sqlite3_bind_text(statement, 2, (site.url as NSString).utf8String, -1, nil)
+        sqlite3_bind_text(statement, 3, (site.name as NSString).utf8String, -1, nil)
+        bindTextOrNull(statement, 4, site.icon)
+        bindTextOrNull(statement, 5, site.chainId)
+        bindTextOrNull(statement, 6, site.permissionsJSON)
+        bindTextOrNull(statement, 7, site.connectionType)
+        bindTextOrNull(statement, 8, site.connectedAddress)
+        sqlite3_bind_int(statement, 9, site.isConnected ? 1 : 0)
+        sqlite3_bind_int64(statement, 10, Int64(site.connectedAt.timeIntervalSince1970))
+        bindInt64OrNull(statement, 11, site.lastUsedAt?.timeIntervalSince1970)
+
+        guard sqlite3_step(statement) == SQLITE_DONE else {
+            throw DatabaseError.executeFailed(String(cString: sqlite3_errmsg(db)))
+        }
+    }
+
+    func replaceConnectedSites(_ sites: [ConnectedSiteRecord]) throws {
+        guard sqlite3_exec(db, "BEGIN TRANSACTION", nil, nil, nil) == SQLITE_OK else {
+            throw DatabaseError.executeFailed(String(cString: sqlite3_errmsg(db)))
+        }
+
+        do {
+            try executeUpdate("DELETE FROM connected_sites;", params: [])
+            for site in sites {
+                try upsertConnectedSite(site)
+            }
+            guard sqlite3_exec(db, "COMMIT", nil, nil, nil) == SQLITE_OK else {
+                throw DatabaseError.executeFailed(String(cString: sqlite3_errmsg(db)))
+            }
+        } catch {
+            sqlite3_exec(db, "ROLLBACK", nil, nil, nil)
+            throw error
+        }
+    }
+
+    func getConnectedSites(includeDisconnected: Bool = true) throws -> [ConnectedSiteRecord] {
+        var sql = "SELECT origin, url, name, icon, chain_id, permissions_json, connection_type, connected_address, is_connected, connected_at, last_used_at FROM connected_sites"
+        if !includeDisconnected {
+            sql += " WHERE is_connected = 1"
+        }
+        sql += " ORDER BY connected_at DESC;"
+
+        var statement: OpaquePointer?
+        defer { sqlite3_finalize(statement) }
+
+        guard sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK else {
+            throw DatabaseError.prepareFailed(String(cString: sqlite3_errmsg(db)))
+        }
+
+        var sites: [ConnectedSiteRecord] = []
+        while sqlite3_step(statement) == SQLITE_ROW {
+            let origin = String(cString: sqlite3_column_text(statement, 0))
+            let url = getTextOrNull(statement, 1) ?? origin
+            let name = String(cString: sqlite3_column_text(statement, 2))
+            let icon = getTextOrNull(statement, 3)
+            let chainId = getTextOrNull(statement, 4)
+            let permissionsJSON = getTextOrNull(statement, 5)
+            let connectionType = getTextOrNull(statement, 6)
+            let connectedAddress = getTextOrNull(statement, 7)
+            let isConnected = sqlite3_column_int(statement, 8) == 1
+            let connectedAt = Date(timeIntervalSince1970: sqlite3_column_double(statement, 9))
+            let lastUsedAt = getDateOrNull(statement, 10)
+
+            sites.append(
+                ConnectedSiteRecord(
+                    origin: origin,
+                    url: url,
+                    name: name,
+                    icon: icon,
+                    chainId: chainId,
+                    permissionsJSON: permissionsJSON,
+                    connectionType: connectionType,
+                    connectedAddress: connectedAddress,
+                    isConnected: isConnected,
+                    connectedAt: connectedAt,
+                    lastUsedAt: lastUsedAt
+                )
+            )
+        }
+
+        return sites
+    }
+
+    func deleteConnectedSite(origin: String) throws {
+        try executeUpdate("DELETE FROM connected_sites WHERE origin = ?;", params: [origin])
+    }
+
+    // MARK: - Contact Operations
+
+    struct ContactRecord {
+        let id: String
+        let address: String
+        let name: String
+        let isAlias: Bool
+        let isContact: Bool
+        let cexId: String?
+        let note: String?
+        let addedAt: Date
+        let updatedAt: Date
+    }
+
+    func upsertContact(_ contact: ContactRecord) throws {
+        let sql = """
+        INSERT OR REPLACE INTO contacts
+        (id, address, name, is_alias, is_contact, cex_id, note, added_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+        """
+
+        var statement: OpaquePointer?
+        defer { sqlite3_finalize(statement) }
+
+        guard sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK else {
+            throw DatabaseError.prepareFailed(String(cString: sqlite3_errmsg(db)))
+        }
+
+        sqlite3_bind_text(statement, 1, (contact.id as NSString).utf8String, -1, nil)
+        sqlite3_bind_text(statement, 2, (contact.address.lowercased() as NSString).utf8String, -1, nil)
+        sqlite3_bind_text(statement, 3, (contact.name as NSString).utf8String, -1, nil)
+        sqlite3_bind_int(statement, 4, contact.isAlias ? 1 : 0)
+        sqlite3_bind_int(statement, 5, contact.isContact ? 1 : 0)
+        bindTextOrNull(statement, 6, contact.cexId)
+        bindTextOrNull(statement, 7, contact.note)
+        sqlite3_bind_int64(statement, 8, Int64(contact.addedAt.timeIntervalSince1970))
+        sqlite3_bind_int64(statement, 9, Int64(contact.updatedAt.timeIntervalSince1970))
+
+        guard sqlite3_step(statement) == SQLITE_DONE else {
+            throw DatabaseError.executeFailed(String(cString: sqlite3_errmsg(db)))
+        }
+    }
+
+    func replaceContacts(_ contacts: [ContactRecord]) throws {
+        guard sqlite3_exec(db, "BEGIN TRANSACTION", nil, nil, nil) == SQLITE_OK else {
+            throw DatabaseError.executeFailed(String(cString: sqlite3_errmsg(db)))
+        }
+
+        do {
+            try executeUpdate("DELETE FROM contacts;", params: [])
+            for contact in contacts {
+                try upsertContact(contact)
+            }
+            guard sqlite3_exec(db, "COMMIT", nil, nil, nil) == SQLITE_OK else {
+                throw DatabaseError.executeFailed(String(cString: sqlite3_errmsg(db)))
+            }
+        } catch {
+            sqlite3_exec(db, "ROLLBACK", nil, nil, nil)
+            throw error
+        }
+    }
+
+    func getContacts() throws -> [ContactRecord] {
+        let sql = """
+        SELECT id, address, name, is_alias, is_contact, cex_id, note, added_at, updated_at
+        FROM contacts
+        ORDER BY updated_at DESC;
+        """
+
+        var statement: OpaquePointer?
+        defer { sqlite3_finalize(statement) }
+
+        guard sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK else {
+            throw DatabaseError.prepareFailed(String(cString: sqlite3_errmsg(db)))
+        }
+
+        var contacts: [ContactRecord] = []
+        while sqlite3_step(statement) == SQLITE_ROW {
+            contacts.append(
+                ContactRecord(
+                    id: getTextOrNull(statement, 0) ?? UUID().uuidString,
+                    address: String(cString: sqlite3_column_text(statement, 1)),
+                    name: String(cString: sqlite3_column_text(statement, 2)),
+                    isAlias: sqlite3_column_int(statement, 3) == 1,
+                    isContact: sqlite3_column_int(statement, 4) == 1,
+                    cexId: getTextOrNull(statement, 5),
+                    note: getTextOrNull(statement, 6),
+                    addedAt: Date(timeIntervalSince1970: sqlite3_column_double(statement, 7)),
+                    updatedAt: Date(timeIntervalSince1970: sqlite3_column_double(statement, 8))
+                )
+            )
+        }
+
+        return contacts
+    }
+
+    func deleteContact(address: String) throws {
+        try executeUpdate("DELETE FROM contacts WHERE address = ?;", params: [address.lowercased()])
+    }
+
+    // MARK: - KV Store Operations
+
+    func setValueData(_ data: Data, forKey key: String) throws {
+        let sql = """
+        INSERT OR REPLACE INTO kv_store (key, value, updated_at)
+        VALUES (?, ?, ?);
+        """
+
+        var statement: OpaquePointer?
+        defer { sqlite3_finalize(statement) }
+
+        guard sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK else {
+            throw DatabaseError.prepareFailed(String(cString: sqlite3_errmsg(db)))
+        }
+
+        sqlite3_bind_text(statement, 1, (key as NSString).utf8String, -1, nil)
+        _ = data.withUnsafeBytes { bytes in
+            sqlite3_bind_blob(statement, 2, bytes.baseAddress, Int32(data.count), SQLITE_TRANSIENT)
+        }
+        sqlite3_bind_int64(statement, 3, Int64(Date().timeIntervalSince1970))
+
+        guard sqlite3_step(statement) == SQLITE_DONE else {
+            throw DatabaseError.executeFailed(String(cString: sqlite3_errmsg(db)))
+        }
+    }
+
+    func getValueData(forKey key: String) throws -> Data? {
+        let sql = "SELECT value FROM kv_store WHERE key = ? LIMIT 1;"
+        var statement: OpaquePointer?
+        defer { sqlite3_finalize(statement) }
+
+        guard sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK else {
+            throw DatabaseError.prepareFailed(String(cString: sqlite3_errmsg(db)))
+        }
+        sqlite3_bind_text(statement, 1, (key as NSString).utf8String, -1, nil)
+
+        guard sqlite3_step(statement) == SQLITE_ROW else {
+            return nil
+        }
+
+        guard let bytes = sqlite3_column_blob(statement, 0) else {
+            return nil
+        }
+        let length = Int(sqlite3_column_bytes(statement, 0))
+        return Data(bytes: bytes, count: length)
+    }
+
+    func removeValue(forKey key: String) throws {
+        try executeUpdate("DELETE FROM kv_store WHERE key = ?;", params: [key])
+    }
+
     // MARK: - Utility Methods
 
-    private func executeUpdate(_ sql: String, params: [String]) throws {
+    private func executeUpdate(_ sql: String, params: [String?]) throws {
         var statement: OpaquePointer?
         defer { sqlite3_finalize(statement) }
 
@@ -536,7 +869,11 @@ class DatabaseManager {
         }
 
         for (index, param) in params.enumerated() {
-            sqlite3_bind_text(statement, Int32(index + 1), (param as NSString).utf8String, -1, nil)
+            if let param {
+                sqlite3_bind_text(statement, Int32(index + 1), (param as NSString).utf8String, -1, nil)
+            } else {
+                sqlite3_bind_null(statement, Int32(index + 1))
+            }
         }
 
         guard sqlite3_step(statement) == SQLITE_DONE else {

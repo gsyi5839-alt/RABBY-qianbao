@@ -285,6 +285,151 @@ yarn web:dev
 yarn admin:dev
 ```
 
+## Production Server & Deployment
+
+### Server Connection
+
+**SSH Access:**
+```bash
+# Server IP: 154.89.152.172
+# SSH Port: 33216 (NOT default 22)
+# Username: root
+
+ssh -p 33216 root@154.89.152.172
+```
+
+**Important**: Always use port **33216** for SSH connections to the production server.
+
+### Deployment Configuration
+
+**Server Location**: `/root/projects/RABBY-qianbao/`
+
+**Running Services (PM2):**
+```bash
+# View all services
+pm2 list
+
+# API service
+pm2 restart rabby-api
+pm2 logs rabby-api
+
+# Check service status
+pm2 status rabby-api
+```
+
+**Nginx Configuration**: `/etc/nginx/sites-available/bocail.com`
+
+### Production URLs
+
+- **Main Website**: https://bocail.com
+- **Admin Dashboard**: https://bocail.com/admin
+- **API Endpoint**: https://bocail.com/api/
+
+**Admin Login Credentials:**
+- Username: `1019683427`
+- Password: `xie080886`
+- Role: `super_admin`
+
+### Database Configuration
+
+**PostgreSQL Database:**
+```bash
+# Database: rabby_db
+# User: rabby_user
+# Password: rabby_password_2024
+# Host: localhost
+# Port: 5432
+
+# Connect to database
+psql -U rabby_user -d rabby_db
+```
+
+**Important Tables:**
+- `admins`: Admin users with roles (admin, super_admin)
+- `dapps`: DApp directory
+- `security_rules`: Security rules and alerts
+- `wallets`: Wallet backup data (if implemented)
+
+### Common Deployment Tasks
+
+**Update API Code:**
+```bash
+ssh -p 33216 root@154.89.152.172
+
+cd /root/projects/RABBY-qianbao/apps/api
+# Make changes to dist files or rebuild
+pm2 restart rabby-api
+pm2 logs rabby-api --lines 50
+```
+
+**Update Admin Frontend:**
+```bash
+# Build locally
+cd /Users/macbook/Downloads/Rabby-0.93.77/apps/admin
+yarn build
+
+# Upload to server
+scp -P 33216 -r dist/* root@154.89.152.172:/root/projects/RABBY-qianbao/apps/admin/dist/
+
+# No restart needed (static files)
+```
+
+**Update Nginx Configuration:**
+```bash
+ssh -p 33216 root@154.89.152.172
+
+nano /etc/nginx/sites-available/bocail.com
+nginx -t  # Test configuration
+systemctl reload nginx
+```
+
+**Database Migration:**
+```bash
+ssh -p 33216 root@154.89.152.172
+
+cd /root/projects/RABBY-qianbao/apps/api/db/migrations
+psql -U rabby_user -d rabby_db -f 001_migration.sql
+```
+
+### Troubleshooting
+
+**Check Logs:**
+```bash
+# PM2 logs
+pm2 logs rabby-api
+
+# Nginx access logs
+tail -f /var/log/nginx/access.log
+
+# Nginx error logs
+tail -f /var/log/nginx/error.log
+
+# System logs
+journalctl -u nginx -f
+```
+
+**Common Issues:**
+
+1. **403 Forbidden on Admin APIs**
+   - Check `auth.js` middleware supports `super_admin` role
+   - Verify JWT token is valid and not expired
+   - Solution: Update `adminRequired` function to accept both `admin` and `super_admin`
+
+2. **API Not Responding**
+   - Check PM2 status: `pm2 status rabby-api`
+   - Restart: `pm2 restart rabby-api`
+   - Check logs: `pm2 logs rabby-api --lines 100`
+
+3. **Database Connection Errors**
+   - Verify PostgreSQL is running: `systemctl status postgresql`
+   - Check credentials in `/root/projects/RABBY-qianbao/apps/api/dist/apps/api/src/config.js`
+   - Test connection: `psql -U rabby_user -d rabby_db`
+
+4. **Static Files Not Loading**
+   - Check Nginx configuration for correct `alias` paths
+   - Verify file permissions: `ls -la /root/projects/RABBY-qianbao/apps/admin/dist/`
+   - Clear browser cache or use incognito mode
+
 ## Manifest Types
 
 The extension supports both Chrome MV3 and Firefox MV2:

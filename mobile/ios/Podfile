@@ -62,6 +62,16 @@ post_install do |installer|
 
       # Fix rsync sandbox permission errors in Xcode 15+
       config.build_settings['ENABLE_USER_SCRIPT_SANDBOXING'] = 'NO'
+      
+      # Fix framework header warnings (double-quoted includes, @import)
+      if ['EFQRCode', 'secp256k1.swift'].include?(target.name)
+        config.build_settings['CLANG_ENABLE_MODULES'] = 'YES'
+        config.build_settings['DEFINES_MODULE'] = 'YES'
+        config.build_settings['GCC_WARN_INHIBIT_ALL_WARNINGS'] = 'YES'
+        config.build_settings['CLANG_WARN_DOCUMENTATION_COMMENTS'] = 'NO'
+        # Convert double-quoted includes to angle-bracketed automatically
+        config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
+      end
 
       # Fix: Suppress ld "search path not found" warnings caused by
       # Xcode 26.x Metal toolchain cryptex (read-only filesystem).
@@ -71,6 +81,57 @@ post_install do |installer|
         ldflags.push('-Xlinker', '-w')
       end
       config.build_settings['OTHER_LDFLAGS'] = ldflags
+    end
+  end
+
+  # Fix secp256k1.swift missing private module map warning
+  installer.pods_project.targets.each do |target|
+    if target.name == 'secp256k1.swift'
+      target.build_configurations.each do |config|
+        config.build_settings['MODULEMAP_PRIVATE_FILE'] = ''
+        # Xcode 26 may warn: "there are private headers but no module map".
+        # Ensure no private headers are emitted for this pod target.
+        config.build_settings['PRIVATE_HEADERS_FOLDER_PATH'] = ''
+      end
+    end
+  end
+
+  # Patch EFQRCode headers to fix module verifier errors
+  efqr_header = File.join(installer.sandbox.root, 'EFQRCode', 'Source', 'EFQRCode.h')
+  if File.exist?(efqr_header)
+    content = File.read(efqr_header)
+    if content.include?('@import Foundation;')
+      File.chmod(0644, efqr_header)
+      File.write(efqr_header, content.gsub('@import Foundation;', '#import <Foundation/Foundation.h>'))
+    end
+  end
+  efqr_umbrella = File.join(installer.sandbox.root, 'Target Support Files', 'EFQRCode', 'EFQRCode-umbrella.h')
+  if File.exist?(efqr_umbrella)
+    content = File.read(efqr_umbrella)
+    if content.include?('#import "EFQRCode.h"')
+      File.write(efqr_umbrella, content.gsub('#import "EFQRCode.h"', '#import <EFQRCode/EFQRCode.h>'))
+    end
+  end
+
+  # Patch secp256k1.swift headers to fix module verifier errors
+  secp256k1_umbrella = File.join(installer.sandbox.root, 'Target Support Files', 'secp256k1.swift', 'secp256k1.swift-umbrella.h')
+  if File.exist?(secp256k1_umbrella)
+    content = File.read(secp256k1_umbrella)
+    patched = content
+      .gsub('#import "secp256k1.h"', '#import <secp256k1/secp256k1.h>')
+      .gsub('#import "secp256k1_ecdh.h"', '#import <secp256k1/secp256k1_ecdh.h>')
+      .gsub('#import "secp256k1_recovery.h"', '#import <secp256k1/secp256k1_recovery.h>')
+    File.write(secp256k1_umbrella, patched) if patched != content
+  end
+  secp256k1_include = File.join(installer.sandbox.root, 'secp256k1.swift', 'secp256k1', 'Classes', 'secp256k1', 'include')
+  ['secp256k1_ecdh.h', 'secp256k1_recovery.h'].each do |header|
+    path = File.join(secp256k1_include, header)
+    if File.exist?(path)
+      content = File.read(path)
+      if content.include?('#include "secp256k1.h"')
+        File.chmod(0644, path)
+        File.write(path, content.gsub('#include "secp256k1.h"', '#include <secp256k1/secp256k1.h>'))
+      end
     end
   end
 

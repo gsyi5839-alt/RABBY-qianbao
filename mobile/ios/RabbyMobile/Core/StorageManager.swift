@@ -39,7 +39,7 @@ class StorageManager {
     }
     
     /// Delete encrypted vault
-    func deleteEncryptedVault() throws {
+    func deleteEncryptedVault() async throws {
         try deleteFromKeychain(key: "encryptedVault")
     }
     
@@ -55,7 +55,7 @@ class StorageManager {
     // MARK: - Encryption/Decryption
     
     func encrypt(data: Data, password: String) async throws -> Data {
-        // Generate salt
+        // Generate random salt
         var salt = [UInt8](repeating: 0, count: 32)
         let saltResult = SecRandomCopyBytes(kSecRandomDefault, salt.count, &salt)
         guard saltResult == errSecSuccess else {
@@ -63,42 +63,45 @@ class StorageManager {
         }
         
         // Derive key using PBKDF2
-        let key = try deriveKey(password: password, salt: Data(salt))
+        let saltData = Data(salt)
+        let key = try deriveKey(password: password, salt: saltData)
         
-        // Generate nonce
-        let nonce = AES.GCM.Nonce()
+        // Encrypt data with AES-GCM
+        let sealedBox = try AES.GCM.seal(data, using: key)
         
-        // Encrypt data
-        let sealedBox = try AES.GCM.seal(data, using: key, nonce: nonce)
+        // Use CryptoKit's combined representation: nonce(12) + ciphertext + tag(16)
+        // Prepend our salt to form: salt(32) + combined
+        guard let combined = sealedBox.combined else {
+            throw StorageError.encryptionFailed
+        }
         
-        // Combine salt + nonce + ciphertext + tag
         var result = Data()
-        result.append(Data(salt))
-        result.append(nonce.dataRepresentation)
-        result.append(sealedBox.ciphertext)
-        result.append(sealedBox.tag)
+        result.append(saltData)
+        result.append(combined)
+        
+        NSLog("[StorageManager] Encrypted: plaintext=%d bytes, result=%d bytes (salt=32 + combined=%d)", data.count, result.count, combined.count)
         
         return result
     }
     
     func decrypt(data: Data, password: String) async throws -> Data {
-        // Extract components
+        // Minimum size: salt(32) + nonce(12) + at least 1 byte ciphertext + tag(16) = 61
         guard data.count > 32 + 12 + 16 else {
             throw StorageError.decryptionFailed
         }
         
-        let salt = data.prefix(32)
-        let nonceData = data.subdata(in: 32..<44)
-        let ciphertextAndTag = data.suffix(from: 44)
-        let ciphertext = ciphertextAndTag.prefix(ciphertextAndTag.count - 16)
-        let tag = ciphertextAndTag.suffix(16)
+        // CRITICAL: Use subdata(in:) which always returns a new contiguous Data instance.
+        // Do NOT use suffix(from:) which returns Slice<Data> with non-zero startIndex
+        // that can cause CryptoKit to misparse ciphertext/tag boundaries.
+        let salt = data.subdata(in: 0..<32)
+        // combined = nonce(12) + ciphertext + tag(16) — exactly what SealedBox(combined:) expects
+        let combined = data.subdata(in: 32..<data.count)
         
-        // Derive key
+        // Derive key using same PBKDF2 parameters as encrypt
         let key = try deriveKey(password: password, salt: salt)
         
-        // Decrypt
-        let nonce = try AES.GCM.Nonce(data: nonceData)
-        let sealedBox = try AES.GCM.SealedBox(nonce: nonce, ciphertext: ciphertext, tag: tag)
+        // Let CryptoKit split nonce/ciphertext/tag correctly via combined representation
+        let sealedBox = try AES.GCM.SealedBox(combined: combined)
         let decrypted = try AES.GCM.open(sealedBox, using: key)
         
         return decrypted
@@ -324,17 +327,17 @@ class StorageManager {
     // MARK: - Clear All Data
     
     func clearAllData() throws {
-        // Delete keychain items
-        try deleteEncryptedVault()
-        
+        // Delete keychain items - 直接调用 deleteFromKeychain 避免 async
+        try deleteFromKeychain(key: "encryptedVault")
+
         // Clear memory cache
         memoryCache.removeAllObjects()
-        
+
         // Clear image cache
         Task { @MainActor in
             ImageCacheManager.shared.clearAll()
         }
-        
+
         // Clear all UserDefaults
         let domain = Bundle.main.bundleIdentifier!
         userDefaults.removePersistentDomain(forName: domain)

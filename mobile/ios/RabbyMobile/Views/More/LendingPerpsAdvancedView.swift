@@ -224,6 +224,12 @@ struct PerpsView: View {
             }
         }
         .navigationTitle(L("Perps Trading"))
+        .onAppear {
+            bootstrapPerpsState()
+        }
+        .onReceive(keyringManager.$currentAccount) { _ in
+            bootstrapPerpsState()
+        }
     }
     
     private var tradeView: some View {
@@ -372,6 +378,10 @@ struct PerpsView: View {
     
     private func placeOrder() {
         Task {
+            guard let walletAccount = keyringManager.currentAccount else { return }
+            perpsManager.syncCurrentAccount(from: walletAccount)
+            _ = try? await perpsManager.ensureAgentWallet(address: walletAccount.address)
+
             let side: PositionSide = orderSide == "long" ? .long : .short
             let perpsOrderType: PerpsOrderType = orderType == "limit" ? .limit : .market
             _ = try? await perpsManager.openPosition(
@@ -387,6 +397,19 @@ struct PerpsView: View {
     
     private func cancelOrder(_ id: String) {
         Task { try? await perpsManager.cancelOrder(orderId: id) }
+    }
+
+    private func bootstrapPerpsState() {
+        guard let walletAccount = keyringManager.currentAccount else {
+            perpsManager.setCurrentAccount(nil)
+            return
+        }
+
+        perpsManager.syncCurrentAccount(from: walletAccount)
+        Task {
+            _ = try? await perpsManager.ensureAgentWallet(address: walletAccount.address)
+            await perpsManager.refreshAllData()
+        }
     }
 }
 

@@ -12,15 +12,19 @@ class SwapManager: ObservableObject {
     @Published var selectedFromToken: Token?
     @Published var selectedToToken: Token?
     @Published var autoSlippage: Bool = true
-    @Published var slippage: String = "0.5"
+    @Published var slippage: String = "0.1"
     @Published var quotes: [SwapQuote] = []
     @Published var isLoading = false
     @Published var preferMEVGuarded = false
     
-    private let networkManager = NetworkManager.shared
+    private let openAPIService = OpenAPIService.shared
     private let storage = StorageManager.shared
+    private let transactionManager = TransactionManager.shared
+    private let chainManager = ChainManager.shared
+    private let networkManager = NetworkManager.shared
     
     private let swapKey = "rabby_swap_settings"
+    private var latestQuoteRequestId: Int = 0
     
     // MARK: - Models
     
@@ -40,6 +44,7 @@ class SwapManager: ObservableObject {
         let to: String // Contract address
         let needApprove: Bool
         let spender: String?
+        let txValue: String?
     }
     
     struct Token: Codable {
@@ -74,26 +79,39 @@ class SwapManager: ObservableObject {
         fromToken: Token,
         toToken: Token,
         amount: String,
-        chain: Chain
+        chain: Chain,
+        userAddress: String
     ) async throws -> [SwapQuote] {
+        guard !userAddress.isEmpty else {
+            throw SwapError.invalidUserAddress
+        }
+        guard !amount.isEmpty, isPositiveNumber(amount) else {
+            throw SwapError.invalidAmount
+        }
+
+        latestQuoteRequestId += 1
+        let requestId = latestQuoteRequestId
         isLoading = true
-        defer { isLoading = false }
+        defer {
+            if requestId == latestQuoteRequestId {
+                isLoading = false
+            }
+        }
         
-        // Call Rabby API to get swap quotes
-        let url = "https://api.rabby.io/v1/swap/quote"
-        let params: [String: Any] = [
+        // Align with extension's OpenAPI path and auth headers.
+        let params: [String: String] = [
             "from_token_id": fromToken.id,
             "to_token_id": toToken.id,
             "amount": amount,
             "chain_id": chain.serverId,
-            "slippage": Double(slippage) ?? 0.5,
-            "user_address": "", // Will be filled by caller
+            "slippage": slippage,
+            "user_address": userAddress,
         ]
         
         do {
-            let response: SwapQuoteResponse = try await networkManager.get(url: url, parameters: params)
+            let response: SwapQuoteResponse = try await openAPIService.get("/v1/swap/quote", params: params)
             
-            // Convert to SwapQuote models
+            // Convert and sort to keep "best quote" stable.
             let quotes = response.data.map { quoteData -> SwapQuote in
                 SwapQuote(
                     id: quoteData.dex_id,
@@ -110,11 +128,16 @@ class SwapManager: ObservableObject {
                     data: quoteData.data,
                     to: quoteData.to,
                     needApprove: quoteData.need_approve,
-                    spender: quoteData.spender
+                    spender: quoteData.spender,
+                    txValue: quoteData.value
                 )
+            }.sorted { lhs, rhs in
+                decimalNumber(from: lhs.toAmount) > decimalNumber(from: rhs.toAmount)
             }
             
-            self.quotes = quotes
+            if requestId == latestQuoteRequestId {
+                self.quotes = quotes
+            }
             return quotes
         } catch {
             print("❌ Failed to get swap quotes: \(error)")
@@ -133,23 +156,19 @@ class SwapManager: ObservableObject {
             throw SwapError.needApproval(spender: spender)
         }
         
-        // Create swap transaction
-        let chainIdInt = Int(chain.serverId) ?? chain.id
-        let valueStr = quote.fromToken.address.lowercased() == chain.nativeTokenAddress.lowercased() ? quote.fromAmount : "0x0"
-        let valueBigUInt = BigUInt(valueStr.replacingOccurrences(of: "0x", with: ""), radix: 16) ?? BigUInt(0)
-        let txData = quote.data.hexToData() ?? Data()
-        
-        let transaction = EthereumTransaction(
-            to: quote.to,
-            from: fromAddress,
-            nonce: BigUInt(0),
-            value: valueBigUInt,
-            data: txData,
-            gasLimit: BigUInt(300000),
-            chainId: chainIdInt
+        let valueHex = resolveSwapValueHex(
+            txValue: quote.txValue,
+            fromAmount: quote.fromAmount,
+            fromToken: quote.fromToken,
+            chain: chain
         )
-        
-        return transaction
+        return try await transactionManager.buildTransaction(
+            from: fromAddress,
+            to: quote.to,
+            value: valueHex,
+            data: quote.data,
+            chain: chain
+        )
     }
     
     /// Approve token for swap
@@ -160,39 +179,15 @@ class SwapManager: ObservableObject {
         fromAddress: String,
         chain: Chain
     ) async throws -> String {
-        // ERC20 approve function
-        let functionSignature = "approve(address,uint256)"
-        let selector = Keccak256.hash(string: functionSignature).prefix(4)
-        
-        var data = Data(selector)
-        
-        // Spender address (padded to 32 bytes)
-        if let spenderData = Data(hexString: String(spender.dropFirst(2))) {
-            data.append(Data(repeating: 0, count: 12))
-            data.append(spenderData)
-        }
-        
-        // Amount (padded to 32 bytes) - use max uint256 for unlimited
-        let maxUint256 = Data(repeating: 0xFF, count: 32)
-        data.append(maxUint256)
-        
-        // Create approval transaction
-        let chainIdInt = Int(chain.serverId) ?? chain.id
-        let transaction = EthereumTransaction(
-            to: token.address,
+        _ = amount
+        let transaction = try await transactionManager.buildTokenApproval(
             from: fromAddress,
-            nonce: BigUInt(0),
-            value: BigUInt(0),
-            data: data,
-            gasLimit: BigUInt(100000),
-            chainId: chainIdInt
+            tokenAddress: token.address,
+            spender: spender,
+            amount: String(repeating: "f", count: 64),
+            chain: chain
         )
-        
-        // Sign and send
-        let signedTx = try await KeyringManager.shared.signTransaction(address: fromAddress, transaction: transaction)
-        let txHash = try await TransactionManager.shared.broadcastTransaction(signedTx)
-        
-        return txHash
+        return try await transactionManager.sendTransaction(transaction)
     }
     
     /// Execute swap
@@ -208,9 +203,29 @@ class SwapManager: ObservableObject {
             chain: chain
         )
         
-        // Sign and send
-        let signedTx = try await KeyringManager.shared.signTransaction(address: fromAddress, transaction: transaction)
-        let txHash = try await TransactionManager.shared.broadcastTransaction(signedTx)
+        let txHash = try await transactionManager.sendTransaction(transaction)
+
+        TransactionHistoryManager.shared.addSwapHistory(
+            address: fromAddress,
+            chainId: chain.serverId,
+            fromToken: .init(
+                id: quote.fromToken.id,
+                symbol: quote.fromToken.symbol,
+                decimals: quote.fromToken.decimals,
+                logo: quote.fromToken.logo
+            ),
+            toToken: .init(
+                id: quote.toToken.id,
+                symbol: quote.toToken.symbol,
+                decimals: quote.toToken.decimals,
+                logo: quote.toToken.logo
+            ),
+            fromAmount: quote.fromAmount,
+            toAmount: quote.toAmount,
+            dexId: quote.dexId,
+            hash: txHash,
+            slippage: Double(slippage) ?? 0.1
+        )
         
         // Post swap to backend
         await postSwap(chain: chain, txHash: txHash, quote: quote)
@@ -229,15 +244,26 @@ class SwapManager: ObservableObject {
     func setAutoSlippage(_ auto: Bool) {
         self.autoSlippage = auto
         if auto {
-            self.slippage = "0.5"
+            self.slippage = "0.1"
         }
         saveSettings()
     }
     
     /// Check and confirm swap transaction (called from TransactionBroadcastWatcher)
     func checkAndConfirmSwap(txHash: String, chainId: Int) {
-        // Track swap confirmation for analytics
-        print("SwapManager: Swap confirmed - txHash: \(txHash), chainId: \(chainId)")
+        Task {
+            guard let chain = chainManager.getChain(id: chainId) else { return }
+            do {
+                if let receipt = try await networkManager.getTransactionReceipt(hash: txHash, chain: chain) {
+                    TransactionHistoryManager.shared.updateSwapStatus(
+                        hash: txHash,
+                        status: receipt.isSuccess ? "success" : "failed"
+                    )
+                }
+            } catch {
+                print("SwapManager: failed to confirm swap \(txHash): \(error)")
+            }
+        }
     }
     
     /// Add recent token
@@ -293,7 +319,6 @@ class SwapManager: ObservableObject {
     
     private func postSwap(chain: Chain, txHash: String, quote: SwapQuote) async {
         // Report swap to backend for analytics
-        let url = "https://api.rabby.io/v1/swap/post"
         let params: [String: Any] = [
             "tx_id": txHash,
             "chain_id": chain.serverId,
@@ -308,10 +333,60 @@ class SwapManager: ObservableObject {
             struct PostSwapResponse: Codable {
                 let success: Bool?
             }
-            let _: PostSwapResponse = try await networkManager.post(url: url, body: params)
+            let _: PostSwapResponse = try await openAPIService.post("/v1/swap/post", body: params)
         } catch {
             print("⚠️ Failed to post swap: \(error)")
         }
+    }
+
+    private func isPositiveNumber(_ value: String) -> Bool {
+        guard let decimal = Decimal(string: value), decimal > 0 else {
+            return false
+        }
+        return true
+    }
+
+    private func decimalNumber(from value: String) -> Decimal {
+        Decimal(string: value) ?? 0
+    }
+
+    private func resolveSwapValueHex(
+        txValue: String?,
+        fromAmount: String,
+        fromToken: Token,
+        chain: Chain
+    ) -> String {
+        if let txValue, !txValue.isEmpty {
+            if txValue.hasPrefix("0x") {
+                return txValue
+            }
+            if txValue.allSatisfy({ $0.isNumber }), let wei = BigUInt(txValue) {
+                return "0x" + String(wei, radix: 16)
+            }
+        }
+        let isNativeIn = fromToken.address.lowercased() == chain.nativeTokenAddress.lowercased()
+            || fromToken.address.lowercased() == "0x0000000000000000000000000000000000000000"
+            || fromToken.address.lowercased() == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        guard isNativeIn else { return "0x0" }
+        let wei = decimalToUnitAmount(fromAmount, decimals: fromToken.decimals)
+        return "0x" + String(wei, radix: 16)
+    }
+
+    private func decimalToUnitAmount(_ value: String, decimals: Int) -> BigUInt {
+        let parts = value.split(separator: ".", omittingEmptySubsequences: false)
+        let integerPart = parts.first.map(String.init) ?? "0"
+        let fractionRaw = parts.count > 1 ? String(parts[1]) : ""
+        let fraction = String(fractionRaw.prefix(decimals)).padding(
+            toLength: decimals,
+            withPad: "0",
+            startingAt: 0
+        )
+        let joined = (integerPart + fraction).trimmingCharacters(in: .whitespacesAndNewlines)
+        let normalized = joined.drop(while: { $0 == "0" })
+        if normalized.isEmpty {
+            return 0
+        }
+        return BigUInt(String(normalized)) ?? 0
     }
 }
 
@@ -330,6 +405,7 @@ private struct SwapQuoteResponse: Codable {
         let gas_fee: String
         let data: String
         let to: String
+        let value: String?
         let need_approve: Bool
         let spender: String?
     }
@@ -342,6 +418,8 @@ enum SwapError: Error, LocalizedError {
     case insufficientBalance
     case quoteNotFound
     case slippageTooHigh
+    case invalidAmount
+    case invalidUserAddress
     
     var errorDescription: String? {
         switch self {
@@ -353,6 +431,10 @@ enum SwapError: Error, LocalizedError {
             return "No swap quote found"
         case .slippageTooHigh:
             return "Slippage tolerance too high"
+        case .invalidAmount:
+            return "Invalid swap amount"
+        case .invalidUserAddress:
+            return "No wallet address selected"
         }
     }
 }

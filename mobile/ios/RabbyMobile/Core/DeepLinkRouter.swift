@@ -77,6 +77,7 @@ final class DeepLinkRouter: ObservableObject {
 
     /// Supported custom URL schemes
     private static let customScheme = "rabbywallet"
+    private static let legacyCustomScheme = "rabby"
     private static let wcScheme = "wc"
 
     private let logger = Logger(subsystem: "com.bocail.pay", category: "DeepLinkRouter")
@@ -99,7 +100,7 @@ final class DeepLinkRouter: ObservableObject {
         }
 
         // 2. Custom scheme: rabbywallet://...
-        if url.scheme == Self.customScheme {
+        if url.scheme == Self.customScheme || url.scheme == Self.legacyCustomScheme {
             return handleCustomScheme(url)
         }
 

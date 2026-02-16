@@ -218,11 +218,36 @@ import LogoOkx from 'ui/assets/swap/okx.png';
 import LogoOpenOcean from 'ui/assets/swap/openocean.png';
 import LogoTokenDefault from 'ui/assets/token-default.svg';
 
+// Import and re-export platform-agnostic constants from @rabby/shared.
+// NOTE: `export { ... } from '...'` does NOT bring names into the local module scope,
+// which breaks when we also reference those constants in this file.
+import {
+  KEYRING_TYPE,
+  KEYRING_CLASS,
+  HARDWARE_KEYRING_TYPES,
+  EVENTS,
+  EVENTS_IN_BG,
+  INITIAL_OPENAPI_URL,
+  INITIAL_TESTNET_OPENAPI_URL,
+  MINIMUM_GAS_LIMIT,
+  GAS_LEVEL_TEXT,
+  EXTENSION_MESSAGES,
+  SORT_WEIGHT,
+  KEYRING_CATEGORY,
+  WALLET_BRAND_TYPES,
+  WALLET_BRAND_CATEGORY,
+  TX_TYPE_ENUM,
+  CANCEL_TX_TYPE,
+  DARK_MODE_TYPE,
+  SIGN_PERMISSION_TYPES,
+  KEYRING_TYPE_TEXT,
+  BRAND_ALIAN_TYPE_TEXT,
+} from '@rabby/shared';
+
 export { default as LANGS } from '../../_raw/locales/index.json';
 
 export { CHAINS, CHAINS_ENUM };
 
-// Re-export platform-agnostic constants from @rabby/shared
 export {
   KEYRING_TYPE,
   KEYRING_CLASS,
@@ -235,12 +260,6 @@ export {
   GAS_LEVEL_TEXT,
   EXTENSION_MESSAGES,
   SORT_WEIGHT,
-  GAS_TOP_UP_ADDRESS,
-  GAS_TOP_UP_PAY_ADDRESS,
-  FREE_GAS_ADDRESS,
-  SWAP_FEE_PRECISION,
-  DEFAULT_GAS_LIMIT_RATIO,
-  DEFAULT_GAS_LIMIT_BUFFER,
   KEYRING_CATEGORY,
   WALLET_BRAND_TYPES,
   WALLET_BRAND_CATEGORY,
@@ -250,7 +269,7 @@ export {
   SIGN_PERMISSION_TYPES,
   KEYRING_TYPE_TEXT,
   BRAND_ALIAN_TYPE_TEXT,
-} from '@rabby/shared';
+};
 
 const isDesktop =
   typeof window !== 'undefined' && window.location.pathname === '/desktop.html';

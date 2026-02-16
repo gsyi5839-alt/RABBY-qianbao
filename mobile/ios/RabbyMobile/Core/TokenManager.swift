@@ -14,6 +14,11 @@ class TokenManager: ObservableObject {
     @Published var tokenBalances: [String: TokenBalance] = [:] // tokenId -> balance
     @Published var showLPTokens: Bool = false
     
+    /// Token IDs whose balances are injected for testing and should NOT be
+    /// overwritten by real RPC balance queries.
+    private var testTokenIds: Set<String> = []
+    private let testBalanceFlagKey = "rabby_enable_test_balances"
+    
     /// Maximum number of balance cache entries
     private let maxBalanceCacheSize = 500
     
@@ -29,6 +34,7 @@ class TokenManager: ObservableObject {
         loadBlockedTokens()
         startAutoRefresh()
         observeMemoryWarnings()
+        observeShowTestnetPreference()
     }
     
     // MARK: - Token Loading
@@ -58,8 +64,23 @@ class TokenManager: ObservableObject {
         let chainCustomTokens = customTokens.filter { $0.chainId == chain.id }
         tokenList.append(contentsOf: chainCustomTokens)
         
-        // Update cache
+        // If test balance injection is disabled, always purge previously injected data first.
+        if !isTestBalanceInjectionEnabled {
+            clearInjectedTestTokens()
+        }
+        
+        // Update cache – preserve injected test tokens only when the feature is enabled.
         let key = "\(address.lowercased())_\(chain.id)"
+        let existingTestTokens: [TokenItem]
+        if isTestBalanceInjectionEnabled {
+            existingTestTokens = (tokens[key] ?? []).filter { testTokenIds.contains($0.id) }
+        } else {
+            existingTestTokens = []
+        }
+        // Remove duplicates: if a test token matches the native token, keep the test version
+        let testIds = Set(existingTestTokens.map { $0.id })
+        tokenList = tokenList.filter { !testIds.contains($0.id) }
+        tokenList.append(contentsOf: existingTestTokens)
         tokens[key] = tokenList
         
         // Load balances for these tokens
@@ -71,6 +92,9 @@ class TokenManager: ObservableObject {
     /// Load balances for tokens
     func loadBalances(address: String, tokens: [TokenItem], chain: Chain) async {
         for token in tokens {
+            // Skip tokens whose balance was injected for testing
+            if testTokenIds.contains(token.id) { continue }
+            
             do {
                 let balance = try await getTokenBalance(
                     tokenAddress: token.address,
@@ -214,6 +238,115 @@ class TokenManager: ObservableObject {
         return token
     }
     
+    // MARK: - Development / Testing Helpers
+    
+    /// Inject mock token with balance for testing purposes.
+    /// Use this to test Send/Swap/Bridge flows without real on-chain funds.
+    func injectTestToken(
+        address: String,
+        symbol: String,
+        name: String,
+        decimals: Int,
+        logoURL: String?,
+        price: Double,
+        balance: Double,
+        chain: Chain,
+        ownerAddress: String,
+        isNative: Bool = false
+    ) {
+        guard isTestBalanceInjectionEnabled else {
+            return
+        }
+        
+        let tokenId = "\(chain.serverId):\(address)"
+        
+        let token = TokenItem(
+            id: tokenId,
+            chainId: chain.id,
+            address: address,
+            symbol: symbol,
+            name: name,
+            decimals: decimals,
+            logoURL: logoURL,
+            price: price,
+            priceChange24h: nil,
+            isNative: isNative
+        )
+        
+        // Add to tokens list
+        let key = "\(ownerAddress.lowercased())_\(chain.id)"
+        if tokens[key] == nil {
+            tokens[key] = []
+        }
+        // Remove existing if present
+        tokens[key]?.removeAll { $0.id == tokenId }
+        tokens[key]?.append(token)
+        
+        // Convert balance to raw hex (balance * 10^decimals)
+        let rawBalance = Decimal(balance) * pow(10, decimals)
+        let rawBalanceString = NSDecimalNumber(decimal: rawBalance).stringValue
+            .components(separatedBy: ".").first ?? "0"
+        let hexBalance: String
+        if let bigUint = BigUInt(rawBalanceString) {
+            hexBalance = "0x" + String(bigUint, radix: 16)
+        } else {
+            hexBalance = "0x0"
+        }
+        
+        let tokenBalance = TokenBalance(
+            tokenId: tokenId,
+            address: ownerAddress,
+            chainId: chain.id,
+            balance: hexBalance,
+            balanceFormatted: formatTokenBalanceDisplay(balance),
+            updatedAt: Date()
+        )
+        tokenBalances[tokenId] = tokenBalance
+        
+        // Mark as test token so RPC refresh won't overwrite
+        testTokenIds.insert(tokenId)
+        
+        NSLog("[TokenManager] Injected test token: %@ %@ (balance: %f) for %@", symbol, name, balance, ownerAddress)
+    }
+    
+    /// Whether the app should inject fake balances for QA.
+    /// Default is OFF, so real on-chain balances are always used.
+    var isTestBalanceInjectionEnabled: Bool {
+        #if DEBUG
+        let fromEnv = ProcessInfo.processInfo.environment["RABBY_ENABLE_TEST_BALANCES"] == "1"
+        let fromSettings = UserDefaults.standard.bool(forKey: testBalanceFlagKey)
+        return fromEnv || fromSettings
+        #else
+        return false
+        #endif
+    }
+    
+    /// Remove all injected fake tokens/balances so UI can recover to real balances.
+    private func clearInjectedTestTokens() {
+        guard !testTokenIds.isEmpty else { return }
+        let injectedIds = testTokenIds
+        
+        tokens = tokens.mapValues { list in
+            list.filter { !injectedIds.contains($0.id) }
+        }
+        for tokenId in injectedIds {
+            tokenBalances.removeValue(forKey: tokenId)
+        }
+        testTokenIds.removeAll()
+    }
+    
+    /// Format a balance double for display
+    private func formatTokenBalanceDisplay(_ balance: Double) -> String {
+        if balance == 0 { return "0" }
+        if balance >= 1_000_000 {
+            return String(format: "%.2f", balance)
+        }
+        if balance >= 1 {
+            return String(format: "%.4f", balance)
+        }
+        return String(format: "%.8f", balance)
+    }
+    
     // MARK: - Token Search
     
     /// Search tokens by symbol or address
@@ -294,6 +427,34 @@ class TokenManager: ObservableObject {
         let activeTokenIds = Set(tokens.values.flatMap { $0.map { $0.id } })
         tokenBalances = tokenBalances.filter { activeTokenIds.contains($0.key) }
     }
+
+    private func observeShowTestnetPreference() {
+        // When user hides testnets, purge any cached token lists/balances for testnet chains.
+        PreferenceManager.shared.$showTestnet
+            .removeDuplicates()
+            .sink { [weak self] show in
+                guard let self else { return }
+                if !show {
+                    self.purgeTestnetCaches()
+                }
+            }
+            .store(in: &cancellables)
+    }
+
+    private func purgeTestnetCaches() {
+        let hiddenChainIds = Set(chainManager.allChains.filter { $0.isTestnet }.map { $0.id })
+        if hiddenChainIds.isEmpty { return }
+
+        // tokens key is `${address}_${chainId}`
+        tokens = tokens.filter { key, _ in
+            let parts = key.split(separator: "_")
+            guard parts.count == 2, let chainId = Int(parts[1]) else { return true }
+            return !hiddenChainIds.contains(chainId)
+        }
+
+        // balances are keyed by tokenId; best-effort purge using current token lists.
+        trimBalanceCache()
+    }
     
     private func refreshAllBalances() async {
         for (key, tokenList) in tokens {
@@ -311,7 +472,8 @@ class TokenManager: ObservableObject {
     
     /// Manually refresh balances for address
     func refreshBalances(address: String) async {
-        for chain in chainManager.allChains {
+        // Respect "Show testnet" toggle globally (aligns with extension).
+        for chain in chainManager.visibleChains {
             if let tokenList = try? await loadTokens(address: address, chain: chain) {
                 await loadBalances(address: address, tokens: tokenList, chain: chain)
             }
@@ -381,6 +543,7 @@ struct TokenItem: Codable, Identifiable, Hashable {
     var price: Double
     var priceChange24h: Double?
     var isNative: Bool
+    var protocolName: String?
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)

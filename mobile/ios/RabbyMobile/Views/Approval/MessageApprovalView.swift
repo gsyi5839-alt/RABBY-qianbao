@@ -325,11 +325,13 @@ struct MessageApprovalView: View {
     // MARK: - Actions
 
     private func performSecurityCheck() {
-        securityResults = securityEngine.checkSignMessage(
-            from: fromAddress,
-            message: message,
-            origin: origin
-        )
+        Task {
+            securityResults = await securityEngine.checkSignMessage(
+                from: fromAddress,
+                message: message,
+                origin: origin
+            )
+        }
     }
 
     private func signMessage() {
@@ -465,4 +467,3 @@ struct MessageApprovalView: View {
         return [Color(red: r, green: g, blue: b), Color(red: b, green: r, blue: g)]
     }
 }
-

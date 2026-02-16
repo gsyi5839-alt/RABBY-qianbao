@@ -1039,9 +1039,23 @@ struct ChainListView: View {
             Toggle(L("Show Testnets"), isOn: $showTestnets)
             
             ForEach(filteredChains) { chain in
-                HStack {
-                    Circle().fill(Color.blue.opacity(0.2)).frame(width: 36, height: 36)
-                        .overlay(Text(String(chain.symbol.prefix(2))).font(.caption).fontWeight(.bold).foregroundColor(.blue))
+                HStack(spacing: 12) {
+                    // Chain logo from URL
+                    AsyncImage(url: URL(string: chain.logo)) { phase in
+                        switch phase {
+                        case .success(let image):
+                            image.resizable().scaledToFit()
+                        case .failure:
+                            Circle().fill(Color.blue.opacity(0.2))
+                                .overlay(Text(String(chain.symbol.prefix(2))).font(.caption).fontWeight(.bold).foregroundColor(.blue))
+                        case .empty:
+                            ProgressView().scaleEffect(0.6)
+                        @unknown default:
+                            Circle().fill(Color(.systemGray5))
+                        }
+                    }
+                    .frame(width: 36, height: 36)
+                    .clipShape(Circle())
                     
                     VStack(alignment: .leading, spacing: 2) {
                         Text(chain.name).fontWeight(.medium)

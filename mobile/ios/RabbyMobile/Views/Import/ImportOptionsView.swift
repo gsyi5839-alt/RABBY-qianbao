@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// Import Options View - Hub for all wallet import methods
 /// Corresponds to: src/ui/views/ImportMode.tsx + NewUserImport/
@@ -122,6 +123,7 @@ struct ImportPrivateKeyView: View {
     @State private var isImporting = false
     @State private var errorMessage: String?
     @State private var showSuccess = false
+    @State private var showScanner = false
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
@@ -135,11 +137,39 @@ struct ImportPrivateKeyView: View {
                     }
                     .padding().background(Color.orange.opacity(0.1)).cornerRadius(8)
                     
+                    // Private Key input with scan button
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(L("Private Key")).font(.headline)
-                        SecureField(L("Enter private key (with or without 0x prefix)"), text: $privateKey)
-                            .padding().background(Color(.systemGray6)).cornerRadius(8)
-                            .autocapitalization(.none)
+                        HStack {
+                            Text(L("Private Key")).font(.headline)
+                            Spacer()
+                            Button(action: pastePrivateKeyFromClipboard) {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "doc.on.clipboard")
+                                    Text(L("Paste"))
+                                }
+                                .font(.caption)
+                            }
+                        }
+                        HStack(spacing: 8) {
+                            SecureField(L("Enter private key (with or without 0x prefix)"), text: $privateKey)
+                                .padding().background(Color(.systemGray6)).cornerRadius(8)
+                                .textInputAutocapitalization(.never)
+                                .autocorrectionDisabled(true)
+                                .keyboardType(.asciiCapable)
+                                .textContentType(.none)
+                            
+                            // QR Scan button
+                            Button {
+                                showScanner = true
+                            } label: {
+                                Image(systemName: "qrcode.viewfinder")
+                                    .font(.title3)
+                                    .foregroundColor(.purple)
+                                    .frame(width: 44, height: 44)
+                                    .background(Color(.systemGray6))
+                                    .cornerRadius(8)
+                            }
+                        }
                     }
                     
                     if !keyringManager.isInitialized {
@@ -171,6 +201,11 @@ struct ImportPrivateKeyView: View {
             .navigationTitle(L("Import Private Key"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button(L("Cancel")) { dismiss() } } }
+            .sheet(isPresented: $showScanner) {
+                UniversalQRScannerView(purpose: .privateKey) { scannedKey in
+                    privateKey = scannedKey
+                }
+            }
             .alert(L("Import Successful"), isPresented: $showSuccess) {
                 Button(L("OK")) { dismiss() }
             } message: { Text(L("Your wallet has been imported successfully.")) }
@@ -179,6 +214,17 @@ struct ImportPrivateKeyView: View {
     
     private var canImport: Bool {
         !privateKey.isEmpty && (keyringManager.isInitialized || password.count >= 8)
+    }
+
+    private func pastePrivateKeyFromClipboard() {
+        if let text = UIPasteboard.general.string?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !text.isEmpty {
+            privateKey = text
+            return
+        }
+        guard let text = UIPasteboard.general.strings?.first?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !text.isEmpty else { return }
+        privateKey = text
     }
     
     private func importKey() {
@@ -206,6 +252,7 @@ struct WatchAddressImportView: View {
     @State private var isImporting = false
     @State private var errorMessage: String?
     @State private var showSuccess = false
+    @State private var showScanner = false
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
@@ -220,16 +267,30 @@ struct WatchAddressImportView: View {
                     }
                     .padding().background(Color.blue.opacity(0.1)).cornerRadius(8)
                     
-                    // Address input
+                    // Address input with scan button
                     VStack(alignment: .leading, spacing: 8) {
                         Text(L("Address or ENS")).font(.headline)
-                        TextField(L("0x... or name.eth"), text: $address)
-                            .padding().background(Color(.systemGray6)).cornerRadius(8)
-                            .autocapitalization(.none)
-                            .onChange(of: address) { newValue in
-                                if newValue.hasSuffix(".eth") { resolveENS(newValue) }
-                                else { resolvedAddress = nil }
+                        HStack(spacing: 8) {
+                            TextField(L("0x... or name.eth"), text: $address)
+                                .padding().background(Color(.systemGray6)).cornerRadius(8)
+                                .autocapitalization(.none)
+                                .onChange(of: address) { newValue in
+                                    if newValue.hasSuffix(".eth") { resolveENS(newValue) }
+                                    else { resolvedAddress = nil }
+                                }
+                            
+                            // QR Scan button
+                            Button {
+                                showScanner = true
+                            } label: {
+                                Image(systemName: "qrcode.viewfinder")
+                                    .font(.title3)
+                                    .foregroundColor(.blue)
+                                    .frame(width: 44, height: 44)
+                                    .background(Color(.systemGray6))
+                                    .cornerRadius(8)
                             }
+                        }
                     }
                     
                     // ENS resolved
@@ -267,6 +328,11 @@ struct WatchAddressImportView: View {
             .navigationTitle(L("Watch Address"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button(L("Cancel")) { dismiss() } } }
+            .sheet(isPresented: $showScanner) {
+                UniversalQRScannerView(purpose: .watchAddress) { scannedAddress in
+                    address = scannedAddress
+                }
+            }
             .alert(L("Address Added"), isPresented: $showSuccess) {
                 Button(L("OK")) { dismiss() }
             } message: { Text(L("Watch address has been added. You can monitor it but cannot sign transactions.")) }
@@ -274,7 +340,15 @@ struct WatchAddressImportView: View {
     }
     
     private var effectiveAddress: String {
-        resolvedAddress ?? (EthereumUtil.isValidAddress(address) ? address : "")
+        // Validate Ethereum address inline
+        let cleanAddress = address.trimmingCharacters(in: .whitespacesAndNewlines)
+        let pattern = "^0x[a-fA-F0-9]{40}$"
+        let isValid = (try? NSRegularExpression(pattern: pattern))?.firstMatch(
+            in: cleanAddress,
+            range: NSRange(cleanAddress.startIndex..., in: cleanAddress)
+        ) != nil
+        
+        return resolvedAddress ?? (isValid ? cleanAddress : "")
     }
     
     private func resolveENS(_ name: String) {
@@ -438,11 +512,24 @@ struct JsonKeystoreImportView: View {
             ScrollView {
                 VStack(spacing: 20) {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(L("JSON Keystore")).font(.headline)
+                        HStack {
+                            Text(L("JSON Keystore")).font(.headline)
+                            Spacer()
+                            Button(action: pasteKeystoreFromClipboard) {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "doc.on.clipboard")
+                                    Text(L("Paste"))
+                                }
+                                .font(.caption)
+                            }
+                        }
                         TextEditor(text: $keystoreJSON)
                             .frame(minHeight: 150)
                             .padding(4).background(Color(.systemGray6)).cornerRadius(8)
-                            .autocapitalization(.none)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled(true)
+                            .keyboardType(.asciiCapable)
+                            .textContentType(.none)
                         Text(L("Paste the contents of your JSON keystore file")).font(.caption).foregroundColor(.secondary)
                     }
                     
@@ -490,6 +577,15 @@ struct JsonKeystoreImportView: View {
     private var canImport: Bool {
         !keystoreJSON.isEmpty && !keystorePassword.isEmpty &&
         (KeyringManager.shared.isInitialized || walletPassword.count >= 8)
+    }
+
+    private func pasteKeystoreFromClipboard() {
+        if let text = UIPasteboard.general.string, !text.isEmpty {
+            keystoreJSON = text
+            return
+        }
+        guard let text = UIPasteboard.general.strings?.first, !text.isEmpty else { return }
+        keystoreJSON = text
     }
     
     private func importKeystore() {

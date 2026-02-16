@@ -1,4 +1,5 @@
 import SwiftUI
+import BigInt
 
 /// NFT View - Display and manage NFTs
 struct NFTView: View {
@@ -158,6 +159,20 @@ struct SendNFTView: View {
     @State private var isSending = false
     @State private var errorMessage: String?
     @Environment(\.dismiss) var dismiss
+
+    private var trimmedRecipient: String {
+        recipient.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private var isAmountValid: Bool {
+        guard nft.type == .erc1155 else { return true }
+        guard let value = BigUInt(amount.trimmingCharacters(in: .whitespacesAndNewlines)) else { return false }
+        return value > 0
+    }
+
+    private var canSend: Bool {
+        EthereumUtil.isValidAddress(trimmedRecipient) && isAmountValid && !isSending
+    }
     
     var body: some View {
         NavigationView {
@@ -179,7 +194,10 @@ struct SendNFTView: View {
                 // Recipient
                 VStack(alignment: .leading, spacing: 4) {
                     Text(L("To Address")).font(.caption).foregroundColor(.secondary)
-                    TextField(L("0x..."), text: $recipient).padding()
+                    TextField(L("0x..."), text: $recipient)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled(true)
+                        .padding()
                         .background(Color(.systemGray6)).cornerRadius(8)
                 }.padding(.horizontal)
                 
@@ -205,10 +223,10 @@ struct SendNFTView: View {
                             .fontWeight(.semibold)
                     }
                     .frame(maxWidth: .infinity).padding()
-                    .background(!recipient.isEmpty ? Color.blue : Color.gray)
+                    .background(canSend ? Color.blue : Color.gray)
                     .foregroundColor(.white).cornerRadius(12)
                 }
-                .disabled(recipient.isEmpty || isSending)
+                .disabled(!canSend)
                 .padding(.horizontal)
             }
             .padding(.vertical)
@@ -220,13 +238,27 @@ struct SendNFTView: View {
     
     private func sendNFT() {
         guard let address = PreferenceManager.shared.currentAccount?.address else { return }
+        guard EthereumUtil.isValidAddress(trimmedRecipient) else {
+            errorMessage = "Invalid recipient address"
+            return
+        }
+        if nft.type == .erc1155 && !isAmountValid {
+            errorMessage = "Invalid amount"
+            return
+        }
+
         isSending = true; errorMessage = nil
         Task {
             do {
                 if nft.type == .erc721 {
-                    _ = try await NFTManager.shared.sendNFT(nft, to: recipient, from: address)
+                    _ = try await NFTManager.shared.sendNFT(nft, to: trimmedRecipient, from: address)
                 } else {
-                    _ = try await NFTManager.shared.sendERC1155(nft, to: recipient, from: address, amount: amount)
+                    _ = try await NFTManager.shared.sendERC1155(
+                        nft,
+                        to: trimmedRecipient,
+                        from: address,
+                        amount: amount.trimmingCharacters(in: .whitespacesAndNewlines)
+                    )
                 }
                 dismiss()
             } catch { errorMessage = error.localizedDescription }

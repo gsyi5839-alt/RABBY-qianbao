@@ -17,6 +17,7 @@ class TransactionManager: ObservableObject {
     
     private let networkManager = NetworkManager.shared
     private let storageManager = StorageManager.shared
+    private let databaseManager = DatabaseManager.shared
     private let keyringManager = KeyringManager.shared
     private let chainManager = ChainManager.shared
     
@@ -275,20 +276,88 @@ class TransactionManager: ObservableObject {
         )
         
         let signedTxHex = "0x" + signedTxData.hexString
-        
-        // Send raw transaction
+
+        // Mainnet default: submit via Rabby backend first (aligned with extension).
+        if shouldSubmitViaBackend(chain: chain) {
+            do {
+                let submitResult = try await OpenAPIService.shared.submitTx(
+                    signedTx: signedTxHex,
+                    chainId: chain.id
+                )
+
+                if let txHash = await resolveBackendTxHash(from: submitResult, signedTxHex: signedTxHex, chain: chain, from: transaction.from) {
+                    await addPendingTransaction(transaction: transaction, hash: txHash, chain: chain)
+                    watchTransaction(hash: txHash, chain: chain)
+                    return txHash
+                }
+            } catch {
+                print("TransactionManager: backend submit failed, fallback to RPC send - \(error)")
+            }
+        }
+
+        // Fallback path: send raw transaction directly to chain RPC.
         let txHash = try await networkManager.sendRawTransaction(
             signedTransaction: signedTxHex,
             chain: chain
         )
-        
-        // Add to pending transactions
+
         await addPendingTransaction(transaction: transaction, hash: txHash, chain: chain)
-        
-        // Start watching transaction
         watchTransaction(hash: txHash, chain: chain)
-        
         return txHash
+    }
+
+    private func shouldSubmitViaBackend(chain: Chain) -> Bool {
+        if chain.isTestnet || chain.isCustom {
+            return false
+        }
+        return !RPCManager.shared.hasCustomRPC(chainId: chain.id)
+    }
+
+    private func resolveBackendTxHash(
+        from submitResult: OpenAPIService.TxRequest,
+        signedTxHex: String,
+        chain: Chain,
+        from address: String
+    ) async -> String? {
+        if let txId = submitResult.tx_id, !txId.isEmpty {
+            return txId
+        }
+
+        let requestId = submitResult.id
+        if !requestId.isEmpty {
+            TransactionBroadcastWatcherManager.shared.addTransaction(
+                reqId: requestId,
+                address: address,
+                chainId: chain.id,
+                nonce: submitResult.signed_tx.nonce
+            )
+
+            // Give backend a short chance to materialize tx_id before RPC fallback.
+            for _ in 0..<3 {
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                if let item = (try? await OpenAPIService.shared.getTxRequests(ids: [requestId]))?.first,
+                   let txId = item.tx_id,
+                   !txId.isEmpty {
+                    TransactionBroadcastWatcherManager.shared.removeTransaction(reqId: requestId)
+                    return txId
+                }
+            }
+        }
+
+        // Backend accepted but no tx hash yet; fallback to direct RPC push.
+        do {
+            let txHash = try await networkManager.sendRawTransaction(
+                signedTransaction: signedTxHex,
+                chain: chain
+            )
+            if !requestId.isEmpty {
+                TransactionBroadcastWatcherManager.shared.removeTransaction(reqId: requestId)
+            }
+            return txHash
+        } catch {
+            print("TransactionManager: backend pending and RPC fallback failed - \(error)")
+            return nil
+        }
     }
     
     /// Broadcast a signed transaction
@@ -379,6 +448,13 @@ class TransactionManager: ObservableObject {
     }
     
     private func updateTransactionStatus(hash: String, receipt: TransactionReceipt) {
+        let txStatus = receipt.isSuccess ? "success" : "failed"
+        TransactionHistoryManager.shared.updateSwapStatus(hash: hash, status: txStatus)
+        TransactionHistoryManager.shared.updateBridgeStatus(
+            hash: hash,
+            status: receipt.isSuccess ? "fromSuccess" : "failed"
+        )
+
         // Find and update transaction
         for (index, group) in pendingTransactions.enumerated() {
             if let txIndex = group.txs.firstIndex(where: { $0.hash == hash }) {
@@ -456,16 +532,28 @@ class TransactionManager: ObservableObject {
     // MARK: - Persistence
     
     private func loadTransactions() {
-        if let pending = try? storageManager.getPreference(forKey: "pendingTransactions", type: [TransactionGroup].self) {
+        if let pendingData = try? databaseManager.getValueData(forKey: "pendingTransactions"),
+           let pending = try? JSONDecoder().decode([TransactionGroup].self, from: pendingData) {
+            pendingTransactions = pending
+        } else if let pending = try? storageManager.getPreference(forKey: "pendingTransactions", type: [TransactionGroup].self) {
             pendingTransactions = pending
         }
         
-        if let completed = try? storageManager.getPreference(forKey: "completedTransactions", type: [TransactionGroup].self) {
+        if let completedData = try? databaseManager.getValueData(forKey: "completedTransactions"),
+           let completed = try? JSONDecoder().decode([TransactionGroup].self, from: completedData) {
+            completedTransactions = completed.prefix(100).map { $0 }
+        } else if let completed = try? storageManager.getPreference(forKey: "completedTransactions", type: [TransactionGroup].self) {
             completedTransactions = completed.prefix(100).map { $0 } // Keep last 100
         }
     }
     
     private func saveTransactions() {
+        if let pendingData = try? JSONEncoder().encode(pendingTransactions) {
+            try? databaseManager.setValueData(pendingData, forKey: "pendingTransactions")
+        }
+        if let completedData = try? JSONEncoder().encode(completedTransactions) {
+            try? databaseManager.setValueData(completedData, forKey: "completedTransactions")
+        }
         try? storageManager.savePreference(pendingTransactions, forKey: "pendingTransactions")
         try? storageManager.savePreference(completedTransactions, forKey: "completedTransactions")
     }

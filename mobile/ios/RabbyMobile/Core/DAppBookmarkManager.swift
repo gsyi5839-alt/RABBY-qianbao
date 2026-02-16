@@ -112,17 +112,28 @@ class DAppBookmarkManager: ObservableObject {
     // MARK: - Popular DApps
 
     static let popularDApps: [DAppBookmark] = [
-        DAppBookmark(id: "uniswap", url: "https://app.uniswap.org", title: "Uniswap", iconURL: "", addedAt: Date(), lastVisitedAt: Date(), isFavorite: false),
-        DAppBookmark(id: "aave", url: "https://app.aave.com", title: "Aave", iconURL: "", addedAt: Date(), lastVisitedAt: Date(), isFavorite: false),
-        DAppBookmark(id: "opensea", url: "https://opensea.io", title: "OpenSea", iconURL: "", addedAt: Date(), lastVisitedAt: Date(), isFavorite: false),
-        DAppBookmark(id: "1inch", url: "https://app.1inch.io", title: "1inch", iconURL: "", addedAt: Date(), lastVisitedAt: Date(), isFavorite: false),
-        DAppBookmark(id: "curve", url: "https://curve.fi", title: "Curve", iconURL: "", addedAt: Date(), lastVisitedAt: Date(), isFavorite: false),
-        DAppBookmark(id: "lido", url: "https://lido.fi", title: "Lido", iconURL: "", addedAt: Date(), lastVisitedAt: Date(), isFavorite: false),
-        DAppBookmark(id: "gmx", url: "https://gmx.io", title: "GMX", iconURL: "", addedAt: Date(), lastVisitedAt: Date(), isFavorite: false),
-        DAppBookmark(id: "pancakeswap", url: "https://pancakeswap.finance", title: "PancakeSwap", iconURL: "", addedAt: Date(), lastVisitedAt: Date(), isFavorite: false),
-        DAppBookmark(id: "sushiswap", url: "https://www.sushi.com", title: "SushiSwap", iconURL: "", addedAt: Date(), lastVisitedAt: Date(), isFavorite: false),
-        DAppBookmark(id: "compound", url: "https://app.compound.finance", title: "Compound", iconURL: "", addedAt: Date(), lastVisitedAt: Date(), isFavorite: false),
+        DAppBookmark(id: "uniswap", url: "https://app.uniswap.org", title: "Uniswap", iconURL: faviconURL(for: "https://app.uniswap.org"), addedAt: Date(), lastVisitedAt: Date(), isFavorite: false),
+        DAppBookmark(id: "aave", url: "https://app.aave.com", title: "Aave", iconURL: faviconURL(for: "https://app.aave.com"), addedAt: Date(), lastVisitedAt: Date(), isFavorite: false),
+        DAppBookmark(id: "opensea", url: "https://opensea.io", title: "OpenSea", iconURL: faviconURL(for: "https://opensea.io"), addedAt: Date(), lastVisitedAt: Date(), isFavorite: false),
+        DAppBookmark(id: "1inch", url: "https://app.1inch.io", title: "1inch", iconURL: faviconURL(for: "https://app.1inch.io"), addedAt: Date(), lastVisitedAt: Date(), isFavorite: false),
+        DAppBookmark(id: "curve", url: "https://curve.fi", title: "Curve", iconURL: faviconURL(for: "https://curve.fi"), addedAt: Date(), lastVisitedAt: Date(), isFavorite: false),
+        DAppBookmark(id: "lido", url: "https://lido.fi", title: "Lido", iconURL: faviconURL(for: "https://lido.fi"), addedAt: Date(), lastVisitedAt: Date(), isFavorite: false),
+        DAppBookmark(id: "gmx", url: "https://gmx.io", title: "GMX", iconURL: faviconURL(for: "https://gmx.io"), addedAt: Date(), lastVisitedAt: Date(), isFavorite: false),
+        DAppBookmark(id: "pancakeswap", url: "https://pancakeswap.finance", title: "PancakeSwap", iconURL: faviconURL(for: "https://pancakeswap.finance"), addedAt: Date(), lastVisitedAt: Date(), isFavorite: false),
+        DAppBookmark(id: "sushiswap", url: "https://www.sushi.com", title: "SushiSwap", iconURL: faviconURL(for: "https://www.sushi.com"), addedAt: Date(), lastVisitedAt: Date(), isFavorite: false),
+        DAppBookmark(id: "compound", url: "https://app.compound.finance", title: "Compound", iconURL: faviconURL(for: "https://app.compound.finance"), addedAt: Date(), lastVisitedAt: Date(), isFavorite: false),
+        DAppBookmark(id: "polymarket", url: "https://polymarket.com", title: "Polymarket", iconURL: faviconURL(for: "https://polymarket.com"), addedAt: Date(), lastVisitedAt: Date(), isFavorite: false),
+        DAppBookmark(id: "probable", url: "https://probable.markets", title: "Probable", iconURL: faviconURL(for: "https://probable.markets"), addedAt: Date(), lastVisitedAt: Date(), isFavorite: false),
+        DAppBookmark(id: "spark", url: "https://app.spark.fi/my-portfolio", title: "Spark", iconURL: faviconURL(for: "https://app.spark.fi/my-portfolio"), addedAt: Date(), lastVisitedAt: Date(), isFavorite: false),
+        DAppBookmark(id: "venus", url: "https://venus.io", title: "Venus", iconURL: faviconURL(for: "https://venus.io"), addedAt: Date(), lastVisitedAt: Date(), isFavorite: false),
+        DAppBookmark(id: "hyperliquid", url: "https://app.hyperliquid.xyz", title: "Hyperliquid", iconURL: faviconURL(for: "https://app.hyperliquid.xyz"), addedAt: Date(), lastVisitedAt: Date(), isFavorite: false),
+        DAppBookmark(id: "lighter", url: "https://app.lighter.xyz/trade/LIT_USDC", title: "Lighter", iconURL: faviconURL(for: "https://app.lighter.xyz/trade/LIT_USDC"), addedAt: Date(), lastVisitedAt: Date(), isFavorite: false),
     ]
+
+    static func faviconURL(for url: String) -> String {
+        guard let host = URL(string: url)?.host, !host.isEmpty else { return "" }
+        return "https://icons.duckduckgo.com/ip3/\(host).ico"
+    }
 }
 
 // MARK: - DApp Bookmark Model

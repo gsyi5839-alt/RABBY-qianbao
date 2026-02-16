@@ -12,23 +12,53 @@ async function postData(url = '', params: URLSearchParams) {
   return response;
 }
 
-let { extensionId } = await browser.storage.local.get('extensionId');
-if (!extensionId) {
-  extensionId = genExtensionId();
-  browser.storage.local.set({ extensionId });
-}
+let extensionId: string | null = null;
+let extensionIdPromise: Promise<string> | null = null;
+
+const getOrCreateExtensionId = async () => {
+  if (extensionId) return extensionId;
+  if (extensionIdPromise) return extensionIdPromise;
+
+  extensionIdPromise = (async () => {
+    try {
+      // In unit tests the polyfill can be partially mocked; fall back to a random id.
+      const storage = (browser as any)?.storage?.local;
+      if (!storage?.get || !storage?.set) {
+        extensionId = genExtensionId();
+        return extensionId;
+      }
+
+      const stored = await storage.get('extensionId');
+      let id = stored?.extensionId as string | undefined;
+      if (!id) {
+        id = genExtensionId();
+        await storage.set({ extensionId: id });
+      }
+      extensionId = id;
+      return id;
+    } finally {
+      // Clear the promise so future calls return the cached string directly.
+      extensionIdPromise = null;
+    }
+  })();
+
+  return extensionIdPromise;
+};
 
 const getParams = async () => {
   const gaParams = new URLSearchParams();
 
-  const pathname = location.hash.substring(2) || 'background';
-  const url = `https://${location.host}.com/${pathname}`;
+  const pathname =
+    (typeof location !== 'undefined' ? location.hash.substring(2) : '') ||
+    'background';
+  const host = typeof location !== 'undefined' ? location.host : 'rabby';
+  const url = `https://${host}.com/${pathname}`;
 
   gaParams.append('action_name', pathname);
   gaParams.append('idsite', '2');
   gaParams.append('rec', '1');
   gaParams.append('url', encodeURI(url));
-  gaParams.append('_id', extensionId);
+  gaParams.append('_id', await getOrCreateExtensionId());
   gaParams.append('rand', nanoid());
   gaParams.append('ca', '1');
   gaParams.append('h', new Date().getUTCHours().toString());
@@ -36,7 +66,7 @@ const getParams = async () => {
   gaParams.append('s', new Date().getUTCSeconds().toString());
   gaParams.append('cookie', '0');
   gaParams.append('send_image', '0');
-  gaParams.append('dimension1', process.env.release!);
+  gaParams.append('dimension1', process.env.release || 'dev');
 
   return gaParams;
 };

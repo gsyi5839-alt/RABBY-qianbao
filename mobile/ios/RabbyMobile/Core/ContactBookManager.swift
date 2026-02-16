@@ -9,6 +9,7 @@ class ContactBookManager: ObservableObject {
     
     @Published var contacts: [Contact] = []
     private let storage = StorageManager.shared
+    private let database = DatabaseManager.shared
     
     private let contactsKey = "rabby_contacts"
     
@@ -34,6 +35,28 @@ class ContactBookManager: ObservableObject {
             self.note = note
             self.createdAt = Date()
             self.updatedAt = Date()
+        }
+
+        init(
+            id: String,
+            name: String,
+            address: String,
+            isAlias: Bool,
+            isContact: Bool,
+            cexId: String?,
+            note: String?,
+            createdAt: Date,
+            updatedAt: Date
+        ) {
+            self.id = id
+            self.name = name
+            self.address = address.lowercased()
+            self.isAlias = isAlias
+            self.isContact = isContact
+            self.cexId = cexId
+            self.note = note
+            self.createdAt = createdAt
+            self.updatedAt = updatedAt
         }
     }
     
@@ -162,6 +185,25 @@ class ContactBookManager: ObservableObject {
     // MARK: - Private Methods
     
     private func loadContacts() {
+        if let rows = try? database.getContacts() {
+            contacts = rows.map { row in
+                Contact(
+                    id: row.id,
+                    name: row.name,
+                    address: row.address,
+                    isAlias: row.isAlias,
+                    isContact: row.isContact,
+                    cexId: row.cexId,
+                    note: row.note,
+                    createdAt: row.addedAt,
+                    updatedAt: row.updatedAt
+                )
+            }
+            if !contacts.isEmpty {
+                return
+            }
+        }
+
         if let data = storage.getData(forKey: contactsKey),
            let decoded = try? JSONDecoder().decode([Contact].self, from: data) {
             contacts = decoded
@@ -169,6 +211,21 @@ class ContactBookManager: ObservableObject {
     }
     
     private func saveContacts() {
+        let rows = contacts.map { contact in
+            DatabaseManager.ContactRecord(
+                id: contact.id,
+                address: contact.address,
+                name: contact.name,
+                isAlias: contact.isAlias,
+                isContact: contact.isContact,
+                cexId: contact.cexId,
+                note: contact.note,
+                addedAt: contact.createdAt,
+                updatedAt: contact.updatedAt
+            )
+        }
+        try? database.replaceContacts(rows)
+
         if let encoded = try? JSONEncoder().encode(contacts) {
             storage.setData(encoded, forKey: contactsKey)
         }

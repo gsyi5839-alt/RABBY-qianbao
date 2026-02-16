@@ -11,6 +11,7 @@ class PreferenceManager: ObservableObject {
     @Published var currentAccount: Account?
     @Published var accounts: [Account] = []
     @Published var hiddenAddresses: [Account] = []
+    @Published var aliasMap: [String: String] = [:]
     
     // UI preferences
     @Published var themeMode: ThemeMode = .light
@@ -92,6 +93,7 @@ class PreferenceManager: ObservableObject {
         var defaultChain: String
         var hiddenAddresses: [String]
         var addedTokenMap: [String: [String]]
+        var aliasMap: [String: String]?
     }
     
     // MARK: - Initialization
@@ -119,6 +121,7 @@ class PreferenceManager: ObservableObject {
     
     func removeAccount(_ address: String) {
         accounts.removeAll { $0.address.lowercased() == address.lowercased() }
+        aliasMap.removeValue(forKey: address.lowercased())
         if currentAccount?.address.lowercased() == address.lowercased() {
             currentAccount = accounts.first
         }
@@ -126,6 +129,7 @@ class PreferenceManager: ObservableObject {
     }
     
     func setAlias(address: String, alias: String) {
+        aliasMap[address.lowercased()] = alias
         if let index = accounts.firstIndex(where: { $0.address.lowercased() == address.lowercased() }) {
             accounts[index].aliasName = alias
         }
@@ -136,6 +140,9 @@ class PreferenceManager: ObservableObject {
     }
     
     func getAlias(address: String) -> String? {
+        if let alias = aliasMap[address.lowercased()], !alias.isEmpty {
+            return alias
+        }
         return accounts.first(where: { $0.address.lowercased() == address.lowercased() })?.aliasName
     }
     
@@ -255,10 +262,24 @@ class PreferenceManager: ObservableObject {
     }
     
     // MARK: - Whitelist
-    
+
     func setWhitelistEnabled(_ enabled: Bool) {
         isWhitelistEnabled = enabled
         savePreferences()
+    }
+
+    // MARK: - Testnet (对齐扩展钱包的 Preference API)
+
+    /// 获取是否显示测试网（对应扩展的 getIsShowTestnet）
+    func getIsShowTestnet() -> Bool {
+        return showTestnet
+    }
+
+    /// 设置是否显示测试网（对应扩展的 setIsShowTestnet）
+    func setIsShowTestnet(_ show: Bool) {
+        showTestnet = show
+        savePreferences()
+        print("[PreferenceManager] ✅ Show testnet set to: \(show)")
     }
     
     // MARK: - Private
@@ -287,6 +308,7 @@ class PreferenceManager: ObservableObject {
             self.showTestnet = store.showTestnet
             self.defaultChain = store.defaultChain
             self.addedTokenMap = store.addedTokenMap
+            self.aliasMap = store.aliasMap ?? [:]
 
             // Sync locale to LocalizationManager after loading
             NotificationCenter.default.post(
@@ -318,7 +340,8 @@ class PreferenceManager: ObservableObject {
             showTestnet: showTestnet,
             defaultChain: defaultChain,
             hiddenAddresses: hiddenAddresses.map { $0.address },
-            addedTokenMap: addedTokenMap
+            addedTokenMap: addedTokenMap,
+            aliasMap: aliasMap
         )
         if let data = try? JSONEncoder().encode(store) {
             storage.setData(data, forKey: prefKey)

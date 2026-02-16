@@ -18,6 +18,10 @@
   "page.transactions.filterScam.button": "Hide Scam tx",
   "page.chainList.title": "{{count}} chains Integrated",
   "page.chainList.mainnet": "Mainnets",
+  "page.receive.saveImage": "Save Image",
+  "page.receive.share": "Share",
+  "page.receive.savedToPhotos": "Saved to Photos",
+  "page.receive.incomingDetected": "Incoming transfer detected. Return to Assets to refresh.",
   "page.chainList.testnet": "Testnets",
   "page.signTx.nftIn": "NFT in",
   "page.signTx.gasLimitNotEnough": "Gas limit is less than 21000. Transaction can't be submitted",
@@ -3537,13 +3541,11 @@
   "security_address_explain": "Address security checks verify whether the receiving address or contract has been flagged for phishing, scams, or other malicious activity.",
   "security_signature_explain": "Signature security checks analyze the message or typed data you're about to sign for potential risks like unlimited token approvals or permit signatures.",
   "security_transaction_explain": "Transaction security checks verify the transaction parameters including gas settings, value transfers, and contract interactions for potential risks.",
-
   "ios.approval.revokeConfirmMsg": "Revoke {symbol} approval for {spender}?",
   "ios.approval.estimatedGas": "Estimated gas: {gas}",
   "ios.approval.selectedCount": "{count} selected",
   "ios.approval.revokingProgress": "Revoking {progress}/{total}...",
   "ios.approval.txValue": "{value} ETH",
-
   "ios.gnosis.txCount": "{count} tx",
   "ios.gnosis.msgCount": "{count} msg",
   "ios.gnosis.threshold": "{threshold}/{owners} threshold",
@@ -3554,10 +3556,8 @@
   "ios.gnosis.confirmationsHeader": "Confirmations ({count}/{required})",
   "ios.gnosis.signatures": "{count}/{required} signatures",
   "ios.gnosis.signaturesHeader": "Signatures ({count}/{required})",
-
   "ios.clearPending.clearingProgress": "Clearing {progress}/{total}...",
   "ios.clearPending.clearAll": "Clear All Pending ({count})",
-
   "ios.ledger.ethAppRunning": "Ethereum app v{version} is running",
   "ios.ledger.accountsReady": "{count} account(s) ready to use",
   "ios.ledger.appVersion": "Version {version}",
@@ -3565,9 +3565,7 @@
   "ios.ledger.accountCount": "{count} account(s)",
   "ios.ledger.connectTo": "Connect to {name}",
   "ios.ledger.importAccounts": "Import {count} Account(s)",
-
   "ios.swap.txResult": "Transaction: {hash}",
-
   "ios.gasAccount.sendToDeposit": "Send {token} to this address to deposit into your Gas Account",
   "ios.gasAccount.sendToDepositBtn": "Send {token} to Deposit",
   "ios.gasAccount.loginMessage": "Login to Rabby Gas Account\nAddress: {address}\nTimestamp: {timestamp}",
@@ -3575,7 +3573,6 @@
   "ios.dapp.domainAge": "Domain is only {days} day(s) old.",
   "ios.dapp.domainAgeOk": "Domain age: {days} days.",
   "ios.dapp.reputationScore": "Reputation score: {score}/100.",
-
   "Unknown error": "Unknown error",
   "Auto": "Auto",
   "Swapping...": "Swapping...",
@@ -3700,5 +3697,15 @@
   "ios.approval.contractInteraction": "Contract Interaction ({selector})",
   "ios.approval.riskCount": "{count} Risk(s)",
   "Execute (Universal Router)": "Execute (Universal Router)",
-  "Swap (1inch)": "Swap (1inch)"
+  "Swap (1inch)": "Swap (1inch)",
+  "logout_wallet": "Logout Wallet",
+  "logout_wallet_confirm_title": "⚠️ Logout Wallet",
+  "logout_wallet_confirm_message": "This action will permanently delete current wallet data.\n\n⚠️ Make sure you have backed up your seed phrase or private key, or you will lose access to your assets forever!\n\nAfter logout, you can create a new wallet or import an existing one.",
+  "logout_password_prompt_title": "Final Confirmation",
+  "logout_password_prompt_message": "Please enter your password to confirm wallet logout.\n\nThis action cannot be undone. Make sure you have backed up your seed phrase!",
+  "logging_out": "Logging out...",
+  "confirm_logout": "Confirm Logout",
+  "logout_failed": "Logout failed",
+  "password_required": "Password required",
+  "continue": "Continue"
 }

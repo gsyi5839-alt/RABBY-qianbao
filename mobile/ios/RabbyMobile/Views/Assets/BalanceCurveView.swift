@@ -61,18 +61,20 @@ struct BalanceCurveView: View {
                         .font(.caption2).foregroundColor(.secondary)
                 }
             } else {
-                // Change indicator
-                HStack(spacing: 6) {
-                    let isPositive = changeValue >= 0
-                    Image(systemName: isPositive ? "arrowtriangle.up.fill" : "arrowtriangle.down.fill")
-                        .font(.caption2)
-                        .foregroundColor(isPositive ? .green : .red)
-                    Text("\(isPositive ? "+" : "")\(formatUSD(changeValue))")
-                        .font(.caption)
-                        .foregroundColor(isPositive ? .green : .red)
-                    Text("(\(String(format: "%.2f%%", changePercent * 100)))")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
+                // Change indicator (avoid showing meaningless +$0.00 while loading / no data)
+                if !isLoading, historyData.count >= 2 {
+                    HStack(spacing: 6) {
+                        let isPositive = changeValue >= 0
+                        Image(systemName: isPositive ? "arrowtriangle.up.fill" : "arrowtriangle.down.fill")
+                            .font(.caption2)
+                            .foregroundColor(isPositive ? .green : .red)
+                        Text("\(isPositive ? "+" : "")\(formatUSD(changeValue))")
+                            .font(.caption)
+                            .foregroundColor(isPositive ? .green : .red)
+                        Text("(\(String(format: "%.2f%%", changePercent * 100)))")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
                 }
             }
             

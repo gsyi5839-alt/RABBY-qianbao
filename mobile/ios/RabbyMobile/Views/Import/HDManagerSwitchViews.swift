@@ -292,48 +292,142 @@ struct SwitchAccountPopup: View {
     @StateObject private var keyringManager = KeyringManager.shared
     @StateObject private var prefManager = PreferenceManager.shared
     @Binding var isPresented: Bool
+    @State private var searchText = ""
+    @State private var editingAlias: PreferenceManager.Account? = nil
+    @State private var aliasText = ""
+    @State private var copiedAddress: String? = nil
+    @State private var showImport = false
+    
+    // Group accounts by keyring type
+    private var groupedAccounts: [(String, String, [PreferenceManager.Account])] {
+        let filtered = filteredAccounts
+        var groups: [(String, String, [PreferenceManager.Account])] = []
+        
+        let hdAccounts = filtered.filter { $0.type == KeyringType.hdKeyring.rawValue }
+        let privateKeyAccounts = filtered.filter { $0.type == KeyringType.simpleKeyring.rawValue }
+        let watchAccounts = filtered.filter { $0.type == KeyringType.watchAddress.rawValue }
+        let otherAccounts = filtered.filter {
+            $0.type != KeyringType.hdKeyring.rawValue &&
+            $0.type != KeyringType.simpleKeyring.rawValue &&
+            $0.type != KeyringType.watchAddress.rawValue
+        }
+        
+        if !hdAccounts.isEmpty {
+            groups.append(("seedphrase", "lock.shield", hdAccounts))
+        }
+        if !privateKeyAccounts.isEmpty {
+            groups.append(("key", "key.fill", privateKeyAccounts))
+        }
+        if !otherAccounts.isEmpty {
+            groups.append(("other", "externaldrive.connected.to.line.below", otherAccounts))
+        }
+        if !watchAccounts.isEmpty {
+            groups.append(("watch", "eye.fill", watchAccounts))
+        }
+        return groups
+    }
+    
+    private var filteredAccounts: [PreferenceManager.Account] {
+        guard !searchText.isEmpty else { return prefManager.accounts }
+        let q = searchText.lowercased()
+        return prefManager.accounts.filter {
+            $0.address.lowercased().contains(q) ||
+            ($0.aliasName ?? "").lowercased().contains(q) ||
+            $0.brandName.lowercased().contains(q)
+        }
+    }
+    
+    private func keyringLabel(_ key: String) -> String {
+        switch key {
+        case "seedphrase": return LocalizationManager.shared.t("Seed Phrase", defaultValue: "Seed Phrase")
+        case "key": return LocalizationManager.shared.t("Private Key", defaultValue: "Private Key")
+        case "watch": return LocalizationManager.shared.t("Watch Only", defaultValue: "Watch Only")
+        default: return LocalizationManager.shared.t("Other", defaultValue: "Other")
+        }
+    }
     
     var body: some View {
         NavigationView {
-            List {
-                ForEach(prefManager.accounts) { account in
-                    Button(action: {
-                        switchTo(account)
-                    }) {
-                        HStack(spacing: 12) {
-                            Circle()
-                                .fill(Color.blue.opacity(0.2))
-                                .frame(width: 36, height: 36)
-                                .overlay(
-                                    Text(String(account.address.dropFirst(2).prefix(2)))
-                                        .font(.caption2).fontWeight(.bold).foregroundColor(.blue)
-                                )
-                            
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(account.aliasName ?? account.brandName)
-                                    .font(.subheadline).fontWeight(.medium)
-                                    .foregroundColor(.primary)
-                                Text("\(account.address.prefix(8))...\(account.address.suffix(6))")
-                                    .font(.system(.caption, design: .monospaced))
-                                    .foregroundColor(.secondary)
-                            }
-                            
-                            Spacer()
-                            
-                            if account.address.lowercased() == prefManager.currentAccount?.address.lowercased() {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .foregroundColor(.blue)
-                            }
-                            
-                            if let balance = account.balance {
-                                Text("$\(String(format: "%.2f", balance))")
-                                    .font(.caption).foregroundColor(.secondary)
-                            }
+            VStack(spacing: 0) {
+                // Search bar
+                HStack(spacing: 8) {
+                    Image(systemName: "magnifyingglass").foregroundColor(.gray)
+                    TextField(L("Search by address or alias"), text: $searchText)
+                        .textFieldStyle(.plain)
+                        .autocapitalization(.none)
+                    if !searchText.isEmpty {
+                        Button(action: { searchText = "" }) {
+                            Image(systemName: "xmark.circle.fill").foregroundColor(.gray)
                         }
                     }
                 }
+                .padding(10)
+                .background(Color(.systemGray6))
+                .cornerRadius(10)
+                .padding(.horizontal)
+                .padding(.top, 8)
+                
+                if filteredAccounts.isEmpty {
+                    Spacer()
+                    VStack(spacing: 12) {
+                        Image(systemName: "person.crop.circle.badge.questionmark")
+                            .font(.system(size: 48))
+                            .foregroundColor(.secondary)
+                        Text(searchText.isEmpty ? L("No accounts found") : L("No matching accounts"))
+                            .font(.subheadline).foregroundColor(.secondary)
+                    }
+                    Spacer()
+                } else {
+                    ScrollView {
+                        LazyVStack(spacing: 0) {
+                            ForEach(groupedAccounts, id: \.0) { (key, icon, accounts) in
+                                // Group header
+                                HStack(spacing: 6) {
+                                    Image(systemName: icon)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                    Text(keyringLabel(key))
+                                        .font(.caption).fontWeight(.semibold)
+                                        .foregroundColor(.secondary)
+                                    Text("(\(accounts.count))")
+                                        .font(.caption2)
+                                        .foregroundColor(.gray)
+                                    Spacer()
+                                }
+                                .padding(.horizontal)
+                                .padding(.top, 16)
+                                .padding(.bottom, 6)
+                                
+                                ForEach(accounts) { account in
+                                    accountRow(account)
+                                    if account.id != accounts.last?.id {
+                                        Divider().padding(.leading, 64)
+                                    }
+                                }
+                            }
+                        }
+                        .padding(.bottom, 16)
+                    }
+                }
+                
+                // Bottom actions
+                VStack(spacing: 0) {
+                    Divider()
+                    Button(action: { showImport = true }) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "plus.circle.fill")
+                                .font(.title3)
+                                .foregroundColor(.blue)
+                            Text(L("Add New Address"))
+                                .font(.subheadline).fontWeight(.medium)
+                                .foregroundColor(.blue)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                    }
+                }
+                .background(Color(.systemBackground))
             }
-            .listStyle(.plain)
             .navigationTitle(L("Switch Account"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -341,12 +435,173 @@ struct SwitchAccountPopup: View {
                     Button(L("Done")) { isPresented = false }
                 }
             }
+            .task {
+                await keyringManager.refreshPreferenceAccounts()
+            }
+            .sheet(isPresented: $showImport) {
+                ImportOptionsView()
+            }
+            .alert(L("Edit Alias"), isPresented: Binding(
+                get: { editingAlias != nil },
+                set: { if !$0 { editingAlias = nil } }
+            )) {
+                TextField(L("Alias"), text: $aliasText)
+                Button(L("Save")) {
+                    if let account = editingAlias {
+                        prefManager.setAlias(address: account.address, alias: aliasText)
+                    }
+                    editingAlias = nil
+                }
+                Button(L("Cancel"), role: .cancel) { editingAlias = nil }
+            } message: {
+                Text(L("Enter a name for this address"))
+            }
         }
     }
     
+    private func accountRow(_ account: PreferenceManager.Account) -> some View {
+        let isCurrent = account.address.lowercased() == keyringManager.currentAccount?.address.lowercased()
+        
+        return Button(action: { switchTo(account) }) {
+            HStack(spacing: 12) {
+                // Account avatar with keyring type indicator
+                ZStack(alignment: .bottomTrailing) {
+                    // Identicon-style colored circle
+                    Circle()
+                        .fill(isCurrent
+                            ? LinearGradient(colors: [.blue, .blue.opacity(0.7)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                            : LinearGradient(colors: [Color(.systemGray4), Color(.systemGray5)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                        .frame(width: 40, height: 40)
+                        .overlay(
+                            Text(String(account.address.dropFirst(2).prefix(2)).uppercased())
+                                .font(.system(size: 14, weight: .bold, design: .monospaced))
+                                .foregroundColor(isCurrent ? .white : .secondary)
+                        )
+                    
+                    // Keyring type badge
+                    keyringBadge(for: account.type)
+                }
+                
+                // Account info
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack(spacing: 4) {
+                        Text(account.aliasName ?? account.brandName)
+                            .font(.subheadline).fontWeight(.medium)
+                            .foregroundColor(isCurrent ? .blue : .primary)
+                            .lineLimit(1)
+                        
+                        if isCurrent {
+                            Text(L("Current"))
+                                .font(.system(size: 9, weight: .semibold))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 1)
+                                .background(Color.blue)
+                                .cornerRadius(3)
+                        }
+                    }
+                    
+                    Text(EthereumUtil.formatAddress(account.address))
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundColor(.secondary)
+                }
+                
+                Spacer()
+                
+                // Balance
+                if let balance = account.balance, balance > 0 {
+                    Text("$\(String(format: "%.2f", balance))")
+                        .font(.subheadline).fontWeight(.medium)
+                        .foregroundColor(.primary)
+                }
+                
+                // Action buttons
+                HStack(spacing: 8) {
+                    // Copy address
+                    Button(action: { copyAddress(account.address) }) {
+                        Image(systemName: copiedAddress == account.address ? "checkmark" : "doc.on.doc")
+                            .font(.caption)
+                            .foregroundColor(copiedAddress == account.address ? .green : .gray)
+                    }
+                    .buttonStyle(.plain)
+                    
+                    // Edit alias
+                    Button(action: {
+                        aliasText = account.aliasName ?? ""
+                        editingAlias = account
+                    }) {
+                        Image(systemName: "pencil")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 10)
+            .background(isCurrent ? Color.blue.opacity(0.06) : Color.clear)
+        }
+        .buttonStyle(.plain)
+    }
+    
+    private func keyringBadge(for type: String) -> some View {
+        let (icon, color): (String, Color) = {
+            switch type {
+            case KeyringType.hdKeyring.rawValue:
+                return ("lock.shield.fill", .blue)
+            case KeyringType.simpleKeyring.rawValue:
+                return ("key.fill", .orange)
+            case KeyringType.watchAddress.rawValue:
+                return ("eye.fill", .gray)
+            default:
+                return ("link.circle.fill", .purple)
+            }
+        }()
+        
+        return Image(systemName: icon)
+            .font(.system(size: 10, weight: .bold))
+            .foregroundColor(.white)
+            .padding(3)
+            .background(color)
+            .clipShape(Circle())
+            .overlay(Circle().stroke(Color(.systemBackground), lineWidth: 1.5))
+            .offset(x: 2, y: 2)
+    }
+    
     private func switchTo(_ account: PreferenceManager.Account) {
-        prefManager.setCurrentAccount(account)
-        isPresented = false
+        Task {
+            do {
+                try await keyringManager.selectAccount(address: account.address)
+                await MainActor.run {
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    isPresented = false
+                }
+            } catch {
+                // fallback for legacy data
+                prefManager.setCurrentAccount(account)
+                if let type = KeyringType(rawValue: account.type) {
+                    keyringManager.currentAccount = Account(
+                        address: account.address,
+                        type: type,
+                        brandName: account.brandName,
+                        alianName: account.aliasName
+                    )
+                }
+                await MainActor.run {
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    isPresented = false
+                }
+            }
+        }
+    }
+    
+    private func copyAddress(_ address: String) {
+        UIPasteboard.general.string = address
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
+        withAnimation { copiedAddress = address }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            withAnimation { if copiedAddress == address { copiedAddress = nil } }
+        }
     }
 }
 
@@ -415,13 +670,7 @@ struct SwitchChainPopup: View {
             isPresented = false
         }) {
             HStack(spacing: 12) {
-                Circle()
-                    .fill(Color.purple.opacity(0.2))
-                    .frame(width: 32, height: 32)
-                    .overlay(
-                        Text(String(chain.symbol.prefix(2)))
-                            .font(.caption2).fontWeight(.bold).foregroundColor(.purple)
-                    )
+                ChainIconView(chainId: chain.serverId, logoUrl: chain.logo, size: 32)
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(chain.name).font(.subheadline).foregroundColor(.primary)

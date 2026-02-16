@@ -21,6 +21,7 @@ struct ChainSelectorSheet: View {
 
     @Environment(\.dismiss) private var dismiss
     @StateObject private var chainManager = ChainManager.shared
+    @StateObject private var prefManager = PreferenceManager.shared  // ← 新增
 
     @State private var searchText = ""
 
@@ -34,6 +35,11 @@ struct ChainSelectorSheet: View {
             VStack(spacing: 0) {
                 // Search bar
                 searchBar
+
+                // Show Testnet Toggle (if there are testnets)
+                if !chainManager.testnetChains.isEmpty {
+                    showTestnetToggle
+                }
 
                 // Chain list
                 ScrollView {
@@ -76,6 +82,25 @@ struct ChainSelectorSheet: View {
         .cornerRadius(10)
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
+    }
+
+    // MARK: - Show Testnet Toggle
+
+    private var showTestnetToggle: some View {
+        HStack {
+            Text(L("Show Testnets"))
+                .font(.subheadline)
+                .foregroundColor(.primary)
+            Spacer()
+            Toggle("", isOn: Binding(
+                get: { prefManager.showTestnet },
+                set: { prefManager.setIsShowTestnet($0) }
+            ))
+            .labelsHidden()
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(Color(.systemBackground))
     }
 
     // MARK: - Pinned section
@@ -173,7 +198,13 @@ struct ChainSelectorSheet: View {
                         image
                             .resizable()
                             .scaledToFit()
-                    default:
+                    case .empty:
+                        // Loading state — show placeholder while fetching
+                        chainIconFallback(chain)
+                            .overlay(ProgressView().scaleEffect(0.5))
+                    case .failure:
+                        chainIconFallback(chain)
+                    @unknown default:
                         chainIconFallback(chain)
                     }
                 }
@@ -224,12 +255,21 @@ struct ChainSelectorSheet: View {
         pinnedChainIds.compactMap { id in
             chainManager.allChains.first(where: { $0.id == id })
         }
+        .filter { chain in
+            // ✅ 过滤测试网（根据设置）
+            prefManager.showTestnet || !chain.isTestnet
+        }
     }
 
     /// All chains, filtered by the search text. When not searching the pinned
     /// chains are excluded to avoid showing duplicates.
     private var filteredChains: [Chain] {
-        let all = chainManager.allChains
+        var all = chainManager.allChains
+
+        // ✅ 过滤测试网（根据设置）
+        if !prefManager.showTestnet {
+            all = all.filter { !$0.isTestnet }
+        }
 
         if searchText.isEmpty {
             return all.filter { chain in

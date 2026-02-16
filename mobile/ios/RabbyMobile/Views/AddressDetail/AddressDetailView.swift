@@ -7,6 +7,7 @@ struct AddressDetailView: View {
     @StateObject private var prefManager = PreferenceManager.shared
     @StateObject private var tokenManager = TokenManager.shared
     @StateObject private var chainManager = ChainManager.shared
+    @EnvironmentObject var localization: LocalizationManager
     @State private var aliasName = ""
     @State private var showBackup = false
     @State private var showDelete = false
@@ -141,9 +142,22 @@ struct AddressDetailView: View {
             Text(L("Assets by Chain")).font(.headline)
             
             ForEach(chainManager.mainnetChains.prefix(5)) { chain in
-                HStack {
-                    Circle().fill(Color.blue.opacity(0.2)).frame(width: 28, height: 28)
-                        .overlay(Text(String(chain.symbol.prefix(1))).font(.caption2).fontWeight(.bold).foregroundColor(.blue))
+                HStack(spacing: 10) {
+                    AsyncImage(url: URL(string: chain.logo)) { phase in
+                        switch phase {
+                        case .success(let image):
+                            image.resizable().scaledToFit()
+                        case .failure:
+                            Circle().fill(Color.blue.opacity(0.2))
+                                .overlay(Text(String(chain.symbol.prefix(1))).font(.caption2).fontWeight(.bold).foregroundColor(.blue))
+                        case .empty:
+                            ProgressView().scaleEffect(0.5)
+                        @unknown default:
+                            Circle().fill(Color(.systemGray5))
+                        }
+                    }
+                    .frame(width: 28, height: 28)
+                    .clipShape(Circle())
                     Text(chain.name).font(.subheadline)
                     Spacer()
                     Text(L("$0.00")).font(.subheadline).foregroundColor(.secondary)
@@ -161,7 +175,7 @@ struct AddressDetailView: View {
             Button(action: { showBackup = true }) {
                 HStack {
                     Image(systemName: "key.fill").foregroundColor(.orange)
-                    Text(L("Backup Seed Phrase / Private Key")).foregroundColor(.primary)
+                    Text(localization.t("backup_seed_phrase_private_key")).foregroundColor(.primary)
                     Spacer()
                     Image(systemName: "chevron.right").foregroundColor(.secondary)
                 }

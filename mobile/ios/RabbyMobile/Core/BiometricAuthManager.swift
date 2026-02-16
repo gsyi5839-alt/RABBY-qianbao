@@ -12,8 +12,26 @@ class BiometricAuthManager: ObservableObject {
     private let storageManager = StorageManager.shared
     
     private init() {
-        isBiometricEnabled = storageManager.isBiometricEnabled()
-        canUseBiometric = isBiometricAvailable()
+        // Defer publishing changes to avoid mutating @Published during view updates
+        Task { @MainActor in
+            self.refreshAvailability()
+        }
+    }
+    
+    // MARK: - Biometric Availability
+    
+    /// Refreshes cached availability and user setting on the main actor
+    func refreshAvailability() {
+        // Read persisted setting
+        self.isBiometricEnabled = storageManager.isBiometricEnabled()
+        // Re-evaluate device capability
+        self.canUseBiometric = isBiometricAvailable()
+    }
+    
+    func isBiometricAvailable() -> Bool {
+        let context = LAContext()
+        var error: NSError?
+        return context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
     }
     
     /// Computed property for biometric type (used by views)
@@ -27,14 +45,6 @@ class BiometricAuthManager: ObservableObject {
         case .none: return .none
         @unknown default: return .unknown
         }
-    }
-    
-    // MARK: - Biometric Availability
-    
-    func isBiometricAvailable() -> Bool {
-        let context = LAContext()
-        var error: NSError?
-        return context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
     }
     
     // MARK: - Authentication
@@ -137,9 +147,10 @@ class BiometricAuthManager: ObservableObject {
     }
     
     /// Async password getter with biometric prompt
-    func getBiometricPasswordAsync() async throws -> String {
+    func getBiometricPasswordAsync(reason: String = "Authenticate to unlock wallet") async throws -> String {
         let context = LAContext()
-        context.localizedReason = "Authenticate to unlock wallet"
+        context.localizedCancelTitle = "Cancel"
+        context.localizedReason = reason
 
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
@@ -147,7 +158,7 @@ class BiometricAuthManager: ObservableObject {
             kSecAttrAccount as String: "walletPassword",
             kSecReturnData as String: true,
             kSecMatchLimit as String: kSecMatchLimitOne,
-            kSecUseAuthenticationContext as String: context
+            kSecUseAuthenticationContext as String: context,
         ]
         
         var result: AnyObject?
@@ -280,3 +291,4 @@ enum BiometricError: Error, LocalizedError {
 }
 
 // MARK: - AutoLockManager is defined in AutoLockManager.swift
+

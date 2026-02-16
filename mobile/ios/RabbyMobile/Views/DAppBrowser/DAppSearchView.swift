@@ -72,14 +72,7 @@ struct DAppSearchView: View {
                 ForEach(bookmarkManager.bookmarks.filter { $0.isFavorite }) { dapp in
                     Button(action: { onOpenDApp?(dapp.url) }) {
                         VStack(spacing: 6) {
-                            AsyncImage(url: URL(string: dapp.iconURL)) { image in
-                                image.resizable().frame(width: 40, height: 40).cornerRadius(10)
-                            } placeholder: {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(Color(.systemGray4))
-                                    .frame(width: 40, height: 40)
-                                    .overlay(Text(String(dapp.title.prefix(1))).foregroundColor(.white))
-                            }
+                            dappIcon(title: dapp.title, iconURL: dapp.iconURL, size: 40, cornerRadius: 10)
                             Text(dapp.title)
                                 .font(.caption2)
                                 .lineLimit(1)
@@ -106,13 +99,7 @@ struct DAppSearchView: View {
             ForEach(bookmarkManager.recentDApps.prefix(5)) { dapp in
                 Button(action: { onOpenDApp?(dapp.url) }) {
                     HStack(spacing: 12) {
-                        AsyncImage(url: URL(string: dapp.iconURL)) { image in
-                            image.resizable().frame(width: 32, height: 32).cornerRadius(8)
-                        } placeholder: {
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(Color(.systemGray4))
-                                .frame(width: 32, height: 32)
-                        }
+                        dappIcon(title: dapp.title, iconURL: dapp.iconURL, size: 32, cornerRadius: 8)
 
                         VStack(alignment: .leading, spacing: 2) {
                             Text(dapp.title).font(.subheadline).foregroundColor(.primary)
@@ -139,10 +126,7 @@ struct DAppSearchView: View {
             ForEach(DAppBookmarkManager.popularDApps) { dapp in
                 Button(action: { onOpenDApp?(dapp.url) }) {
                     HStack(spacing: 12) {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color(.systemGray4))
-                            .frame(width: 32, height: 32)
-                            .overlay(Text(String(dapp.title.prefix(1))).font(.caption).foregroundColor(.white))
+                        dappIcon(title: dapp.title, iconURL: dapp.iconURL, size: 32, cornerRadius: 8)
 
                         Text(dapp.title)
                             .font(.subheadline)
@@ -189,9 +173,7 @@ struct DAppSearchView: View {
                 ForEach(results) { dapp in
                     Button(action: { onOpenDApp?(dapp.url) }) {
                         HStack(spacing: 12) {
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(Color(.systemGray4))
-                                .frame(width: 28, height: 28)
+                            dappIcon(title: dapp.title, iconURL: dapp.iconURL, size: 28, cornerRadius: 8)
 
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(dapp.title).font(.subheadline).foregroundColor(.primary)
@@ -220,5 +202,32 @@ struct DAppSearchView: View {
     private func normalizeURL(_ text: String) -> String {
         if text.hasPrefix("http://") || text.hasPrefix("https://") { return text }
         return "https://\(text)"
+    }
+
+    @ViewBuilder
+    private func dappIcon(title: String, iconURL: String, size: CGFloat, cornerRadius: CGFloat) -> some View {
+        if let url = URL(string: iconURL), !iconURL.isEmpty {
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .success(let image):
+                    image.resizable().frame(width: size, height: size).cornerRadius(cornerRadius)
+                default:
+                    iconFallback(title: title, size: size, cornerRadius: cornerRadius)
+                }
+            }
+        } else {
+            iconFallback(title: title, size: size, cornerRadius: cornerRadius)
+        }
+    }
+
+    private func iconFallback(title: String, size: CGFloat, cornerRadius: CGFloat) -> some View {
+        RoundedRectangle(cornerRadius: cornerRadius)
+            .fill(Color(.systemGray4))
+            .frame(width: size, height: size)
+            .overlay(
+                Text(String(title.prefix(1)).uppercased())
+                    .font(.caption)
+                    .foregroundColor(.white)
+            )
     }
 }

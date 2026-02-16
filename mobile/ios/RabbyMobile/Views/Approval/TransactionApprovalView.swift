@@ -13,6 +13,7 @@ struct TransactionApprovalView: View {
     
     @State private var isProcessing = false
     @State private var securityResults: [SecurityEngineManager.SecurityCheckResult] = []
+    @State private var isCheckingSecurity = true
     @State private var showAdvancedGas = false
     @State private var gasLimit = ""
     @State private var gasPrice = ""
@@ -20,8 +21,7 @@ struct TransactionApprovalView: View {
     @State private var maxPriorityFee = ""
 
     // Balance change preview state
-    // Currently parsed locally from tx data. Future: integrate with OpenAPI preExec
-    // endpoint (POST /v1/tx/pre_exec) for simulation-based accurate balance changes.
+    // Uses `/v1/wallet/pre_exec_tx` when origin is available, falls back to local heuristics.
     @State private var balanceChangeItems: [BalanceChangeItem] = []
     @State private var balanceChangeRiskLevel: SecurityEngineManager.RiskLevel = .safe
     
@@ -59,6 +59,19 @@ struct TransactionApprovalView: View {
             }
         }
         .onAppear {
+            // Prefill gas fields if the DApp provided them.
+            if gasLimit.isEmpty {
+                gasLimit = approval.gasLimit ?? approval.gas ?? ""
+            }
+            if gasPrice.isEmpty {
+                gasPrice = approval.gasPrice ?? ""
+            }
+            if maxFeePerGas.isEmpty {
+                maxFeePerGas = approval.maxFeePerGas ?? ""
+            }
+            if maxPriorityFee.isEmpty {
+                maxPriorityFee = approval.maxPriorityFeePerGas ?? ""
+            }
             performSecurityCheck()
             parseBalanceChanges()
         }
@@ -120,7 +133,7 @@ struct TransactionApprovalView: View {
             HStack {
                 Text(L("Security Check")).font(.headline)
                 Spacer()
-                if securityResults.isEmpty {
+                if isCheckingSecurity {
                     ProgressView().scaleEffect(0.8)
                 } else {
                     let dangerCount = securityResults.filter { $0.level == .danger || $0.level == .forbidden }.count
@@ -132,14 +145,20 @@ struct TransactionApprovalView: View {
                 }
             }
 
-            ForEach(Array(securityResults), id: \.ruleId) { result in
-                HStack(spacing: 8) {
-                    Circle()
-                        .fill(securityColor(result.level))
-                        .frame(width: 8, height: 8)
-                    Text(verbatim: result.message)
-                        .font(.caption)
-                        .foregroundColor(securityColor(result.level))
+            if !isCheckingSecurity && securityResults.isEmpty {
+                Text(L("No security issues detected."))
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            } else {
+                ForEach(Array(securityResults), id: \.ruleId) { result in
+                    HStack(spacing: 8) {
+                        Circle()
+                            .fill(securityColor(result.level))
+                            .frame(width: 8, height: 8)
+                        Text(verbatim: result.message)
+                            .font(.caption)
+                            .foregroundColor(securityColor(result.level))
+                    }
                 }
             }
         }
@@ -222,23 +241,126 @@ struct TransactionApprovalView: View {
     
     private func performSecurityCheck() {
         Task {
+            isCheckingSecurity = true
             if let chain = ChainManager.shared.selectedChain {
                 securityResults = await securityEngine.checkTransaction(
                     from: approval.from, to: approval.to ?? "", value: approval.value ?? "0x0",
-                    data: approval.data ?? "0x", chain: chain
+                    data: approval.data ?? "0x",
+                    chain: chain,
+                    origin: approval.origin,
+                    nonce: approval.nonce,
+                    gas: approval.gas,
+                    gasLimit: approval.gasLimit,
+                    gasPrice: approval.gasPrice,
+                    maxFeePerGas: approval.maxFeePerGas,
+                    maxPriorityFeePerGas: approval.maxPriorityFeePerGas
                 )
             }
+            isCheckingSecurity = false
         }
     }
 
-    /// Parse balance changes from the approval request using local heuristics.
-    /// This provides an immediate preview. For production accuracy, replace with
-    /// OpenAPI preExec simulation: POST /v1/tx/pre_exec which returns the actual
-    /// balance diff from executing the transaction on a forked state.
+    /// Balance change preview:
+    /// - Uses OpenAPI simulation `/v1/wallet/pre_exec_tx` when origin is available.
+    /// - Falls back to local heuristics when API is unavailable or origin is missing.
     private func parseBalanceChanges() {
-        let result = BalanceChangeParser.parse(approval: approval)
-        balanceChangeItems = result.changes
-        balanceChangeRiskLevel = result.riskLevel
+        Task {
+            if let chain = ChainManager.shared.selectedChain,
+               let to = approval.to {
+                if let explain = await securityEngine.preExecTransaction(
+                    from: approval.from,
+                    to: to,
+                    value: approval.value ?? "0x0",
+                    data: approval.data ?? "0x",
+                    chain: chain,
+                    origin: approval.origin,
+                    nonce: approval.nonce,
+                    gas: approval.gas,
+                    gasLimit: approval.gasLimit,
+                    gasPrice: approval.gasPrice,
+                    maxFeePerGas: approval.maxFeePerGas,
+                    maxPriorityFeePerGas: approval.maxPriorityFeePerGas
+                ) {
+                    applyPreExecBalanceChange(explain)
+                    // Add an extra risk hint for infinite approvals (matches extension behavior).
+                    if explain.type_token_approval?.is_infinity == true {
+                        balanceChangeRiskLevel = .danger
+                    }
+                    return
+                }
+            }
+
+            // Fallback: heuristic parser when API is unavailable / rate-limited.
+            let result = BalanceChangeParser.parse(approval: approval)
+            balanceChangeItems = result.changes
+            balanceChangeRiskLevel = result.riskLevel
+        }
+    }
+
+    private func applyPreExecBalanceChange(_ explain: OpenAPIService.WalletExplainTxResponse) {
+        let bc = explain.balance_change
+        var items: [BalanceChangeItem] = []
+
+        func tokenUsdValue(_ t: OpenAPIService.WalletTokenItem) -> Double? {
+            if let v = t.usd_value { return v }
+            if t.price > 0 { return t.price * t.amount }
+            return nil
+        }
+
+        for t in bc.send_token_list {
+            items.append(BalanceChangeItem(
+                tokenSymbol: t.symbol,
+                tokenLogoUrl: t.logo_url,
+                chainId: t.chain,
+                amount: -abs(t.amount),
+                usdValue: tokenUsdValue(t).map { -abs($0) },
+                isNFT: false,
+                nftName: nil
+            ))
+        }
+
+        for t in bc.receive_token_list {
+            items.append(BalanceChangeItem(
+                tokenSymbol: t.symbol,
+                tokenLogoUrl: t.logo_url,
+                chainId: t.chain,
+                amount: abs(t.amount),
+                usdValue: tokenUsdValue(t).map { abs($0) },
+                isNFT: false,
+                nftName: nil
+            ))
+        }
+
+        for n in bc.send_nft_list {
+            items.append(BalanceChangeItem(
+                tokenSymbol: "NFT",
+                tokenLogoUrl: n.content,
+                chainId: n.chain,
+                amount: -abs(n.amount),
+                usdValue: nil,
+                isNFT: true,
+                nftName: n.name
+            ))
+        }
+
+        for n in bc.receive_nft_list {
+            items.append(BalanceChangeItem(
+                tokenSymbol: "NFT",
+                tokenLogoUrl: n.content,
+                chainId: n.chain,
+                amount: abs(n.amount),
+                usdValue: nil,
+                isNFT: true,
+                nftName: n.name
+            ))
+        }
+
+        balanceChangeItems = items
+        balanceChangeRiskLevel = .safe
+        if !bc.success {
+            // Keep the UI stable: show empty preview state when simulation fails.
+            balanceChangeItems = []
+        }
     }
     
     private func approveTransaction() {
@@ -311,6 +433,13 @@ struct ApprovalRequest: Identifiable {
     let to: String?
     let value: String?
     let data: String?
+    /// Optional transaction fields (may be provided by the DApp).
+    let nonce: String?
+    let gas: String?
+    let gasLimit: String?
+    let gasPrice: String?
+    let maxFeePerGas: String?
+    let maxPriorityFeePerGas: String?
     /// For `signText` approvals: raw message string (hex string or plain text).
     let message: String?
     /// For `signTypedData` approvals: full typed data JSON string (EIP-712 v4).
@@ -334,6 +463,12 @@ struct ApprovalRequest: Identifiable {
     // Convenience initializer without signMethod for backward compatibility
     init(
         id: String, from: String, to: String?, value: String?, data: String?,
+        nonce: String? = nil,
+        gas: String? = nil,
+        gasLimit: String? = nil,
+        gasPrice: String? = nil,
+        maxFeePerGas: String? = nil,
+        maxPriorityFeePerGas: String? = nil,
         message: String?, typedDataJSON: String?, signMethod: String? = nil,
         chainId: Int, origin: String?, siteName: String?, iconUrl: String?,
         isEIP1559: Bool, type: ApprovalType
@@ -343,6 +478,12 @@ struct ApprovalRequest: Identifiable {
         self.to = to
         self.value = value
         self.data = data
+        self.nonce = nonce
+        self.gas = gas
+        self.gasLimit = gasLimit
+        self.gasPrice = gasPrice
+        self.maxFeePerGas = maxFeePerGas
+        self.maxPriorityFeePerGas = maxPriorityFeePerGas
         self.message = message
         self.typedDataJSON = typedDataJSON
         self.signMethod = signMethod
@@ -445,6 +586,8 @@ struct SignTypedDataApprovalView: View {
     var onApprove: (() -> Void)?
     var onReject: (() -> Void)?
     @Environment(\.dismiss) var dismiss
+    @StateObject private var securityEngine = SecurityEngineManager.shared
+    @State private var securityResults: [SecurityEngineManager.SecurityCheckResult] = []
 
     // Parse the typed data for structured display
     private var parsedData: (domain: [String: Any], primaryType: String, message: [String: Any])? {
@@ -489,6 +632,30 @@ struct SignTypedDataApprovalView: View {
                             Spacer()
                             Text(verbatim: EthereumUtil.formatAddress(addr)).font(.caption).fontWeight(.medium)
                         }
+                        .padding(.horizontal)
+                    }
+
+                    // Security checks (best-effort, extension-compatible)
+                    if !securityResults.isEmpty {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(L("Security Check"))
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                            ForEach(Array(securityResults.enumerated()), id: \.offset) { _, item in
+                                HStack(alignment: .top, spacing: 8) {
+                                    Circle()
+                                        .fill(securityColor(item.level))
+                                        .frame(width: 8, height: 8)
+                                        .padding(.top, 4)
+                                    Text(item.message)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                        }
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(12)
                         .padding(.horizontal)
                     }
 
@@ -571,6 +738,23 @@ struct SignTypedDataApprovalView: View {
             .navigationTitle(L("Sign Typed Data"))
             .navigationBarTitleDisplayMode(.inline)
         }
+        .onAppear {
+            Task {
+                guard let addr = signerAddress, !addr.isEmpty else { return }
+                securityResults = await securityEngine.checkSignMessage(
+                    from: addr,
+                    message: typedDataJSON,
+                    origin: origin
+                )
+            }
+        }
+    }
+
+    private func securityColor(_ level: SecurityEngineManager.RiskLevel) -> Color {
+        switch level {
+        case .safe: return .green
+        case .warning: return .orange
+        case .danger, .forbidden: return .red
+        }
     }
 }
-

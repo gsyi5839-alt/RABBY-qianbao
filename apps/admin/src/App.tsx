@@ -9,6 +9,8 @@ import SecurityPage from './pages/Security';
 import DappsPage from './pages/Dapps';
 import AuditPage from './pages/Audit';
 import SystemPage from './pages/System';
+import WalletsPage from './pages/Wallets';
+import WalletStoragePage from './pages/WalletStorage';  // ← 新增：钱包存储管理页面
 import { useAuth } from './hooks/useAuth';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -54,6 +56,10 @@ export default function App() {
           <Route path="dapps/list" element={<DappsPage />} />
           <Route path="dapps/categories" element={<DappsPage />} />
           <Route path="dapps/review" element={<DappsPage />} />
+          <Route path="wallets" element={<WalletsPage />} />
+          <Route path="wallets/list" element={<WalletsPage />} />
+          <Route path="wallets/balances" element={<WalletsPage />} />
+          <Route path="wallet-storage" element={<WalletStoragePage />} />  {/* ← 新增：钱包存储管理 */}
           <Route path="audit" element={<AuditPage />} />
           <Route path="audit/operations" element={<AuditPage />} />
           <Route path="audit/api-logs" element={<AuditPage />} />

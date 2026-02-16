@@ -1,37 +1,47 @@
 import { KEYRING_CLASS } from '@/constant';
 import { isManifestV3 } from '@/utils/env';
 
-const ImKeyBridge = isManifestV3
-  ? require('./eth-imkey-keyring/imkey-offscreen-bridge')
-  : require('./eth-imkey-keyring/imkey-bridge');
+const getImKeyBridge = () =>
+  isManifestV3
+    ? require('./eth-imkey-keyring/imkey-offscreen-bridge')
+    : require('./eth-imkey-keyring/imkey-bridge');
 
-const OneKeyBridge = isManifestV3
-  ? require('./eth-onekey-keyring/onekey-offscreen-bridge')
-  : require('./eth-onekey-keyring/onekey-bridge');
+const getOneKeyBridge = () =>
+  isManifestV3
+    ? require('./eth-onekey-keyring/onekey-offscreen-bridge')
+    : require('./eth-onekey-keyring/onekey-bridge');
 
-const TrezorBridge = isManifestV3
-  ? require('./eth-trezor-keyring/trezor-offscreen-bridge')
-  : require('@rabby-wallet/eth-trezor-keyring/dist/trezor-bridge');
+const getTrezorBridge = () =>
+  isManifestV3
+    ? require('./eth-trezor-keyring/trezor-offscreen-bridge')
+    : require('@rabby-wallet/eth-trezor-keyring/dist/trezor-bridge');
 
-const BitBox02Bridge = isManifestV3
-  ? require('./eth-bitbox02-keyring/bitbox02-offscreen-bridge')
-  : require('./eth-bitbox02-keyring/bitbox02-bridge');
+// BitBox02 depends on `bitbox-api` which may not be present in unit-test environments.
+// Load it lazily so unrelated tests (and non-BitBox users) won't fail at module import time.
+const getBitBox02Bridge = () =>
+  isManifestV3
+    ? require('./eth-bitbox02-keyring/bitbox02-offscreen-bridge')
+    : require('./eth-bitbox02-keyring/bitbox02-bridge');
 
 export const getKeyringBridge = async (type: string) => {
   if (type === KEYRING_CLASS.HARDWARE.IMKEY) {
-    return new (await ImKeyBridge).default();
+    const Mod = await getImKeyBridge();
+    return new Mod.default();
   }
 
   if (type === KEYRING_CLASS.HARDWARE.ONEKEY) {
-    return new (await OneKeyBridge).default();
+    const Mod = await getOneKeyBridge();
+    return new Mod.default();
   }
 
   if (type === KEYRING_CLASS.HARDWARE.TREZOR) {
-    return new (await TrezorBridge).default();
+    const Mod = await getTrezorBridge();
+    return new Mod.default();
   }
 
   if (type === KEYRING_CLASS.HARDWARE.BITBOX02) {
-    return new (await BitBox02Bridge).default();
+    const Mod = await getBitBox02Bridge();
+    return new Mod.default();
   }
 
   return;

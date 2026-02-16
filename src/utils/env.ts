@@ -21,5 +21,6 @@ export const __DEV__ = process.env.NODE_ENV === 'development';
 export const appIsProd = process.env.NODE_ENV === 'production';
 export const appIsDev = !appIsProd;
 
-export const isManifestV3 =
-  browser.runtime.getManifest().manifest_version === 3;
+// In unit tests `webextension-polyfill` may be partially mocked.
+const manifest = browser?.runtime?.getManifest?.();
+export const isManifestV3 = manifest?.manifest_version === 3;

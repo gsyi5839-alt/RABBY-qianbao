@@ -13,6 +13,7 @@ class TransactionHistoryManager: ObservableObject {
     @Published var bridgeHistory: [BridgeHistoryItem] = []
     
     private let storage = StorageManager.shared
+    private let database = DatabaseManager.shared
     private let historyKey = "rabby_tx_history"
     private let swapHistoryKey = "rabby_swap_history"
     private let bridgeHistoryKey = "rabby_bridge_history"
@@ -204,6 +205,7 @@ class TransactionHistoryManager: ObservableObject {
         fromAmount: String, toAmount: String,
         dexId: String, hash: String, slippage: Double
     ) {
+        swapHistory.removeAll { $0.hash == hash }
         let item = SwapHistoryItem(
             id: hash, address: address, chainId: chainId,
             fromToken: fromToken, toToken: toToken,
@@ -217,6 +219,10 @@ class TransactionHistoryManager: ObservableObject {
     
     func updateSwapStatus(hash: String, status: String) {
         if let index = swapHistory.firstIndex(where: { $0.hash == hash }) {
+            let current = swapHistory[index].status
+            if (current == "success" || current == "failed") && status == "pending" {
+                return
+            }
             swapHistory[index].status = status
             if status == "success" || status == "failed" {
                 swapHistory[index].completedAt = Date()
@@ -237,6 +243,7 @@ class TransactionHistoryManager: ObservableObject {
         fromAmount: String, toAmount: String,
         bridgeId: String, hash: String, estimatedDuration: TimeInterval
     ) {
+        bridgeHistory.removeAll { $0.hash == hash }
         let item = BridgeHistoryItem(
             id: hash, address: address, fromChainId: fromChainId,
             toChainId: toChainId, fromToken: fromToken, toToken: toToken,
@@ -250,6 +257,16 @@ class TransactionHistoryManager: ObservableObject {
     
     func updateBridgeStatus(hash: String, status: String) {
         if let index = bridgeHistory.firstIndex(where: { $0.hash == hash }) {
+            let current = bridgeHistory[index].status
+            if current == "allSuccess" {
+                return
+            }
+            if current == "failed" && status != "allSuccess" {
+                return
+            }
+            if current == "allSuccess" && status == "failed" {
+                return
+            }
             bridgeHistory[index].status = status
             if status == "allSuccess" || status == "failed" {
                 bridgeHistory[index].completedAt = Date()
@@ -284,28 +301,37 @@ class TransactionHistoryManager: ObservableObject {
     }
     
     private func loadHistory() {
-        if let d = storage.getData(forKey: historyKey),
+        if let d = (try? database.getValueData(forKey: historyKey)) ?? storage.getData(forKey: historyKey),
            let h = try? JSONDecoder().decode([String: [TransactionGroup]].self, from: d) {
             self.transactions = h
             for (addr, _) in h { updatePendingTransactions(address: addr) }
         }
-        if let d = storage.getData(forKey: swapHistoryKey),
+        if let d = (try? database.getValueData(forKey: swapHistoryKey)) ?? storage.getData(forKey: swapHistoryKey),
            let h = try? JSONDecoder().decode([SwapHistoryItem].self, from: d) {
             self.swapHistory = h
         }
-        if let d = storage.getData(forKey: bridgeHistoryKey),
+        if let d = (try? database.getValueData(forKey: bridgeHistoryKey)) ?? storage.getData(forKey: bridgeHistoryKey),
            let h = try? JSONDecoder().decode([BridgeHistoryItem].self, from: d) {
             self.bridgeHistory = h
         }
     }
     
     private func saveHistory() {
-        if let d = try? JSONEncoder().encode(transactions) { storage.setData(d, forKey: historyKey) }
+        if let d = try? JSONEncoder().encode(transactions) {
+            try? database.setValueData(d, forKey: historyKey)
+            storage.setData(d, forKey: historyKey)
+        }
     }
     private func saveSwapHistory() {
-        if let d = try? JSONEncoder().encode(swapHistory) { storage.setData(d, forKey: swapHistoryKey) }
+        if let d = try? JSONEncoder().encode(swapHistory) {
+            try? database.setValueData(d, forKey: swapHistoryKey)
+            storage.setData(d, forKey: swapHistoryKey)
+        }
     }
     private func saveBridgeHistory() {
-        if let d = try? JSONEncoder().encode(bridgeHistory) { storage.setData(d, forKey: bridgeHistoryKey) }
+        if let d = try? JSONEncoder().encode(bridgeHistory) {
+            try? database.setValueData(d, forKey: bridgeHistoryKey)
+            storage.setData(d, forKey: bridgeHistoryKey)
+        }
     }
 }

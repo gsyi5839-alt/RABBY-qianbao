@@ -1,6 +1,7 @@
 import Foundation
 import BigInt
 import CryptoSwift
+import Combine
 
 // MARK: - Ledger Keyring Integration
 //
@@ -360,29 +361,80 @@ class KeyringManager: ObservableObject {
     
     private var password: String?
     private let storageManager = StorageManager.shared
+    private var cancellables = Set<AnyCancellable>()
     
     private init() {
-        // Check if vault exists
+        setupPreferenceSync()
+
+        // Check if vault exists in Keychain
+        // NOTE: NEVER clear vault on launch — user may have real funds.
+        // If user forgot password, they must use "Reset Wallet" (requires mnemonic backup).
         Task {
-            let vault = try? await storageManager.getEncryptedVault()
-            await MainActor.run { self.isInitialized = vault != nil }
+            do {
+                let vault = try await storageManager.getEncryptedVault()
+                let hasVault = vault != nil
+                NSLog("[KeyringManager] Init: vault exists = %@, vault size = %d bytes", hasVault ? "YES" : "NO", vault?.count ?? 0)
+                await MainActor.run { self.isInitialized = hasVault }
+            } catch {
+                NSLog("[KeyringManager] Init ERROR: Failed to read vault from Keychain: %@", "\(error)")
+                await MainActor.run { self.isInitialized = false }
+            }
         }
     }
     
     // MARK: - Vault Creation
     func createNewVault(password: String) async {
-        self.password = password
+        // Trim whitespace for consistency between create and unlock
+        self.password = password.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // ✅ 修复：清空旧的 keyrings，避免数据混乱
+        // 创建新 vault 时应该是全新的开始，不应该保留旧钱包数据
+        self.keyrings.removeAll()
+
         self.isInitialized = true
         self.isUnlocked = true
     }
     
     // MARK: - Unlock/Lock
     func submitPassword(_ password: String) async throws {
-        let valid = try await verifyPassword(password)
-        guard valid else { throw KeyringError.invalidPassword }
-        self.password = password
-        self.keyrings = try await unlockKeyrings(password: password)
+        NSLog("[KeyringManager] submitPassword called, password length: %d", password.count)
+        NSLog("[KeyringManager] isInitialized: %@, vault exists: %@", isInitialized ? "YES" : "NO", storageManager.hasVault() ? "YES" : "NO")
+
+        // Validate password is not empty/whitespace-only
+        let trimmedPassword = password.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedPassword.isEmpty else {
+            NSLog("[KeyringManager] Password is empty after trimming")
+            throw KeyringError.invalidPassword
+        }
+
+        let valid = try await verifyPassword(trimmedPassword)
+        guard valid else {
+            NSLog("[KeyringManager] Password verification FAILED — wrong password or corrupted vault")
+            throw KeyringError.invalidPassword
+        }
+        NSLog("[KeyringManager] Password verified OK, unlocking keyrings...")
+        self.password = trimmedPassword
+        do {
+            self.keyrings = try await unlockKeyrings(password: trimmedPassword)
+        } catch {
+            NSLog("[KeyringManager] unlockKeyrings FAILED: %@", "\(error)")
+            throw error
+        }
         self.isUnlocked = true
+        
+        // Restore currentAccount from loaded keyrings
+        if currentAccount == nil {
+            for keyring in keyrings {
+                let accounts = await keyring.getAccounts()
+                if let firstAddr = accounts.first {
+                    currentAccount = Account(address: firstAddr, type: keyring.type, brandName: keyring.type.rawValue)
+                    NSLog("[KeyringManager] Restored currentAccount: %@", firstAddr)
+                    break
+                }
+            }
+        }
+        
+        NSLog("[KeyringManager] Unlocked successfully, %d keyring(s) loaded", keyrings.count)
         NotificationCenter.default.post(name: .keyringUnlocked, object: nil)
     }
     
@@ -392,23 +444,30 @@ class KeyringManager: ObservableObject {
         isUnlocked = false
         NotificationCenter.default.post(name: .keyringLocked, object: nil)
     }
+
+    /// Returns the in-memory unlock password while wallet is unlocked.
+    /// Used to seed biometric keychain credential when enabling biometrics.
+    func currentUnlockPassword() -> String? {
+        password
+    }
     
     @discardableResult
     func verifyPassword(_ password: String) async throws -> Bool {
-        print("[KeyringManager] Verifying password...")
+        NSLog("[KeyringManager] Verifying password (length=%d)...", password.count)
         let encryptedVault = try? await storageManager.getEncryptedVault()
         guard let vault = encryptedVault else {
             // No vault yet — password is accepted for new vault
-            print("[KeyringManager] No vault found - accepting password for new vault")
+            NSLog("[KeyringManager] No vault found - accepting password for new vault")
             return true
         }
-        print("[KeyringManager] Vault found, attempting to decrypt...")
+        NSLog("[KeyringManager] Vault found (%d bytes), attempting to decrypt...", vault.count)
         do {
-            _ = try await storageManager.decrypt(data: vault, password: password)
-            print("[KeyringManager] Password verified successfully")
+            let decrypted = try await storageManager.decrypt(data: vault, password: password)
+            NSLog("[KeyringManager] Password verified OK, decrypted %d bytes", decrypted.count)
             return true
         } catch {
-            print("[KeyringManager] Password verification failed: \(error)")
+            NSLog("[KeyringManager] Password verification FAILED: %@", "\(error)")
+            NSLog("[KeyringManager] Vault hex prefix: %@", vault.prefix(64).map { String(format: "%02x", $0) }.joined())
             return false
         }
     }
@@ -470,9 +529,30 @@ class KeyringManager: ObservableObject {
         }
         return allAccounts
     }
-    
+
+    /// 获取最后添加的 keyring（用于备份新创建/导入的钱包）
+    func getLastAddedKeyring() -> Keyring? {
+        return keyrings.last
+    }
+
     func removeAccount(address: String, type: KeyringType) async throws {
-        guard let keyring = keyrings.first(where: { $0.type == type }) else {
+        let normalized = address.lowercased()
+
+        var targetKeyring: Keyring?
+        for keyring in keyrings {
+            let accounts = await keyring.getAccounts()
+            if accounts.contains(where: { $0.lowercased() == normalized }) {
+                targetKeyring = keyring
+                break
+            }
+        }
+
+        // Fallback to type match to preserve previous behavior.
+        if targetKeyring == nil {
+            targetKeyring = keyrings.first(where: { $0.type == type })
+        }
+
+        guard let keyring = targetKeyring else {
             throw KeyringError.keyringNotFound
         }
         
@@ -617,14 +697,86 @@ class KeyringManager: ObservableObject {
     }
     
     func addAccountFromExistingMnemonic(address: String) async throws {
-        // Find the HD keyring and add the next account
-        guard let hdKeyring = keyrings.first(where: { $0.type == .hdKeyring }) as? HDKeyring else {
+        // If address is provided, add to that specific HD keyring group.
+        var targetHDKeyring: HDKeyring?
+        let normalized = address.lowercased()
+        if !normalized.isEmpty {
+            for keyring in keyrings {
+                guard let hd = keyring as? HDKeyring else { continue }
+                let accounts = await hd.getAccounts()
+                if accounts.contains(where: { $0.lowercased() == normalized }) {
+                    targetHDKeyring = hd
+                    break
+                }
+            }
+        }
+
+        if targetHDKeyring == nil {
+            targetHDKeyring = keyrings.first(where: { $0.type == .hdKeyring }) as? HDKeyring
+        }
+
+        guard let hdKeyring = targetHDKeyring else {
             throw KeyringError.keyringNotFound
         }
         _ = try await hdKeyring.addAccounts(count: 1)
         try await persistAllKeyrings()
     }
+
+    func selectAccount(address: String) async throws {
+        let normalized = address.lowercased()
+        for keyring in keyrings {
+            let accounts = await keyring.getAccounts()
+            if let matched = accounts.first(where: { $0.lowercased() == normalized }) {
+                let alias = PreferenceManager.shared.getAlias(address: matched)
+                currentAccount = Account(
+                    address: matched,
+                    type: keyring.type,
+                    brandName: keyring.type.rawValue,
+                    alianName: alias
+                )
+                await syncPreferenceAccounts()
+                return
+            }
+        }
+        throw KeyringError.accountNotFound
+    }
+
+    func refreshPreferenceAccounts() async {
+        await syncPreferenceAccounts()
+    }
     
+    // MARK: - Reset/Logout
+    /// 完全重置钱包（退出登录）
+    /// ⚠️ 警告：这会永久删除加密vault，用户必须有助记词备份才能恢复
+    func resetWallet() async throws {
+        NSLog("[KeyringManager] 🔴 resetWallet called - clearing vault and all data")
+
+        // 1. 清除内存中的keyrings
+        keyrings.removeAll()
+        password = nil
+        currentAccount = nil
+
+        // 2. 删除Keychain中的加密vault
+        try await storageManager.deleteEncryptedVault()
+        NSLog("[KeyringManager] 🔴 Vault deleted from Keychain")
+
+        // 3. 清除PreferenceManager中的账户数据
+        PreferenceManager.shared.currentAccount = nil
+        PreferenceManager.shared.accounts.removeAll()
+
+        // 4. 清除生物识别密码
+        BiometricAuthManager.shared.disableBiometric()
+
+        // 5. 重置状态
+        isUnlocked = false
+        isInitialized = false
+
+        NSLog("[KeyringManager] 🔴 Wallet reset complete - returning to onboarding state")
+
+        // 发送通知
+        NotificationCenter.default.post(name: .walletReset, object: nil)
+    }
+
     // MARK: - Export Methods
     func getMnemonic(password: String) async throws -> String {
         let valid = try await verifyPassword(password)
@@ -774,12 +926,28 @@ class KeyringManager: ObservableObject {
         try await storageManager.saveEncryptedVault(data: vaultData, password: password)
         print("[KeyringManager] Vault saved successfully")
 
-        // Verify vault was saved
-        if let savedVault = try? await storageManager.getEncryptedVault() {
-            print("[KeyringManager] ✓ Vault verification: \(savedVault.count) bytes saved")
-        } else {
-            print("[KeyringManager] ⚠️ WARNING: Vault verification failed!")
+        // Verify vault was saved AND can be decrypted with the same password
+        do {
+            guard let savedVault = try await storageManager.getEncryptedVault() else {
+                print("[KeyringManager] CRITICAL: Vault not found in Keychain after save!")
+                throw KeyringError.vaultSaveFailed
+            }
+            // Verify we can decrypt it with the current password
+            _ = try await storageManager.decrypt(data: savedVault, password: password)
+            print("[KeyringManager] ✓ Vault saved and decryption verified (\(savedVault.count) bytes)")
+        } catch {
+            print("[KeyringManager] CRITICAL: Vault verification failed after save: \(error)")
+            // Retry once — in case of transient Keychain issue
+            print("[KeyringManager] Retrying vault save...")
+            try await storageManager.saveEncryptedVault(data: vaultData, password: password)
+            guard let retryVault = try await storageManager.getEncryptedVault() else {
+                throw KeyringError.vaultSaveFailed
+            }
+            _ = try await storageManager.decrypt(data: retryVault, password: password)
+            print("[KeyringManager] ✓ Vault saved on retry and verified")
         }
+
+        await syncPreferenceAccounts()
     }
     
     private func unlockKeyrings(password: String) async throws -> [Keyring] {
@@ -821,6 +989,108 @@ class KeyringManager: ObservableObject {
         }
         
         return loadedKeyrings
+    }
+
+    private func setupPreferenceSync() {
+        $currentAccount
+            .sink { [weak self] _ in
+                guard let self = self else { return }
+                Task { @MainActor in
+                    await self.syncPreferenceAccounts()
+                }
+            }
+            .store(in: &cancellables)
+
+        $keyrings
+            .sink { [weak self] _ in
+                guard let self = self else { return }
+                Task { @MainActor in
+                    await self.syncPreferenceAccounts()
+                }
+            }
+            .store(in: &cancellables)
+    }
+
+    private func syncPreferenceAccounts() async {
+        let pref = PreferenceManager.shared
+        let existingByAddress = Dictionary(uniqueKeysWithValues: pref.accounts.map {
+            ($0.address.lowercased(), $0)
+        })
+
+        var merged: [PreferenceManager.Account] = []
+        var seen = Set<String>()
+
+        for keyring in keyrings {
+            let addresses = await keyring.getAccounts()
+            for (idx, address) in addresses.enumerated() {
+                let lower = address.lowercased()
+                guard !seen.contains(lower) else { continue }
+                seen.insert(lower)
+
+                let existing = existingByAddress[lower]
+                let alias = existing?.aliasName ?? pref.getAlias(address: address)
+                merged.append(
+                    PreferenceManager.Account(
+                        type: keyring.type.rawValue,
+                        address: address,
+                        brandName: keyring.type.rawValue,
+                        aliasName: alias,
+                        displayBrandName: existing?.displayBrandName,
+                        index: idx,
+                        balance: existing?.balance
+                    )
+                )
+            }
+        }
+
+        // Keep the last known account snapshot while the wallet is locked.
+        if !isUnlocked && keyrings.isEmpty && merged.isEmpty {
+            return
+        }
+
+        pref.accounts = merged
+
+        let currentLower = currentAccount?.address.lowercased()
+        let matchedCurrent = currentLower.flatMap { lower in
+            merged.first { $0.address.lowercased() == lower }
+        }
+
+        if let matchedCurrent {
+            if pref.currentAccount?.address.lowercased() != matchedCurrent.address.lowercased() {
+                pref.setCurrentAccount(matchedCurrent)
+            } else if pref.currentAccount?.aliasName != matchedCurrent.aliasName {
+                pref.currentAccount = matchedCurrent
+            }
+            return
+        }
+
+        if let prefCurrent = pref.currentAccount,
+           let matchedPref = merged.first(where: { $0.address.lowercased() == prefCurrent.address.lowercased() }) {
+            if let type = KeyringType(rawValue: matchedPref.type) {
+                currentAccount = Account(
+                    address: matchedPref.address,
+                    type: type,
+                    brandName: matchedPref.brandName,
+                    alianName: matchedPref.aliasName
+                )
+            }
+            pref.currentAccount = matchedPref
+            return
+        }
+
+        if let first = merged.first {
+            if let type = KeyringType(rawValue: first.type) {
+                currentAccount = Account(
+                    address: first.address,
+                    type: type,
+                    brandName: first.brandName,
+                    alianName: first.aliasName
+                )
+            }
+            pref.setCurrentAccount(first)
+        } else if pref.currentAccount != nil {
+            pref.currentAccount = nil
+        }
     }
 }
 
@@ -964,6 +1234,7 @@ enum KeyringError: Error, LocalizedError {
     case unsupportedKeyringType
     case invalidOptions
     case invalidPassword
+    case vaultSaveFailed
 
     var errorDescription: String? {
         switch self {
@@ -995,6 +1266,8 @@ enum KeyringError: Error, LocalizedError {
             return "Invalid options provided."
         case .invalidPassword:
             return "Invalid password."
+        case .vaultSaveFailed:
+            return "Failed to save wallet vault to secure storage. Please try again."
         }
     }
 }
@@ -1004,4 +1277,5 @@ extension Notification.Name {
     static let keyringUnlocked = Notification.Name("keyringUnlocked")
     static let keyringLocked = Notification.Name("keyringLocked")
     static let accountRemoved = Notification.Name("accountRemoved")
+    static let walletReset = Notification.Name("walletReset")
 }

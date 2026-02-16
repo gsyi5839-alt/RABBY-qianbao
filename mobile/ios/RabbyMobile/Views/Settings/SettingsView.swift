@@ -13,6 +13,11 @@ struct SettingsView: View {
     @State private var showConnectedSites = false
     @State private var showSecuritySettings = false
     @State private var showAbout = false
+    @State private var showLogoutConfirm = false
+    @State private var showLogoutPasswordPrompt = false
+    @State private var logoutPassword = ""
+    @State private var logoutError = ""
+    @State private var isLoggingOut = false
     
     var body: some View {
         NavigationView {
@@ -191,17 +196,27 @@ struct SettingsView: View {
                     }
                 }
 
-                // Lock button
+                // Lock and Logout buttons
                 Section {
                     Button(action: lockWallet) {
                         HStack {
                             Spacer()
-                            Text(localization.t("lock_wallet")).foregroundColor(.red).fontWeight(.semibold)
+                            Text(localization.t("lock_wallet")).foregroundColor(.orange).fontWeight(.semibold)
                             Spacer()
                         }
                     }
                     .accessibilityLabel(localization.t("lock_wallet"))
                     .accessibilityHint("Locks the wallet and requires authentication to access")
+
+                    Button(action: { showLogoutConfirm = true }) {
+                        HStack {
+                            Spacer()
+                            Text(localization.t("logout_wallet", defaultValue: "退出钱包")).foregroundColor(.red).fontWeight(.semibold)
+                            Spacer()
+                        }
+                    }
+                    .accessibilityLabel(localization.t("logout_wallet", defaultValue: "退出钱包"))
+                    .accessibilityHint("Completely reset wallet - requires seed phrase to recover")
                 }
             }
             .navigationTitle(localization.t("tab_settings"))
@@ -210,6 +225,23 @@ struct SettingsView: View {
                 Button(L("OK"), role: .cancel) {}
             } message: {
                 Text(biometricErrorMessage)
+            }
+            .alert(localization.t("logout_wallet_confirm_title", defaultValue: "⚠️ 退出钱包"), isPresented: $showLogoutConfirm) {
+                Button(localization.t("cancel", defaultValue: "取消"), role: .cancel) {}
+                Button(localization.t("continue", defaultValue: "继续"), role: .destructive) {
+                    showLogoutPasswordPrompt = true
+                }
+            } message: {
+                Text(localization.t("logout_wallet_confirm_message", defaultValue: "此操作将永久删除当前钱包数据。\n\n⚠️ 请确保您已备份助记词或私钥，否则将永久失去资产访问权限！\n\n退出后可以重新创建新钱包或导入现有钱包。"))
+            }
+            .sheet(isPresented: $showLogoutPasswordPrompt) {
+                LogoutPasswordPromptView(
+                    isPresented: $showLogoutPasswordPrompt,
+                    password: $logoutPassword,
+                    errorMessage: $logoutError,
+                    isLoggingOut: $isLoggingOut,
+                    onConfirm: executeLogout
+                )
             }
         }
     }
@@ -231,15 +263,16 @@ struct SettingsView: View {
     
     private func toggleBiometrics(enable: Bool) {
         if enable {
-            // Enable biometrics: verify with biometric prompt first, then save password
             Task {
                 do {
                     let success = try await BiometricAuthManager.shared.authenticate(
                         reason: "Enable biometric unlock for Rabby Wallet"
                     )
                     if success {
-                        // Need the current password to save for biometric unlock
-                        // For now, enable the flag. In production, show password prompt.
+                        guard let currentPassword = keyringManager.currentUnlockPassword(), !currentPassword.isEmpty else {
+                            throw BiometricError.passwordNotStored
+                        }
+                        try BiometricAuthManager.shared.saveBiometricPassword(currentPassword)
                         BiometricAuthManager.shared.enableBiometric()
                     }
                 } catch {
@@ -258,6 +291,50 @@ struct SettingsView: View {
         Task {
             await keyringManager.setLocked()
             autoLock.lock()
+        }
+    }
+
+    private func executeLogout() {
+        guard !logoutPassword.isEmpty else {
+            logoutError = localization.t("password_required", defaultValue: "请输入密码")
+            return
+        }
+
+        isLoggingOut = true
+        logoutError = ""
+
+        Task {
+            do {
+                // 1. 验证密码
+                let valid = try await keyringManager.verifyPassword(logoutPassword)
+                guard valid else {
+                    await MainActor.run {
+                        logoutError = localization.t("incorrect_password", defaultValue: "密码错误")
+                        isLoggingOut = false
+                    }
+                    return
+                }
+
+                // 2. 执行退出钱包
+                try await keyringManager.resetWallet()
+
+                await MainActor.run {
+                    isLoggingOut = false
+                    showLogoutPasswordPrompt = false
+                    logoutPassword = ""
+
+                    // 触发震动反馈
+                    let generator = UINotificationFeedbackGenerator()
+                    generator.notificationOccurred(.success)
+                }
+
+                NSLog("[SettingsView] Wallet logout successful - returning to onboarding")
+            } catch {
+                await MainActor.run {
+                    logoutError = localization.t("logout_failed", defaultValue: "退出失败：\(error.localizedDescription)")
+                    isLoggingOut = false
+                }
+            }
         }
     }
 }
@@ -1344,6 +1421,106 @@ struct ApprovalDetailSheet: View {
     }
 }
 
+// MARK: - Logout Password Prompt View
+
+/// 退出钱包密码确认视图
+struct LogoutPasswordPromptView: View {
+    @EnvironmentObject var localization: LocalizationManager
+    @Binding var isPresented: Bool
+    @Binding var password: String
+    @Binding var errorMessage: String
+    @Binding var isLoggingOut: Bool
+    let onConfirm: () -> Void
+
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 24) {
+                // 警告图标
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .resizable()
+                    .frame(width: 60, height: 60)
+                    .foregroundColor(.red)
+                    .padding(.top, 40)
+
+                // 标题和说明
+                VStack(spacing: 12) {
+                    Text(localization.t("logout_password_prompt_title", defaultValue: "最后确认"))
+                        .font(.title2)
+                        .fontWeight(.bold)
+
+                    Text(localization.t("logout_password_prompt_message", defaultValue: "请输入密码以确认退出钱包。\n\n此操作不可撤销，请确保已备份助记词！"))
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                }
+
+                // 密码输入
+                VStack(alignment: .leading, spacing: 8) {
+                    SecureField(localization.t("enter_password", defaultValue: "输入密码"), text: $password)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .autocapitalization(.none)
+                        .padding(.horizontal)
+                        .onSubmit {
+                            if !password.isEmpty && !isLoggingOut {
+                                onConfirm()
+                            }
+                        }
+
+                    if !errorMessage.isEmpty {
+                        HStack {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.red)
+                                .font(.caption)
+                            Text(errorMessage)
+                                .font(.caption)
+                                .foregroundColor(.red)
+                        }
+                        .padding(.horizontal)
+                    }
+                }
+
+                Spacer()
+
+                // 确认按钮
+                Button(action: onConfirm) {
+                    HStack {
+                        if isLoggingOut {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                .scaleEffect(0.8)
+                        }
+                        Text(isLoggingOut
+                            ? localization.t("logging_out", defaultValue: "退出中...")
+                            : localization.t("confirm_logout", defaultValue: "确认退出"))
+                            .fontWeight(.semibold)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(password.isEmpty || isLoggingOut ? Color.gray : Color.red)
+                    .foregroundColor(.white)
+                    .cornerRadius(12)
+                }
+                .disabled(password.isEmpty || isLoggingOut)
+                .padding(.horizontal)
+                .padding(.bottom, 20)
+            }
+            .navigationTitle(localization.t("logout_wallet", defaultValue: "退出钱包"))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(localization.t("cancel", defaultValue: "取消")) {
+                        isPresented = false
+                        password = ""
+                        errorMessage = ""
+                    }
+                    .disabled(isLoggingOut)
+                }
+            }
+        }
+    }
+}
+
 /// Security Settings View
 struct SecuritySettingsView: View {
     @StateObject private var securityEngine = SecurityEngineManager.shared
@@ -1387,51 +1564,259 @@ struct SecuritySettingsView: View {
 
 /// Custom RPC View
 struct CustomRPCView: View {
-    @StateObject private var rpcManager = CustomRPCManager.shared
-    @State private var chainName = ""
+    @StateObject private var rpcManager = RPCManager.shared
+    @StateObject private var chainManager = ChainManager.shared
+    @State private var selectedChain: Chain?
+    @State private var showChainPicker = false
     @State private var rpcUrl = ""
-    
+    @State private var alias = ""
+    @State private var errorMessage: String?
+    @State private var testingRPC: Int?  // chainId being tested
+
     var body: some View {
         List {
-            Section(L("Add Custom RPC")) {
-                TextField(L("Chain Name"), text: $chainName)
-                TextField(L("RPC URL"), text: $rpcUrl)
-                    .keyboardType(.URL).autocapitalization(.none)
-                Button(L("Add")) { addRPC() }.disabled(chainName.isEmpty || rpcUrl.isEmpty)
-            }
-            
-            Section(L("Custom RPCs")) {
-                ForEach(Array(rpcManager.customRPCs.keys.sorted()), id: \.self) { key in
-                    if let config = rpcManager.customRPCs[key] {
-                        HStack {
-                            VStack(alignment: .leading) {
-                                Text(key).fontWeight(.medium)
-                                Text(config.url).font(.caption).foregroundColor(.secondary)
-                            }
-                            Spacer()
-                            if let latency = config.latency {
-                                Text("\(latency)ms").font(.caption)
-                                    .foregroundColor(latency < 500 ? .green : latency < 1000 ? .orange : .red)
-                            }
-                            Toggle("", isOn: Binding(
-                                get: { config.enable },
-                                set: { rpcManager.setRPCEnable(chain: key, enable: $0) }
-                            )).labelsHidden()
+            // Add Custom RPC Section
+            Section {
+                // Chain Selection
+                Button(action: { showChainPicker = true }) {
+                    HStack {
+                        Text(L("Chain"))
+                        Spacer()
+                        if let chain = selectedChain {
+                            Text(chain.name)
+                                .foregroundColor(.secondary)
+                        } else {
+                            Text(L("Select Chain"))
+                                .foregroundColor(.secondary)
                         }
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                     }
                 }
-                .onDelete { indexSet in
-                    let keys = Array(rpcManager.customRPCs.keys.sorted())
-                    indexSet.forEach { rpcManager.removeRPC(chain: keys[$0]) }
+
+                // RPC URL Input
+                TextField(L("RPC URL"), text: $rpcUrl)
+                    .keyboardType(.URL)
+                    .autocapitalization(.none)
+                    .autocorrectionDisabled(true)
+
+                // Alias Input (Optional)
+                TextField(L("Alias (Optional)"), text: $alias)
+
+                // Error Message
+                if let error = errorMessage {
+                    Text(error)
+                        .font(.caption)
+                        .foregroundColor(.red)
+                }
+
+                // Add Button
+                Button(action: addRPC) {
+                    Text(L("Add RPC"))
+                }
+                .disabled(selectedChain == nil || rpcUrl.isEmpty)
+            } header: {
+                Text(L("Add Custom RPC"))
+            }
+
+            // Custom RPCs List
+            if !rpcManager.customRPCs.isEmpty {
+                Section {
+                    ForEach(Array(rpcManager.customRPCs.keys.sorted()), id: \.self) { chainId in
+                        if let rpcItem = rpcManager.customRPCs[chainId],
+                           let chain = chainManager.getChain(id: chainId) {
+                            customRPCRow(chain: chain, rpcItem: rpcItem)
+                        }
+                    }
+                    .onDelete(perform: deleteRPC)
+                } header: {
+                    Text(L("Custom RPCs"))
+                }
+            } else {
+                Section {
+                    Text(L("No custom RPCs"))
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                } header: {
+                    Text(L("Custom RPCs"))
                 }
             }
         }
         .navigationTitle(L("Custom RPC"))
+        .sheet(isPresented: $showChainPicker) {
+            chainPickerSheet
+        }
     }
-    
+
+    // MARK: - Custom RPC Row
+
+    private func customRPCRow(chain: Chain, rpcItem: RPCItem) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(chain.name)
+                        .fontWeight(.medium)
+
+                    if let alias = rpcItem.alias, !alias.isEmpty {
+                        Text(alias)
+                            .font(.caption)
+                            .foregroundColor(.blue)
+                    }
+
+                    Text(rpcItem.url)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                }
+
+                Spacer()
+
+                // RPC Status
+                if testingRPC == chain.id {
+                    ProgressView()
+                        .scaleEffect(0.8)
+                } else if let status = rpcManager.getRPCStatus(chainId: chain.id) {
+                    Image(systemName: status.available ? "checkmark.circle.fill" : "xmark.circle.fill")
+                        .foregroundColor(status.available ? .green : .red)
+                        .font(.caption)
+                }
+
+                // Enable Toggle
+                Toggle("", isOn: Binding(
+                    get: { rpcItem.enable },
+                    set: { rpcManager.setRPCEnable(chainId: chain.id, enable: $0) }
+                ))
+                .labelsHidden()
+            }
+
+            // Test Button
+            Button(action: { testRPC(chainId: chain.id) }) {
+                HStack(spacing: 4) {
+                    Image(systemName: "arrow.clockwise")
+                        .font(.caption2)
+                    Text(L("Test Connection"))
+                        .font(.caption2)
+                }
+            }
+            .buttonStyle(.plain)
+            .foregroundColor(.blue)
+            .disabled(testingRPC == chain.id)
+        }
+        .padding(.vertical, 4)
+    }
+
+    // MARK: - Chain Picker Sheet
+
+    private var chainPickerSheet: some View {
+        NavigationView {
+            List {
+                // Mainnet Chains
+                Section(L("Mainnet")) {
+                    ForEach(chainManager.mainnetChains, id: \.id) { chain in
+                        Button(action: {
+                            selectedChain = chain
+                            showChainPicker = false
+                        }) {
+                            HStack {
+                                Text(chain.name)
+                                Spacer()
+                                if selectedChain?.id == chain.id {
+                                    Image(systemName: "checkmark")
+                                        .foregroundColor(.blue)
+                                }
+                            }
+                        }
+                        .foregroundColor(.primary)
+                    }
+                }
+
+                // Testnet Chains
+                if !chainManager.testnetChains.isEmpty {
+                    Section(L("Testnet")) {
+                        ForEach(chainManager.testnetChains, id: \.id) { chain in
+                            Button(action: {
+                                selectedChain = chain
+                                showChainPicker = false
+                            }) {
+                                HStack {
+                                    Text(chain.name)
+                                    Spacer()
+                                    if selectedChain?.id == chain.id {
+                                        Image(systemName: "checkmark")
+                                            .foregroundColor(.blue)
+                                    }
+                                }
+                            }
+                            .foregroundColor(.primary)
+                        }
+                    }
+                }
+            }
+            .navigationTitle(L("Select Chain"))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(L("Cancel")) {
+                        showChainPicker = false
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: - Actions
+
     private func addRPC() {
-        rpcManager.setRPC(chain: chainName, url: rpcUrl)
-        chainName = ""; rpcUrl = ""
+        guard let chain = selectedChain else {
+            errorMessage = "Please select a chain"
+            return
+        }
+
+        guard !rpcUrl.isEmpty else {
+            errorMessage = "Please enter RPC URL"
+            return
+        }
+
+        // Validate URL format
+        guard rpcManager.isValidRPCURL(rpcUrl) else {
+            errorMessage = "Invalid RPC URL format"
+            return
+        }
+
+        // Add RPC
+        rpcManager.setRPC(
+            chainId: chain.id,
+            url: rpcUrl,
+            alias: alias.isEmpty ? nil : alias
+        )
+
+        // Clear form
+        selectedChain = nil
+        rpcUrl = ""
+        alias = ""
+        errorMessage = nil
+
+        // Test the new RPC
+        testRPC(chainId: chain.id)
+    }
+
+    private func deleteRPC(at offsets: IndexSet) {
+        let sortedKeys = Array(rpcManager.customRPCs.keys.sorted())
+        offsets.forEach { index in
+            let chainId = sortedKeys[index]
+            rpcManager.removeCustomRPC(chainId: chainId)
+        }
+    }
+
+    private func testRPC(chainId: Int) {
+        testingRPC = chainId
+        Task {
+            let _ = await rpcManager.ping(chainId: chainId)
+            await MainActor.run {
+                testingRPC = nil
+            }
+        }
     }
 }
 
@@ -1442,7 +1827,7 @@ struct CustomTestnetView: View {
     
     var body: some View {
         List {
-            if testnetManager.testnets.isEmpty {
+            if testnetManager.getList().isEmpty {
                 Section {
                     VStack(spacing: 8) {
                         Text(L("No custom testnets")).foregroundColor(.secondary)
@@ -1450,19 +1835,34 @@ struct CustomTestnetView: View {
                     }.frame(maxWidth: .infinity)
                 }
             } else {
-                ForEach(testnetManager.testnets) { testnet in
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(testnet.name).fontWeight(.medium)
-                            Text("Chain ID: \(testnet.id)").font(.caption).foregroundColor(.secondary)
-                            Text(testnet.rpcUrl).font(.caption2).foregroundColor(.gray)
+                ForEach(testnetManager.getList()) { testnet in
+                    HStack(spacing: 12) {
+                        // Chain logo
+                        chainLogo(testnet)
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(testnet.name)
+                                .fontWeight(.medium)
+                            Text("Chain ID: \(testnet.id)")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Text(testnet.rpcUrl)
+                                .font(.caption2)
+                                .foregroundColor(.gray)
+                                .lineLimit(1)
                         }
+
                         Spacer()
-                        Text(testnet.nativeTokenSymbol).font(.caption).foregroundColor(.blue)
+
+                        Text(testnet.nativeTokenSymbol)
+                            .font(.caption)
+                            .foregroundColor(.blue)
                     }
+                    .padding(.vertical, 4)
                 }
                 .onDelete { indexSet in
-                    indexSet.forEach { testnetManager.removeTestnet(chainId: testnetManager.testnets[$0].id) }
+                    let testnets = testnetManager.getList()
+                    indexSet.forEach { testnetManager.remove(chainId: testnets[$0].id) }
                 }
             }
         }
@@ -1477,6 +1877,47 @@ struct CustomTestnetView: View {
         .sheet(isPresented: $showAddForm) {
             AddTestnetView()
         }
+    }
+
+    // MARK: - Chain Logo Helper
+
+    /// 显示测试网 logo（带 AsyncImage 和 fallback）
+    private func chainLogo(_ testnet: TestnetChain) -> some View {
+        Group {
+            if let url = URL(string: testnet.logo), testnet.logo.hasPrefix("http") {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFit()
+                    case .empty:
+                        logoPlaceholder(testnet)
+                            .overlay(ProgressView().scaleEffect(0.5))
+                    case .failure:
+                        logoPlaceholder(testnet)
+                    @unknown default:
+                        logoPlaceholder(testnet)
+                    }
+                }
+            } else {
+                logoPlaceholder(testnet)
+            }
+        }
+        .frame(width: 32, height: 32)
+        .clipShape(Circle())
+    }
+
+    /// Logo 占位符（使用代币符号首字母）
+    private func logoPlaceholder(_ testnet: TestnetChain) -> some View {
+        Circle()
+            .fill(Color.purple.opacity(0.15))
+            .overlay(
+                Text(String(testnet.nativeTokenSymbol.prefix(2)))
+                    .font(.caption2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.purple)
+            )
     }
 }
 
@@ -1517,19 +1958,28 @@ struct AddTestnetView: View {
             }
         }
     }
-    
+
     private func addTestnet() {
         guard let id = Int(chainId) else { errorMessage = "Invalid Chain ID"; return }
         isAdding = true; errorMessage = nil
         Task {
-            do {
-                try await CustomTestnetManager.shared.addTestnet(
-                    chainId: id, name: name, nativeTokenSymbol: symbol,
-                    rpcUrl: rpcUrl, scanLink: scanLink.isEmpty ? nil : scanLink
-                )
-                dismiss()
-            } catch { errorMessage = error.localizedDescription }
-            isAdding = false
+            let chain = TestnetChainBase(
+                id: id,
+                name: name,
+                nativeTokenSymbol: symbol,
+                rpcUrl: rpcUrl,
+                scanLink: scanLink.isEmpty ? nil : scanLink
+            )
+            let result = await CustomTestnetManager.shared.add(chain)
+            await MainActor.run {
+                isAdding = false
+                switch result {
+                case .success:
+                    dismiss()
+                case .failure(let error):
+                    errorMessage = error.message
+                }
+            }
         }
     }
 }

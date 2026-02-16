@@ -1,10 +1,92 @@
 import Foundation
 import Combine
 import BigInt
+import Starscream
 import WalletConnectSwiftV2
 
 /// Typealias to disambiguate WalletConnect Account from RabbyMobile.Account
 private typealias WCAccount = WalletConnectSwiftV2.Account
+
+// MARK: - Starscream WebSocket Adapter for WalletConnect SDK
+
+/// Wraps Starscream's delegate-based WebSocket into WalletConnect's callback-based WebSocketConnecting protocol
+final class StarscreamWebSocket: WebSocketConnecting {
+    var isConnected: Bool = false
+    var onConnect: (() -> Void)?
+    var onDisconnect: ((Error?) -> Void)?
+    var onText: ((String) -> Void)?
+    var request: URLRequest
+
+    private let socket: Starscream.WebSocket
+
+    init(url: URL) {
+        var request = URLRequest(url: url)
+        request.timeoutInterval = 30
+        self.request = request
+        self.socket = Starscream.WebSocket(request: request)
+        setupCallbacks()
+    }
+
+    private func setupCallbacks() {
+        socket.onEvent = { [weak self] event in
+            guard let self else { return }
+            switch event {
+            case .connected:
+                self.isConnected = true
+                self.onConnect?()
+            case .disconnected(_, _):
+                self.isConnected = false
+                self.onDisconnect?(nil)
+            case .text(let text):
+                self.onText?(text)
+            case .error(let error):
+                self.isConnected = false
+                self.onDisconnect?(error)
+            case .cancelled:
+                self.isConnected = false
+                self.onDisconnect?(nil)
+            default:
+                break
+            }
+        }
+    }
+
+    func connect() {
+        socket.connect()
+    }
+
+    func disconnect() {
+        socket.disconnect()
+    }
+
+    func write(string: String, completion: (() -> Void)?) {
+        socket.write(string: string, completion: completion)
+    }
+}
+
+/// Factory that creates StarscreamWebSocket instances for WalletConnect SDK
+struct DefaultSocketFactory: WebSocketFactory {
+    func create(with url: URL) -> WebSocketConnecting {
+        return StarscreamWebSocket(url: url)
+    }
+}
+
+/// CryptoProvider implementation for WalletConnect SDK using project's existing Secp256k1Helper and Keccak256
+struct DefaultCryptoProvider: CryptoProvider {
+    func recoverPubKey(signature: EthereumSignature, message: Data) throws -> Data {
+        let r = Data(signature.r)
+        let s = Data(signature.s)
+        // WalletConnect uses v as 0/1, Ethereum uses 27/28
+        let v = signature.v < 27 ? signature.v + 27 : signature.v
+        let pubKey = try Secp256k1Helper.recoverPublicKey(hash: message, r: r, s: s, v: v)
+        // WalletConnect expects 65-byte uncompressed key (with 0x04 prefix)
+        return Data([0x04]) + pubKey
+    }
+
+    func keccak256(_ data: Data) -> Data {
+        return Keccak256.hash(data: data)
+    }
+}
 
 /// WalletConnect Manager - Support WalletConnect v2 protocol for DApp connections
 /// Equivalent to Web version's WalletConnect integration
@@ -87,15 +169,27 @@ class WalletConnectManager: ObservableObject {
 
     /// Configure the WalletConnect Sign client and subscribe to events
     private func configureWalletConnect() {
+        // swiftlint:disable:next force_try
+        let redirect = try! AppMetadata.Redirect(native: "rabbywallet://wc", universal: nil)
         let metadata = AppMetadata(
             name: WCConfig.name,
             description: WCConfig.description,
             url: WCConfig.url,
             icons: WCConfig.icons,
-            redirect: try! AppMetadata.Redirect(native: "rabby://wc", universal: nil)
+            redirect: redirect
         )
 
-        // Configure Pair client
+        // 1. Configure Networking FIRST (required before accessing Sign.instance)
+        Networking.configure(
+            groupIdentifier: "group.com.bocail.pay",
+            projectId: WCConfig.projectId,
+            socketFactory: DefaultSocketFactory()
+        )
+
+        // 2. Configure Sign client (required before accessing Sign.instance)
+        Sign.configure(crypto: DefaultCryptoProvider())
+
+        // 3. Configure Pair client
         Pair.configure(metadata: metadata)
 
         // Subscribe to session proposals from DApps

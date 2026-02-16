@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import Security
 
 // MARK: - Data Models
 
@@ -332,6 +333,8 @@ class PerpsManager: ObservableObject {
     private let storage = StorageManager.shared
     private let api = OpenAPIService.shared
     private let storageKey = "perps_store"
+    private let perpsKeychainService = "com.rabby.wallet.perps"
+    private let agentVaultsAccountKey = "agentVaults"
     private var agentWallets: [String: AgentWalletInfo] = [:]
 
     /// Timer for auto-refreshing market data (5 seconds)
@@ -355,6 +358,11 @@ class PerpsManager: ObservableObject {
 
     struct AgentWalletInfo: Codable {
         let vault: String
+        var agentAddress: String
+        var approveSignatures: [ApproveSignature]
+    }
+
+    struct AgentWalletPreference: Codable {
         var agentAddress: String
         var approveSignatures: [ApproveSignature]
     }
@@ -404,25 +412,63 @@ class PerpsManager: ObservableObject {
         }
     }
 
+    func syncCurrentAccount(from walletAccount: Account?) {
+        guard let walletAccount else {
+            setCurrentAccount(nil)
+            return
+        }
+
+        let mapped = PerpsAccount(
+            address: walletAccount.address,
+            type: walletAccount.type.rawValue,
+            brandName: walletAccount.brandName
+        )
+
+        if currentAccount?.address.lowercased() != mapped.address.lowercased() {
+            setCurrentAccount(mapped)
+        } else if currentAccount?.type != mapped.type || currentAccount?.brandName != mapped.brandName {
+            currentAccount = mapped
+            saveToStorage()
+        }
+    }
+
     func getLastUsedAccount() -> PerpsAccount? {
         return lastUsedAccount
+    }
+
+    @discardableResult
+    func ensureAgentWallet(address: String) async throws -> AgentWalletInfo {
+        let normalized = address.lowercased()
+        if let existing = agentWallets[normalized] {
+            return existing
+        }
+
+        _ = try await createAgentWallet(masterAddress: normalized)
+        guard let wallet = agentWallets[normalized] else {
+            throw PerpsError.keyGenerationFailed
+        }
+        return wallet
     }
 
     // MARK: - Agent Wallet
 
     func createAgentWallet(masterAddress: String) async throws -> (agentAddress: String, vault: String) {
-        // Generate new keypair for agent wallet
+        let normalizedMaster = masterAddress.lowercased()
+        if let existing = agentWallets[normalizedMaster] {
+            return (existing.agentAddress, existing.vault)
+        }
+
+        // Generate a cryptographically secure secp256k1 private key.
         var privateKeyBytes = [UInt8](repeating: 0, count: 32)
         let result = SecRandomCopyBytes(kSecRandomDefault, privateKeyBytes.count, &privateKeyBytes)
         guard result == errSecSuccess else { throw PerpsError.keyGenerationFailed }
 
-        let vault = privateKeyBytes.map { String(format: "%02x", $0) }.joined()
-
-        // Derive address from private key (simplified - in production use keccak256)
-        let agentAddress = "0x" + vault.prefix(40)
+        let privateKeyData = Data(privateKeyBytes)
+        let vault = privateKeyData.hexString
+        let agentAddress = try Secp256k1Helper.privateKeyToAddress(privateKeyData)
 
         let walletInfo = AgentWalletInfo(vault: vault, agentAddress: agentAddress, approveSignatures: [])
-        agentWallets[masterAddress.lowercased()] = walletInfo
+        agentWallets[normalizedMaster] = walletInfo
         saveToStorage()
 
         return (agentAddress, vault)
@@ -505,7 +551,7 @@ class PerpsManager: ObservableObject {
 
     /// Get a specific market by symbol
     func getMarket(symbol: String) -> PerpsMarket? {
-        return markets.first { $0.symbol.uppercased() == symbol.uppercased() }
+        return markets.first { symbolsMatch($0.symbol, symbol) }
     }
 
     /// Get markets sorted by 24h volume (descending)
@@ -546,7 +592,7 @@ class PerpsManager: ObservableObject {
 
     /// Get positions filtered by symbol
     func getPositions(symbol: String) -> [PerpsPosition] {
-        return positions.filter { $0.symbol.uppercased() == symbol.uppercased() }
+        return positions.filter { symbolsMatch($0.symbol, symbol) }
     }
 
     /// Total unrealized PnL across all positions
@@ -589,9 +635,7 @@ class PerpsManager: ObservableObject {
     /// Cancel a single order by ID
     func cancelOrder(orderId: String) async throws {
         guard let account = currentAccount else { throw PerpsError.noAccount }
-        guard let agentWallet = getAgentWallet(address: account.address) else {
-            throw PerpsError.noAgentWallet
-        }
+        let agentWallet = try await ensureAgentWallet(address: account.address)
 
         let signature = try await signAction(
             agentWallet: agentWallet,
@@ -616,9 +660,7 @@ class PerpsManager: ObservableObject {
     /// Cancel all active orders, optionally filtered by symbol
     func cancelAllOrders(symbol: String? = nil) async throws {
         guard let account = currentAccount else { throw PerpsError.noAccount }
-        guard let agentWallet = getAgentWallet(address: account.address) else {
-            throw PerpsError.noAgentWallet
-        }
+        let agentWallet = try await ensureAgentWallet(address: account.address)
 
         var payload: [String: Any] = [
             "address": account.address,
@@ -672,17 +714,17 @@ class PerpsManager: ObservableObject {
         reduceOnly: Bool = false
     ) async throws -> PerpsOrder {
         guard let account = currentAccount else { throw PerpsError.noAccount }
-        guard let agentWallet = getAgentWallet(address: account.address) else {
-            throw PerpsError.noAgentWallet
-        }
+        let agentWallet = try await ensureAgentWallet(address: account.address)
+
+        let normalizedSymbol = normalizeTradingSymbol(symbol)
 
         // Validate inputs
         guard size > 0 else { throw PerpsError.invalidParameter("Size must be greater than 0") }
         guard leverage >= 1 else { throw PerpsError.invalidParameter("Leverage must be at least 1x") }
 
-        if let market = getMarket(symbol: symbol) {
+        if let market = getMarket(symbol: normalizedSymbol) {
             guard Int(leverage) <= market.maxLeverage else {
-                throw PerpsError.invalidParameter("Leverage exceeds maximum \(market.maxLeverage)x for \(symbol)")
+                throw PerpsError.invalidParameter("Leverage exceeds maximum \(market.maxLeverage)x for \(normalizedSymbol)")
             }
         }
 
@@ -700,7 +742,7 @@ class PerpsManager: ObservableObject {
 
         // Build order payload
         var orderPayload: [String: Any] = [
-            "symbol": symbol,
+            "symbol": normalizedSymbol,
             "side": side.rawValue,
             "size": size,
             "leverage": leverage,
@@ -744,13 +786,13 @@ class PerpsManager: ObservableObject {
     @discardableResult
     func closePosition(symbol: String, size: Double? = nil) async throws -> PerpsOrder {
         guard let account = currentAccount else { throw PerpsError.noAccount }
-        guard getAgentWallet(address: account.address) != nil else {
-            throw PerpsError.noAgentWallet
-        }
+        _ = try await ensureAgentWallet(address: account.address)
+
+        let normalizedSymbol = normalizeTradingSymbol(symbol)
 
         // Find the open position for this symbol
-        guard let position = positions.first(where: { $0.symbol.uppercased() == symbol.uppercased() }) else {
-            throw PerpsError.noPosition(symbol)
+        guard let position = positions.first(where: { symbolsMatch($0.symbol, normalizedSymbol) }) else {
+            throw PerpsError.noPosition(normalizedSymbol)
         }
 
         let closeSize = size ?? position.size
@@ -762,7 +804,7 @@ class PerpsManager: ObservableObject {
         let closeSide: PositionSide = position.side == .long ? .short : .long
 
         return try await openPosition(
-            symbol: symbol,
+            symbol: normalizedSymbol,
             side: closeSide,
             size: closeSize,
             leverage: position.leverage,
@@ -778,12 +820,12 @@ class PerpsManager: ObservableObject {
     ///   - newMargin: New margin amount (nil to keep current)
     func modifyPosition(symbol: String, newLeverage: Double? = nil, newMargin: Double? = nil) async throws {
         guard let account = currentAccount else { throw PerpsError.noAccount }
-        guard let agentWallet = getAgentWallet(address: account.address) else {
-            throw PerpsError.noAgentWallet
-        }
+        let agentWallet = try await ensureAgentWallet(address: account.address)
 
-        guard positions.contains(where: { $0.symbol.uppercased() == symbol.uppercased() }) else {
-            throw PerpsError.noPosition(symbol)
+        let normalizedSymbol = normalizeTradingSymbol(symbol)
+
+        guard positions.contains(where: { symbolsMatch($0.symbol, normalizedSymbol) }) else {
+            throw PerpsError.noPosition(normalizedSymbol)
         }
 
         guard newLeverage != nil || newMargin != nil else {
@@ -793,7 +835,7 @@ class PerpsManager: ObservableObject {
         var payload: [String: Any] = [
             "address": account.address,
             "agent_address": agentWallet.agentAddress,
-            "symbol": symbol
+            "symbol": normalizedSymbol
         ]
         if let newLeverage = newLeverage {
             guard newLeverage >= 1 else {
@@ -872,35 +914,39 @@ class PerpsManager: ObservableObject {
     // MARK: - Agent Wallet Signing
 
     /// Sign a trading action with the agent wallet's private key
-    /// In production, this would use keccak256 + secp256k1 signing
     private func signAction(agentWallet: AgentWalletInfo, action: String, payload: [String: Any]) async throws -> String {
-        // Build the message to sign: action + sorted payload keys
-        var message = action
-        for key in payload.keys.sorted() {
-            message += ":\(key)=\(payload[key] ?? "")"
+        guard let privateKey = Data(hexString: agentWallet.vault) else {
+            throw PerpsError.signingFailed("Invalid agent private key")
         }
 
-        // In a full implementation, this would:
-        // 1. Hash the message with keccak256
-        // 2. Sign with the agent wallet's private key (from vault)
-        // 3. Return the hex-encoded signature
-        //
-        // For now we produce a deterministic placeholder that includes the vault
-        // to prove possession of the agent key.
-        let messageData = Data(message.utf8)
-        let vaultData = Data(agentWallet.vault.utf8)
-        var combined = Data()
-        combined.append(messageData)
-        combined.append(vaultData)
+        let canonicalPayloadData = try JSONSerialization.data(withJSONObject: payload, options: [.sortedKeys])
+        var signable = Data(action.utf8)
+        signable.append(Data([0x3A])) // ':'
+        signable.append(canonicalPayloadData)
 
-        // SHA256 as a placeholder for keccak256 + secp256k1
-        let hash = combined.withUnsafeBytes { (bytes: UnsafeRawBufferPointer) -> Data in
-            var hashData = [UInt8](repeating: 0, count: 32)
-            CC_SHA256(bytes.baseAddress, CC_LONG(combined.count), &hashData)
-            return Data(hashData)
+        let digest = Keccak256.hash(data: signable)
+        let signature = try Secp256k1Helper.sign(hash: digest, privateKey: privateKey)
+
+        var rawSignature = Data()
+        rawSignature.append(signature.r)
+        rawSignature.append(signature.s)
+        rawSignature.append(UInt8(signature.recid + 27))
+
+        return "0x" + rawSignature.hexString
+    }
+
+    // MARK: - Symbol Utils
+
+    private func normalizeTradingSymbol(_ symbol: String) -> String {
+        let cleaned = symbol.trimmingCharacters(in: .whitespacesAndNewlines)
+        if cleaned.uppercased().hasSuffix("-PERP") {
+            return cleaned.uppercased()
         }
+        return "\(cleaned.uppercased())-PERP"
+    }
 
-        return "0x" + hash.map { String(format: "%02x", $0) }.joined()
+    private func symbolsMatch(_ lhs: String, _ rhs: String) -> Bool {
+        normalizeTradingSymbol(lhs) == normalizeTradingSymbol(rhs)
     }
 
     // MARK: - Retry Logic
@@ -936,22 +982,74 @@ class PerpsManager: ObservableObject {
     // MARK: - Storage
 
     private func loadFromStorage() {
-        if let data = storage.getData(forKey: storageKey),
-           let store = try? JSONDecoder().decode(PerpsStore.self, from: data) {
-            currentAccount = store.currentAccount
-            lastUsedAccount = store.lastUsedAccount
-            hasDoneNewUserProcess = store.hasDoneNewUserProcess
-            favoritedCoins = store.favoritedCoins
-            marketSlippage = store.marketSlippage
-            soundEnabled = store.soundEnabled
-            quoteUnit = store.quoteUnit
-            if let wallets = store.agentWallets {
-                agentWallets = wallets
+        var decodedStore: PerpsStore?
+        if let data = storage.getData(forKey: storageKey) {
+            decodedStore = try? JSONDecoder().decode(PerpsStore.self, from: data)
+        }
+
+        currentAccount = decodedStore?.currentAccount
+        lastUsedAccount = decodedStore?.lastUsedAccount
+        hasDoneNewUserProcess = decodedStore?.hasDoneNewUserProcess ?? false
+        favoritedCoins = decodedStore?.favoritedCoins ?? ["BTC", "ETH", "SOL"]
+        marketSlippage = decodedStore?.marketSlippage ?? 0.08
+        soundEnabled = decodedStore?.soundEnabled ?? true
+        quoteUnit = decodedStore?.quoteUnit ?? .base
+
+        let preferences = Dictionary(uniqueKeysWithValues: (decodedStore?.agentPreferences ?? [:]).map {
+            ($0.key.lowercased(), $0.value)
+        })
+        let legacyWallets = Dictionary(uniqueKeysWithValues: (decodedStore?.legacyAgentWallets ?? [:]).map {
+            ($0.key.lowercased(), $0.value)
+        })
+        let storedVaults = Dictionary(uniqueKeysWithValues: loadAgentVaultsFromKeychain().map {
+            ($0.key.lowercased(), $0.value)
+        })
+
+        var rebuiltWallets: [String: AgentWalletInfo] = [:]
+        var migratedVaults = storedVaults
+        var didMigrate = false
+
+        let allAddresses = Set(preferences.keys).union(legacyWallets.keys).union(storedVaults.keys)
+        for address in allAddresses {
+            let normalized = address.lowercased()
+            let preference = preferences[normalized] ?? {
+                if let legacy = legacyWallets[normalized] {
+                    return AgentWalletPreference(
+                        agentAddress: legacy.agentAddress,
+                        approveSignatures: legacy.approveSignatures
+                    )
+                }
+                return AgentWalletPreference(agentAddress: "", approveSignatures: [])
+            }()
+
+            var vault = storedVaults[normalized]
+            if vault == nil, let legacy = legacyWallets[normalized] {
+                vault = legacy.vault
+                migratedVaults[normalized] = legacy.vault
+                didMigrate = true
             }
+
+            guard let resolvedVault = vault, !resolvedVault.isEmpty else { continue }
+            rebuiltWallets[normalized] = AgentWalletInfo(
+                vault: resolvedVault,
+                agentAddress: preference.agentAddress,
+                approveSignatures: preference.approveSignatures
+            )
+        }
+
+        agentWallets = rebuiltWallets
+
+        if didMigrate {
+            saveAgentVaultsToKeychain(migratedVaults)
+            saveToStorage()
         }
     }
 
     private func saveToStorage() {
+        let preferences = Dictionary(uniqueKeysWithValues: agentWallets.map { key, value in
+            (key.lowercased(), AgentWalletPreference(agentAddress: value.agentAddress, approveSignatures: value.approveSignatures))
+        })
+
         let store = PerpsStore(
             currentAccount: currentAccount,
             lastUsedAccount: lastUsedAccount,
@@ -960,11 +1058,50 @@ class PerpsManager: ObservableObject {
             marketSlippage: marketSlippage,
             soundEnabled: soundEnabled,
             quoteUnit: quoteUnit,
-            agentWallets: agentWallets
+            agentPreferences: preferences,
+            legacyAgentWallets: nil
         )
         if let data = try? JSONEncoder().encode(store) {
             storage.setData(data, forKey: storageKey)
         }
+
+        let vaultMap = Dictionary(uniqueKeysWithValues: agentWallets.map { ($0.key.lowercased(), $0.value.vault) })
+        saveAgentVaultsToKeychain(vaultMap)
+    }
+
+    private func loadAgentVaultsFromKeychain() -> [String: String] {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: perpsKeychainService,
+            kSecAttrAccount as String: agentVaultsAccountKey,
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
+
+        var result: AnyObject?
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+        guard status == errSecSuccess, let data = result as? Data else {
+            return [:]
+        }
+
+        return (try? JSONDecoder().decode([String: String].self, from: data)) ?? [:]
+    }
+
+    private func saveAgentVaultsToKeychain(_ vaults: [String: String]) {
+        guard let data = try? JSONEncoder().encode(vaults) else { return }
+
+        let baseQuery: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: perpsKeychainService,
+            kSecAttrAccount as String: agentVaultsAccountKey
+        ]
+
+        SecItemDelete(baseQuery as CFDictionary)
+
+        var addQuery = baseQuery
+        addQuery[kSecValueData as String] = data
+        addQuery[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+        SecItemAdd(addQuery as CFDictionary, nil)
     }
 
     private struct PerpsStore: Codable {
@@ -975,7 +1112,32 @@ class PerpsManager: ObservableObject {
         let marketSlippage: Double
         let soundEnabled: Bool
         let quoteUnit: QuoteUnit
-        let agentWallets: [String: AgentWalletInfo]?
+        let agentPreferences: [String: AgentWalletPreference]?
+        let legacyAgentWallets: [String: AgentWalletInfo]?
+
+        enum CodingKeys: String, CodingKey {
+            case currentAccount
+            case lastUsedAccount
+            case hasDoneNewUserProcess
+            case favoritedCoins
+            case marketSlippage
+            case soundEnabled
+            case quoteUnit
+            case agentPreferences
+            case legacyAgentWallets = "agentWallets"
+        }
+
+        func encode(to encoder: Encoder) throws {
+            var c = encoder.container(keyedBy: CodingKeys.self)
+            try c.encode(currentAccount, forKey: .currentAccount)
+            try c.encode(lastUsedAccount, forKey: .lastUsedAccount)
+            try c.encode(hasDoneNewUserProcess, forKey: .hasDoneNewUserProcess)
+            try c.encode(favoritedCoins, forKey: .favoritedCoins)
+            try c.encode(marketSlippage, forKey: .marketSlippage)
+            try c.encode(soundEnabled, forKey: .soundEnabled)
+            try c.encode(quoteUnit, forKey: .quoteUnit)
+            try c.encode(agentPreferences, forKey: .agentPreferences)
+        }
     }
 }
 
@@ -1015,7 +1177,3 @@ enum PerpsError: LocalizedError {
         }
     }
 }
-
-// MARK: - CommonCrypto Import (for SHA256 in signing placeholder)
-
-import CommonCrypto
