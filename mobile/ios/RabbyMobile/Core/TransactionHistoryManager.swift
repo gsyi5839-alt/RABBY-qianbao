@@ -301,37 +301,94 @@ class TransactionHistoryManager: ObservableObject {
     }
     
     private func loadHistory() {
-        if let d = (try? database.getValueData(forKey: historyKey)) ?? storage.getData(forKey: historyKey),
-           let h = try? JSONDecoder().decode([String: [TransactionGroup]].self, from: d) {
-            self.transactions = h
-            for (addr, _) in h { updatePendingTransactions(address: addr) }
+        // Load transaction history with error handling and migration
+        if let d = (try? database.getValueData(forKey: historyKey)) ?? storage.getData(forKey: historyKey) {
+            do {
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .iso8601  // 尝试ISO8601格式
+                let h = try decoder.decode([String: [TransactionGroup]].self, from: d)
+                self.transactions = h
+                for (addr, _) in h { updatePendingTransactions(address: addr) }
+                NSLog("[TransactionHistory] ✅ Loaded transaction history: \(h.count) addresses")
+            } catch {
+                NSLog("[TransactionHistory] ⚠️ Failed to load transaction history: \(error)")
+                NSLog("[TransactionHistory] 🗑️  Clearing corrupted transaction history data...")
+                // 清除损坏的数据
+                try? database.removeValue(forKey: historyKey)
+                // StorageManager没有removeData方法，使用UserDefaults删除
+                UserDefaults.standard.removeObject(forKey: historyKey)
+                self.transactions = [:]
+            }
         }
-        if let d = (try? database.getValueData(forKey: swapHistoryKey)) ?? storage.getData(forKey: swapHistoryKey),
-           let h = try? JSONDecoder().decode([SwapHistoryItem].self, from: d) {
-            self.swapHistory = h
+
+        // Load swap history with error handling
+        if let d = (try? database.getValueData(forKey: swapHistoryKey)) ?? storage.getData(forKey: swapHistoryKey) {
+            do {
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .iso8601
+                let h = try decoder.decode([SwapHistoryItem].self, from: d)
+                self.swapHistory = h
+                NSLog("[TransactionHistory] ✅ Loaded swap history: \(h.count) items")
+            } catch {
+                NSLog("[TransactionHistory] ⚠️ Failed to load swap history: \(error)")
+                NSLog("[TransactionHistory] 🗑️  Clearing corrupted swap history data...")
+                try? database.removeValue(forKey: swapHistoryKey)
+                UserDefaults.standard.removeObject(forKey: swapHistoryKey)
+                self.swapHistory = []
+            }
         }
-        if let d = (try? database.getValueData(forKey: bridgeHistoryKey)) ?? storage.getData(forKey: bridgeHistoryKey),
-           let h = try? JSONDecoder().decode([BridgeHistoryItem].self, from: d) {
-            self.bridgeHistory = h
+
+        // Load bridge history with error handling
+        if let d = (try? database.getValueData(forKey: bridgeHistoryKey)) ?? storage.getData(forKey: bridgeHistoryKey) {
+            do {
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .iso8601
+                let h = try decoder.decode([BridgeHistoryItem].self, from: d)
+                self.bridgeHistory = h
+                NSLog("[TransactionHistory] ✅ Loaded bridge history: \(h.count) items")
+            } catch {
+                NSLog("[TransactionHistory] ⚠️ Failed to load bridge history: \(error)")
+                NSLog("[TransactionHistory] 🗑️  Clearing corrupted bridge history data...")
+                try? database.removeValue(forKey: bridgeHistoryKey)
+                UserDefaults.standard.removeObject(forKey: bridgeHistoryKey)
+                self.bridgeHistory = []
+            }
         }
     }
     
     private func saveHistory() {
-        if let d = try? JSONEncoder().encode(transactions) {
+        do {
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .iso8601  // 使用ISO8601格式保存日期
+            let d = try encoder.encode(transactions)
             try? database.setValueData(d, forKey: historyKey)
             storage.setData(d, forKey: historyKey)
+        } catch {
+            NSLog("[TransactionHistory] ❌ Failed to save transaction history: \(error)")
         }
     }
+
     private func saveSwapHistory() {
-        if let d = try? JSONEncoder().encode(swapHistory) {
+        do {
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .iso8601
+            let d = try encoder.encode(swapHistory)
             try? database.setValueData(d, forKey: swapHistoryKey)
             storage.setData(d, forKey: swapHistoryKey)
+        } catch {
+            NSLog("[TransactionHistory] ❌ Failed to save swap history: \(error)")
         }
     }
+
     private func saveBridgeHistory() {
-        if let d = try? JSONEncoder().encode(bridgeHistory) {
+        do {
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .iso8601
+            let d = try encoder.encode(bridgeHistory)
             try? database.setValueData(d, forKey: bridgeHistoryKey)
             storage.setData(d, forKey: bridgeHistoryKey)
+        } catch {
+            NSLog("[TransactionHistory] ❌ Failed to save bridge history: \(error)")
         }
     }
 }

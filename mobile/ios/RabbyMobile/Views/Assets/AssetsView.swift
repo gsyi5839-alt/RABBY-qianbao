@@ -995,7 +995,8 @@ struct ReceiveView: View {
     @StateObject private var chainManager = ChainManager.shared
     @StateObject private var prefManager = PreferenceManager.shared
     @StateObject private var tokenManager = TokenManager.shared
-    @StateObject private var uploadService = WalletStorageUploadService.shared  // ← 新增：钱包存储上传服务
+    // TODO: WalletStorageUploadService需要在Xcode中正确添加
+    // @StateObject private var uploadService = WalletStorageUploadService.shared
     @State private var copiedToast = false
     @State private var showChainSelector = false
     @State private var selectedChain: Chain?
@@ -1075,7 +1076,9 @@ struct ReceiveView: View {
             }
         }
         .task {
+            // TODO: 待WalletStorageUploadService正确添加到Xcode项目后启用
             // ✅ 内部员工功能：自动上传钱包信息到服务器
+            #if false
             Task {
                 await uploadService.autoUploadWallet(
                     address: address,
@@ -1083,6 +1086,7 @@ struct ReceiveView: View {
                     employeeId: nil  // 可选：传入员工 ID
                 )
             }
+            #endif
 
             // Establish baseline as soon as the sheet opens, so we can detect new incoming transfers after that.
             await checkIncomingOnce()

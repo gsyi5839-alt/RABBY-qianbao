@@ -73,9 +73,12 @@ class RPCManager: ObservableObject {
     ///   - url: RPC URL
     ///   - alias: 可选的别名
     func setRPC(chainId: Int, url: String, alias: String? = nil) {
-        let rpcItem = customRPCs[chainId]
-            ? RPCItem(url: url, enable: customRPCs[chainId]!.enable, alias: alias)
-            : RPCItem(url: url, enable: true, alias: alias)
+        let rpcItem: RPCItem
+        if let existing = customRPCs[chainId] {
+            rpcItem = RPCItem(url: url, enable: existing.enable, alias: alias)
+        } else {
+            rpcItem = RPCItem(url: url, enable: true, alias: alias)
+        }
 
         customRPCs[chainId] = rpcItem
 
